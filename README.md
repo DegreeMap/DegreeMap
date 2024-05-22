@@ -14,7 +14,14 @@ To run the backend server for the application, you may either run the DegreeMapA
 ./mvnw spring-boot:run
 ```
 
+### Running Database:
+TODO: add description for this
+```
+docker-compose up -d
+```
+
 ### Dependencies:
 - Java 21
 - Maven 3.8.7
 - Spring Boot 3.2.5
+- MySQL 8.4.0
