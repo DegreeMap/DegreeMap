@@ -25,3 +25,4 @@ docker-compose up -d
 - Maven 3.8.7
 - Spring Boot 3.2.5
 - MySQL 8.4.0
+Additional dependencies can be found in the pom.xml file, although you won't have to download anything for those ones.
