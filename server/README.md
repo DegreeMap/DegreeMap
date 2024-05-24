@@ -5,17 +5,17 @@ TODO
 
 ### Running Database:
 To run the database for the application, you can run this command in the server directory:
-```
+``` bash
 docker-compose up -d
 ```
 To close the database, either delete the docker container or run this command in the server directory:
-```
+``` bash
 docker-compose down 
 ```
 
 ### Running Back-end:
 To run the backend server for the application you MUST have the database running, then you may either run the DegreeMapApplication.java file using some IDE or you can run this command in the root directory:
-```
+``` bash
 ./mvnw spring-boot:run
 ```
 To close the backend server, Ctrl + C in the terminal running the server.
