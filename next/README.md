@@ -21,6 +21,7 @@ Additional dependencies can be found in degreemap/package.json, although you won
 - next 14.2.3+: next@latest
 - react 18.3.1+: react@latest
 - react-dom 18.3.1+: react-dom@latest
+- axios: 1.7.2+: axios
 
 ### Extra Next.js Resources:
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
