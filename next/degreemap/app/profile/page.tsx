@@ -1,7 +1,11 @@
+import NavBar from "@/components/nav/navbars";
 import React, { useEffect, useState } from "react";
 
 export default function ProfilePage() {
-    <>
-        <p>profile page!</p>
-    </>
+    return (
+        <>
+            <NavBar></NavBar>
+            <p>profile page!</p>
+        </>
+    );
 }
