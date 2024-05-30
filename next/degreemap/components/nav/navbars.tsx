@@ -13,9 +13,9 @@ export default function NavBar() {
     ];
     
     const navData: NavItemData[] = [
-        { name: "Profile", link: "/profile" },
         { name: "Maker", link: "/maker" },
-        { name: "Courses", link: "/courses" }
+        { name: "Courses", link: "/courses" },
+        { name: "Profile", link: "/profile" },
     ];
     
     return (
