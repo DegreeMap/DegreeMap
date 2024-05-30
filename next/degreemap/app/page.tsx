@@ -3,13 +3,28 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NavBar from "@/components/nav/navbars";
+import NavItem from "@/components/nav/navitem";
+
+type NavData = {
+  name: string;
+  link: string;
+};
 
 export default function Home() {
+  
+  const navItems: NavData[] = [
+    { name: "Profile", link: "/profile" },
+  ];
+  
   return (
     <div className = "h-screen w-screen">
-      <NavBar></NavBar>
-      <p>home page! :)</p>
-    </div >
+      <NavBar navItems={navItems}></NavBar>
+      <div> 
+        <p>home page! :)</p>  
+        <NavItem navData={{name: "Maker", link: "/maker"}}></NavItem>
+        <NavItem navData={{name: "Courses", link: "/courses"}}></NavItem>  
+      </div>
+    </div>
   );
 }
 

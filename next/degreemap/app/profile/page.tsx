@@ -1,7 +1,7 @@
 import NavBar from "@/components/nav/navbars";
 import React, { useEffect, useState } from "react";
 
-export default function ProfilePage() {
+export default function ProfilePage() {    
     return (
         <>
             <NavBar></NavBar>
