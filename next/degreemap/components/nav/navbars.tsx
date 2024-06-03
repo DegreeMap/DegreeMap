@@ -1,5 +1,8 @@
+"use client"
+
 import React from 'react';
 import NavItem from './navitem';
+import { useSession } from 'next-auth/react';
 
 type NavBarProps = {
     navItems?: NavData[]
@@ -11,11 +14,23 @@ type NavData = {
 };
 
 export default function NavBar({navItems}: NavBarProps) {
-    const defaultNavData: NavData[] = [
-        { name: "Maker", link: "/maker" },
-        { name: "Courses", link: "/courses" },
-        { name: "Profile", link: "/profile" },
-    ];
+    const { data: session } = useSession();
+    
+    var defaultNavData: NavData[];
+    if(session) {
+        defaultNavData = [
+            { name: "Maker", link: "/maker" },
+            { name: "Courses", link: "/courses" },
+            { name: "Profile", link: "/profile" },
+        ];
+    }
+    else {
+        defaultNavData = [
+            { name: "Maker", link: "/maker" },
+            { name: "Courses", link: "/courses" },
+            { name: "Sign In", link: "/profile" },
+        ];
+    }
 
     const items = navItems || defaultNavData; // If no props are given, a default navbar will be made.
     
