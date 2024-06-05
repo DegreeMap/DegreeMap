@@ -1,19 +1,48 @@
-import NextAuth from "next-auth"
+import NextAuth, { Session } from "next-auth"
+import { JWT } from "next-auth/jwt";
+import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google"
 
+interface Credentials {
+  email: string;
+  password: string;
+}
+
+interface User {
+  id: string;
+  name?: string;
+  email?: string;
+}
+
 export const authOptions = {
-  // Configure one or more authentication providers
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? ""
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { label: "Email", type: "email", placeholder: "you@example.com" },
+        password: { label: "Password", type: "password", placeholder: "Password" }
+      },
+      authorize: async (credentials) => {
+        if (!credentials) return null;
+        
+        const res = await fetch("http://localhost:8080/api/login", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: credentials.email,
+            password: credentials.password
+          })
+        });
+
+        const user: User | null = await res.json();
+
+        if (res.ok && user) {
+          return user;
+        }
+        return null;
+      }
     }),
-    GithubProvider({
-      clientId: process.env.GITHUB_ID ?? "",
-      clientSecret: process.env.GITHUB_SECRET ?? "",
-    }),
-    // ...add more providers here
   ],
 }
 export const handler = NextAuth(authOptions)
