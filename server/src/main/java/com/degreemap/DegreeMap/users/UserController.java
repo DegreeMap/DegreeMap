@@ -94,6 +94,6 @@ public class UserController {
         catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
         }
-
+        //TODO when users are associated with course catalogs and other pieces of data, delete all of that as well.
     }
 }
