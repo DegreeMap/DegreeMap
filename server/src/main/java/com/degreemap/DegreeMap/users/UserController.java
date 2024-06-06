@@ -1,5 +1,9 @@
 package com.degreemap.DegreeMap.users;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +27,30 @@ public class UserController {
     private UserRepository userRepository; 
     // @Autowired
     // private PasswordEncoder passwordEncoder;
-    // TODO hash passwords 
+    // TODO hash passwords & add input validation
 
     static class Request {
         public String email;
         public String password;
     }
 
+    public String hashPassword(String password) throws NoSuchAlgorithmException{
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.update(salt);
+        byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
+        return hashedPassword.toString();
+    }
+
     // Create a new User
     // curl -X POST -H "Content-Type: application/json" -d "{\"email\":\"email\", \"password\":\"password\"}" http://localhost:8080/api/users
+    // ^ On windows USE COMMAND PROMPT
     @PostMapping
-    public ResponseEntity<?> registerNewUser(@RequestBody Request postRequest) {
+    public ResponseEntity<?> registerNewUser(@RequestBody Request postRequest) throws NoSuchAlgorithmException {
         try {
-            User user = new User(postRequest.email, postRequest.password);
+            User user = new User(postRequest.email, hashPassword(postRequest.password));
             User savedUser = userRepository.save(user);
             return ResponseEntity
                 .status(HttpStatus.CREATED)

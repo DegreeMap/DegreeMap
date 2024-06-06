@@ -1,18 +1,9 @@
 import NextAuth, { Session } from "next-auth"
-import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GithubProvider from "next-auth/providers/github"
-import GoogleProvider from "next-auth/providers/google"
 
 interface Credentials {
   email: string;
   password: string;
-}
-
-interface User {
-  id: string;
-  name?: string;
-  email?: string;
 }
 
 export const authOptions = {
@@ -26,16 +17,16 @@ export const authOptions = {
       authorize: async (credentials) => {
         if (!credentials) return null;
         
-        const res = await fetch("http://localhost:8080/api/login", {
+        const res = await fetch("http://localhost:8080/api/users", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            email: credentials.email,
-            password: credentials.password
+            email: credentials?.email,
+            password: credentials?.password
           })
         });
 
-        const user: User | null = await res.json();
+        const user= await res.json();
 
         if (res.ok && user) {
           return user;
@@ -44,6 +35,24 @@ export const authOptions = {
       }
     }),
   ],
-}
+  // session: {
+  //   strategy: "jwt"
+  // },
+  // callbacks: {
+  //   jwt: async ({ token, user }) => {
+  //     if (user) {
+  //       token.id = user.id;
+  //       token.email = user.email;
+  //     }
+  //     return token;
+  //   },
+  //   session: async ({ session, token }) => {
+  //     session.user.id = token.id as string;
+  //     session.user.email = token.email as string;
+  //     return session;
+  //   }
+  // }
+};
+
 export const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST };

@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.users;
+package com.degreemap.DegreeMap.config;
 
 import org.springframework.context.annotation.Configuration;
 
