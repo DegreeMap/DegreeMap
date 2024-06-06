@@ -3,6 +3,9 @@ package com.degreemap.DegreeMap.users;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,37 +33,67 @@ public class UserController {
     // Create a new User
     // curl -X POST -H "Content-Type: application/json" -d "{\"email\":\"email\", \"password\":\"password\"}" http://localhost:8080/api/users
     @PostMapping
-    public User registerNewUser(@RequestBody Request postRequest) {
-        User user = new User(postRequest.email, postRequest.password);
-        return userRepository.save(user);
+    public ResponseEntity<?> registerNewUser(@RequestBody Request postRequest) {
+        try {
+            User user = new User(postRequest.email, postRequest.password);
+            User savedUser = userRepository.save(user);
+            return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(savedUser);
+        }
+        catch(DataIntegrityViolationException e){
+            return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body("Registration failed: Duplicate email. Please use a different email.");
+        }
     }
 
     // http://localhost:8080/api/users
     @GetMapping
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
+    public ResponseEntity<List<User>> getAllUsers(){
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(userRepository.findAll());
     }
 
     // http://localhost:8080/api/users/x
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id){
-        return userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+    public ResponseEntity<?> getUserById(@PathVariable Long id){
+        try {
+            return userRepository.findById(id)
+                .map(user -> ResponseEntity.ok(user))
+                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
+        }
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody Request putRequest) {
-        return userRepository.findById(id).map(user -> {
-            user.setEmail(putRequest.email);
-            user.setPasswordHash(putRequest.password);
-            return userRepository.save(user);
-        }).orElseThrow(() -> new RuntimeException("User not found with id " + id));
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody Request putRequest) {
+        try {
+            return userRepository.findById(id).map(user -> {
+                user.setEmail(putRequest.email);
+                user.setPasswordHash(putRequest.password);
+                return ResponseEntity.ok(userRepository.save(user));
+            }).orElseThrow(() -> new RuntimeException("User not found with id " + id));
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
+        }
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id){
-        User user = userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found with id " + id));
-        userRepository.delete(user);
+    public ResponseEntity<?> deleteUser(@PathVariable Long id){
+        try {
+            return userRepository.findById(id).map(user -> {
+                userRepository.delete(user);
+                return ResponseEntity.ok().build(); // .build() means no body
+            }).orElseThrow(() -> new RuntimeException("User not found with id " + id));
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
+        }
+
     }
 }
