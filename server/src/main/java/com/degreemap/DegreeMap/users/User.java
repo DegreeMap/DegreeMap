@@ -2,8 +2,8 @@ package com.degreemap.DegreeMap.users;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.core.GrantedAuthority;
+// import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +20,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails{
+public class User   
+    // implements UserDetails
+        {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,39 +75,39 @@ public class User implements UserDetails{
         this.passwordHash = passwordHash;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
+    // @Override
+    // public Collection<? extends GrantedAuthority> getAuthorities() {
+    //     return List.of();
+    // }
 
-    @Override
-    public String getPassword() {
-        return passwordHash;
-    }
+    // @Override
+    // public String getPassword() {
+    //     return passwordHash;
+    // }
 
-    @Override
-    public String getUsername() { 
-        // 'Username' is just an arbitrary unique value for something. in this case its an email
-        return email;
-    }
+    // @Override
+    // public String getUsername() { 
+    //     // 'Username' is just an arbitrary unique value for something. in this case its an email
+    //     return email;
+    // }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    // @Override
+    // public boolean isAccountNonExpired() {
+    //     return true;
+    // }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    // @Override
+    // public boolean isAccountNonLocked() {
+    //     return true;
+    // }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    // @Override
+    // public boolean isCredentialsNonExpired() {
+    //     return true;
+    // }
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    // @Override
+    // public boolean isEnabled() {
+    //     return true;
+    // }
 }
