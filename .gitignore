@@ -2,3 +2,4 @@ node_modules
 target/maven-status/maven-compiler-plugin/compile/default-compile/
 target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/
 .vscode
+.env

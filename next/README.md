@@ -18,10 +18,11 @@ Then navigate to the provided local link (i.e. [http://localhost:3000](http://lo
 
 ### Front-end Dependencies:
 Additional dependencies can be found in degreemap/package.json, although you won't have to download anything for those ones you'll just probably need to know what they are. You can download these using ```npm install```.
-- next 14.2.3+: next@latest
-- react 18.3.1+: react@latest
-- react-dom 18.3.1+: react-dom@latest
-- axios: 1.7.2+: axios
+- next 14.2.3+
+- react 18.3.1+
+- react-dom 18.3.1+
+- axios: 1.7.2+
+- next-auth: 4.24.7+
 
 ### Extra Next.js Resources:
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
