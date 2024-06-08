@@ -1,58 +1,55 @@
-import NextAuth, { Session } from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { JWT, Session } from "next-auth";
+import { JWTCallback, SessionCallback } from "next-auth/jwt"
 
-interface Credentials {
-  email: string;
-  password: string;
-}
-
-export const authOptions = {
+const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "you@example.com" },
-        password: { label: "Password", type: "password", placeholder: "Password" }
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
       },
       authorize: async (credentials) => {
         if (!credentials) return null;
-        
-        const res = await fetch("http://localhost:8080/api/users", {
+        const response = await fetch('http://localhost:8080/api/users/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            email: credentials?.email,
-            password: credentials?.password
+            email: credentials.email,
+            password: credentials.password
           })
         });
 
-        const user= await res.json();
+        const user = await response.json();
 
-        if (res.ok && user) {
+        if (response.ok && user) {
           return user;
         }
         return null;
       }
     }),
   ],
-  // session: {
-  //   strategy: "jwt"
-  // },
-  // callbacks: {
-  //   jwt: async ({ token, user }) => {
-  //     if (user) {
-  //       token.id = user.id;
-  //       token.email = user.email;
-  //     }
-  //     return token;
-  //   },
-  //   session: async ({ session, token }) => {
-  //     session.user.id = token.id as string;
-  //     session.user.email = token.email as string;
-  //     return session;
-  //   }
-  // }
+  callbacks: {
+    jwt: async ({ token, user, account }: JWTCallback) => {
+      if (user) {
+        token.accessToken = user.jwt;
+      }
+      return token as JWT;
+    },
+    session: async ({ session, token }: SessionCallback) => {
+      if (token) {
+        session.user.accessToken = token.accessToken;
+      }
+      return session as Session;
+    }
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    encryption: true,
+  },
 };
 
-export const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST };
+export default NextAuth(authOptions);
