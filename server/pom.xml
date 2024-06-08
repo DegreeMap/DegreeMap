@@ -62,10 +62,20 @@
     <dependency>
     	<groupId>org.mindrot</groupId>
     	<artifactId>jbcrypt</artifactId>
-    <version>0.4</version>
-</dependency>
+    	<version>0.4</version>
+	</dependency>
+	<dependency>
+    	<groupId>io.jsonwebtoken</groupId>
+    	<artifactId>jjwt</artifactId>
+    	<version>0.9.1</version>
+	</dependency>
 
-
+	<!-- Misc. -->
+	<dependency>
+	    <groupId>javax.xml.bind</groupId>
+	    <artifactId>jaxb-api</artifactId>
+	    <version>2.3.1</version>
+	</dependency>
 </dependencies>
 
 	<build>
