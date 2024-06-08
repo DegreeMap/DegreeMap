@@ -58,26 +58,13 @@
 		<scope>test</scope>
     </dependency>
 
-	<!-- JSON Web Tokens -->
-    <!-- <dependency>
-  	  <groupId>io.jsonwebtoken</groupId>
-  	  <artifactId>jjwt-api</artifactId>
-  	  <version>0.11.5</version>
-  	</dependency>
-  	<dependency>
-  	  <groupId>io.jsonwebtoken</groupId>
-  	  <artifactId>jjwt-impl</artifactId>
-  	  <version>0.11.5</version>
-  	</dependency>
-  	<dependency>
-  	  <groupId>io.jsonwebtoken</groupId>
-  	  <artifactId>jjwt-jackson</artifactId>
-  	  <version>0.11.5</version>
-  	</dependency>
-	  <dependency>
-	  <groupId>org.springframework.boot</groupId>
-	  <artifactId>spring-boot-starter-security</artifactId>
-	</dependency> -->
+	<!-- Security -->
+    <dependency>
+    	<groupId>org.mindrot</groupId>
+    	<artifactId>jbcrypt</artifactId>
+    <version>0.4</version>
+</dependency>
+
 
 </dependencies>
 

@@ -2,8 +2,6 @@ package com.degreemap.DegreeMap.users;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-// import org.springframework.security.core.GrantedAuthority;
-// import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,17 +10,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-
-
 
 @Entity
 @Table(name = "users")
-public class User   
-    // implements UserDetails
-        {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +25,7 @@ public class User
     private String email;
 
     @Column(nullable = false)
-    private String passwordHash; // hash instead of plain.
+    private String password; // actually storing hash
 
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
@@ -46,9 +38,9 @@ public class User
     public User() {
     }
 
-    public User(String email, String passwordHash) {
+    public User(String email, String password) {
         this.email = email;
-        this.passwordHash = passwordHash;
+        this.password = password;
     }
 
     public Long getId() {
@@ -67,47 +59,11 @@ public class User
         this.email = email;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setPassword(String password) {
+        this.password = password;
     }
-
-    // @Override
-    // public Collection<? extends GrantedAuthority> getAuthorities() {
-    //     return List.of();
-    // }
-
-    // @Override
-    // public String getPassword() {
-    //     return passwordHash;
-    // }
-
-    // @Override
-    // public String getUsername() { 
-    //     // 'Username' is just an arbitrary unique value for something. in this case its an email
-    //     return email;
-    // }
-
-    // @Override
-    // public boolean isAccountNonExpired() {
-    //     return true;
-    // }
-
-    // @Override
-    // public boolean isAccountNonLocked() {
-    //     return true;
-    // }
-
-    // @Override
-    // public boolean isCredentialsNonExpired() {
-    //     return true;
-    // }
-
-    // @Override
-    // public boolean isEnabled() {
-    //     return true;
-    // }
 }

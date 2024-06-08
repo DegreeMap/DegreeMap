@@ -88,7 +88,25 @@ public class UserRepositoryTests {
             userRepository.save(user);
         });
     }
+
+    @Test
+    void givenUser_whenSearchByEmail_Success() {
+        User newUser = new User("example@example.com", "Password1234!");
+        User insertedUser = userRepository.save(newUser);
+        assertEquals(entityManager.find(User.class, insertedUser.getId()), newUser);
+        User foundUser = userRepository.findByEmail(insertedUser.getEmail());
+        assertEquals(insertedUser, foundUser);
+    }
+
+    @Test
+    void givenUser_whenSearchByEmail_NotFound_Failure() {
+        assertEquals(userRepository.findByEmail("Poop"), null);
+    }
     
+    @Test
+    void givenUser_whenSearchByEmail_Empty_Failure() {
+        assertEquals(userRepository.findByEmail(null), null);
+    }
 }
 
 
