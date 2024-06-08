@@ -1,9 +1,6 @@
 package com.degreemap.DegreeMap.users;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.degreemap.DegreeMap.utility.PasswordEncoderUtil;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -27,22 +26,25 @@ public class UserController {
     private UserRepository userRepository; 
     // @Autowired
     // private PasswordEncoder passwordEncoder;
-    // TODO hash passwords & add input validation
+    // TODO add input validation & make sure that Users' passwords are not returned when returning bodies (only return their email and id)
 
     static class Request {
         public String email;
         public String password;
     }
 
-    public String hashPassword(String password) throws NoSuchAlgorithmException{
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[16];
-        random.nextBytes(salt);
-        MessageDigest md = MessageDigest.getInstance("SHA-512");
-        md.update(salt);
-        byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
-        return hashedPassword.toString();
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@RequestBody Request loginRequest) {
+        User user = userRepository.findByEmail(loginRequest.email);
+        if (user != null && PasswordEncoderUtil.matches(loginRequest.password, user.getPassword())) {
+            return ResponseEntity.ok("User authenticated successfully");
+        }
+        else if (user == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with email " + loginRequest.email);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
     }
+    
 
     // Create a new User
     // curl -X POST -H "Content-Type: application/json" -d "{\"email\":\"email\", \"password\":\"password\"}" http://localhost:8080/api/users
@@ -50,7 +52,8 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> registerNewUser(@RequestBody Request postRequest) throws NoSuchAlgorithmException {
         try {
-            User user = new User(postRequest.email, hashPassword(postRequest.password));
+            String hashedPassword = PasswordEncoderUtil.hashPassword(postRequest.password);
+            User user = new User(postRequest.email, hashedPassword);
             User savedUser = userRepository.save(user);
             return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -89,7 +92,7 @@ public class UserController {
         try {
             return userRepository.findById(id).map(user -> {
                 user.setEmail(putRequest.email);
-                user.setPasswordHash(putRequest.password);
+                user.setPassword(PasswordEncoderUtil.hashPassword(putRequest.password));
                 return ResponseEntity.ok(userRepository.save(user));
             }).orElseThrow(() -> new RuntimeException("User not found with id " + id));
         }

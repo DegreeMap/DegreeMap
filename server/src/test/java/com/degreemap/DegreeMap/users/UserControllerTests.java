@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.verify;
@@ -16,6 +17,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.degreemap.DegreeMap.utility.PasswordEncoderUtil;
+
 @WebMvcTest(UserController.class)
 public class UserControllerTests {
     
@@ -27,18 +30,20 @@ public class UserControllerTests {
 
     @Test
     public void testRegisterNewUser() throws Exception {
-        User user = new User("test@example.com", "password123");
+        String plainPassword = "Password123!";
+        String hashedPassword = PasswordEncoderUtil.hashPassword(plainPassword);
+        User user = new User("test@example.com", hashedPassword);
 
-        // If the statement in the 'given' is true, along with the expects below, the test will pass.
-        given(userRepository.save(any(User.class))).willReturn(user); 
+        given(userRepository.save(any(User.class))).willReturn(user);
 
         mockMvc.perform(post("/api/users")
-               .contentType(MediaType.APPLICATION_JSON)
-               .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + user.getPasswordHash() + "\"}"))
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.email").value("test@example.com"))
-            .andExpect(jsonPath("$.password").doesNotExist()); // cant leak passwords
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + plainPassword + "\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.email").value("test@example.com"))
+                .andExpect(result -> assertTrue(PasswordEncoderUtil.matches(plainPassword, user.getPassword())));
     }
+
 
     @Test
     public void testRegisterSameEmailTwice() throws Exception{
@@ -48,7 +53,7 @@ public class UserControllerTests {
         // do first attempt
         mockMvc.perform(post("/api/users")
                .contentType(MediaType.APPLICATION_JSON)
-               .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + user.getPasswordHash() + "\"}"))
+               .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + user.getPassword() + "\"}"))
             .andExpect(status().isCreated());
 
         // say the second registration attempt should fail 
@@ -57,7 +62,7 @@ public class UserControllerTests {
         // do second attempt
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\":\"" + user2.getEmail() + "\", \"password\":\"" + user2.getPasswordHash() + "\"}"))
+                .content("{\"email\":\"" + user2.getEmail() + "\", \"password\":\"" + user2.getPassword() + "\"}"))
             .andExpect(status().isConflict()); // Assuming your controller is set up to send a 409 Conflict
     }
 
@@ -74,7 +79,7 @@ public class UserControllerTests {
         for(User user : users){
             mockMvc.perform(post("/api/users")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + user.getPasswordHash() + "\"}"))
+            .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + user.getPassword() + "\"}"))
                 .andExpect(status().isCreated());
         }
 
@@ -104,7 +109,7 @@ public class UserControllerTests {
         mockMvc.perform(get("/api/users/" + user1.getId()))
         .andExpect(status().isNotFound());
     }
-
+    
     @Test
     public void testEditingUser() throws Exception {
         User user = new User("test@example.com", "Password7777!");
@@ -118,7 +123,7 @@ public class UserControllerTests {
                .content("{\"email\":\"" + "newEmail@fart.com" + "\", \"password\":\"" + "passwordFart712!" + "\"}"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.email").value("newEmail@fart.com"))
-            .andExpect(jsonPath("$.password").doesNotExist()); 
+            .andExpect(result -> assertTrue(PasswordEncoderUtil.matches("passwordFart712!", user.getPassword())));
     }
 
     @Test
