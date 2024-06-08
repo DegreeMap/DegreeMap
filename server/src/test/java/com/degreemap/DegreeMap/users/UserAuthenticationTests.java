@@ -52,7 +52,6 @@ public class UserAuthenticationTests {
                 .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + plainPassword + "\"}"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.jwt").value(expectedResponse.jwt));
-        //TODO confirm token is sent
     }
 
     @Test

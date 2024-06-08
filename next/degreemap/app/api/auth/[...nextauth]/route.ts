@@ -1,55 +1,58 @@
-import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import { JWT, Session } from "next-auth";
-import { JWTCallback, SessionCallback } from "next-auth/jwt"
+// // If using NextAuth 4.x or later, the following imports are typically what you need:
+// import NextAuth from 'next-auth';
+// import CredentialsProvider from 'next-auth/providers/credentials';
+// import type { NextAuthOptions } from 'next-auth';
 
-const authOptions = {
-  providers: [
-    CredentialsProvider({
-      name: 'Credentials',
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
-      },
-      authorize: async (credentials) => {
-        if (!credentials) return null;
-        const response = await fetch('http://localhost:8080/api/users/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: credentials.email,
-            password: credentials.password
-          })
-        });
+// // This is the usual NextAuth configuration with TypeScript types
+// const authOptions: NextAuthOptions = {
+//   providers: [
+//     CredentialsProvider({
+//       name: 'Credentials',
+//       credentials: {
+//         email: { label: "Email", type: "email" },
+//         password: { label: "Password", type: "password" }
+//       },
+//       authorize: async (credentials) => {
+//         if (!credentials) return null;
+//         const response = await fetch('http://localhost:8080/api/users/login', {
+//           method: 'POST',
+//           headers: { 'Content-Type': 'application/json' },
+//           body: JSON.stringify({
+//             email: credentials.email,
+//             password: credentials.password
+//           })
+//         });
+//         const user = await response.json();
+//         if (response.ok && user) {
+//           return user;
+//         }
+//         return null;
+//       }
+//     }),
+//   ],
+//   session: {
+//     strategy: 'jwt',
+//   },
+//   callbacks: {
+//     jwt: async ({ token, user, account }) => {
+//       if (user) {
+//         token.accessToken = user.jwt; // Assuming your user object includes the JWT
+//       }
+//       return token;
+//     },
+//     session: async ({ session, token }) => {
+//       if (token) {
+//         session.user.accessToken = token.accessToken; // Ensure this property is safely handled
+//       }
+//       return session;
+//     }
+//   },
+//   secret: process.env.NEXTAUTH_SECRET,
+//   jwt: {
+//     secret: process.env.JWT_SECRET,
+//     encryption: true,
+//   },
+// };
 
-        const user = await response.json();
+// export default NextAuth(authOptions);
 
-        if (response.ok && user) {
-          return user;
-        }
-        return null;
-      }
-    }),
-  ],
-  callbacks: {
-    jwt: async ({ token, user, account }: JWTCallback) => {
-      if (user) {
-        token.accessToken = user.jwt;
-      }
-      return token as JWT;
-    },
-    session: async ({ session, token }: SessionCallback) => {
-      if (token) {
-        session.user.accessToken = token.accessToken;
-      }
-      return session as Session;
-    }
-  },
-  secret: process.env.NEXTAUTH_SECRET,
-  jwt: {
-    secret: process.env.JWT_SECRET,
-    encryption: true,
-  },
-};
-
-export default NextAuth(authOptions);
