@@ -53,8 +53,8 @@ public class UserController {
     public ResponseEntity<?> authenticateUser(@RequestBody Request loginRequest) {
         User user = userRepository.findByEmail(loginRequest.email);
         if (user != null && PasswordEncoderUtil.matches(loginRequest.password, user.getPassword())) {
-            String JwtToken = JwtUtil.generateToken(user.getEmail());
-            AuthResponse response = new AuthResponse(JwtToken);
+            String jwtToken = JwtUtil.generateToken(user.getEmail());
+            AuthResponse response = new AuthResponse(jwtToken);
             return ResponseEntity.ok(response);
         }
         else if (user == null){
