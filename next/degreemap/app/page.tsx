@@ -4,27 +4,21 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NavBar from "@/components/nav/navbars";
 import NavItem from "@/components/nav/navitem";
-import { useSession } from "next-auth/react";
 
 type NavData = {
   name: string;
   link: string;
 };
 
-export default function Home() {
-  const { data: session } = useSession();
-    
+export default function Home() {    
   var navItems: NavData[];
-  if(session) {
-    navItems = [
-      { name: "Profile", link: "/profile" },
-    ]
-  }
-  else {    
-    navItems = [
-      { name: "Sign In", link: "/profile" },
-    ]
-  }
+  navItems = [
+    { name: "Profile", link: "/profile" },
+  ]
+  // navItems = [
+  //   { name: "Sign In", link: "/profile" },
+  // ]
+  
   
   return (
     <div className = "h-screen w-screen">
