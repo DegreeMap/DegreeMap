@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.degreemap.DegreeMap.utility.JwtUtil;
 import com.degreemap.DegreeMap.utility.PasswordEncoderUtil;
 
 @RestController
@@ -26,18 +27,35 @@ public class UserController {
     private UserRepository userRepository; 
     // @Autowired
     // private PasswordEncoder passwordEncoder;
-    // TODO add input validation & make sure that Users' passwords are not returned when returning bodies (only return their email and id)
+    // TODO 1 add input validation 
+    // TODO 2 make sure that Users' passwords are not returned when returning bodies (only return their email and id)
+    // TODO 3 add security headers
 
+    /*
+     * Format for receiving requests from frontend.
+     */
     static class Request {
         public String email;
         public String password;
+    }
+
+    /*
+     * Format for Authentication Responses being sent to frontend. 
+     */
+    static class AuthResponse {
+        public String jwt;
+        public AuthResponse(String jwt) {
+            this.jwt = jwt;
+        }
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody Request loginRequest) {
         User user = userRepository.findByEmail(loginRequest.email);
         if (user != null && PasswordEncoderUtil.matches(loginRequest.password, user.getPassword())) {
-            return ResponseEntity.ok("User authenticated successfully");
+            String jwtToken = JwtUtil.generateToken(user.getEmail());
+            AuthResponse response = new AuthResponse(jwtToken);
+            return ResponseEntity.ok(response);
         }
         else if (user == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with email " + loginRequest.email);
