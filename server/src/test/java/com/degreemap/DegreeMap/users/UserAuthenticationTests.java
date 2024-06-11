@@ -14,6 +14,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.degreemap.DegreeMap.users.UserController.AuthResponse;
+import com.degreemap.DegreeMap.utility.JwtUtil;
 import com.degreemap.DegreeMap.utility.PasswordEncoderUtil;
 
 @WebMvcTest(UserController.class)
@@ -42,11 +44,14 @@ public class UserAuthenticationTests {
             .andExpect(jsonPath("$.email").value("test@example.com"))
             .andExpect(result -> assertTrue(PasswordEncoderUtil.matches(plainPassword, user.getPassword())));
 
+        String expectedToken = JwtUtil.generateToken(user.getEmail());
+        AuthResponse expectedResponse = new AuthResponse(expectedToken);
+
         mockMvc.perform(post("/api/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + plainPassword + "\"}"))
-            .andExpect(status().isOk());
-        //TODO confirm token is sent
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.jwt").value(expectedResponse.jwt));
     }
 
     @Test
