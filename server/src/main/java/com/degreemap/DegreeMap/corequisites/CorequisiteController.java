@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap;
+package com.degreemap.DegreeMap.corequisites;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class CorequisiteController {
     }
 
     @PutMapping("/{id}")
-    public Corequisite updateCorequisite(@PathVariable Long Id, @RequestBody Corequisite updatedCorequisite) {
+    public Corequisite updateCorequisite(@PathVariable Long id, @RequestBody Corequisite updatedCorequisite) {
         return corequisiteRepository.findById(id).map(corequisite -> {
             corequisite.setCoreqCourse(updatedCorequisite.getCoreqCourse());
             corequisite.setConnectedCourse(updatedCorequisite.getConnectedCourse());

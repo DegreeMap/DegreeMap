@@ -1,4 +1,6 @@
-package com.degreemap.DegreeMap;
+package com.degreemap.DegreeMap.courseTags;
+
+import com.degreemap.DegreeMap.courses.Course;
 
 import jakarta.persistence.*;
 
