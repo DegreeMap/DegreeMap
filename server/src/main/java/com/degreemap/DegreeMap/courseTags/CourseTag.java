@@ -1,6 +1,7 @@
 package com.degreemap.DegreeMap.courseTags;
 
 import com.degreemap.DegreeMap.courses.Course;
+import com.degreemap.DegreeMap.tags.Tag;
 
 import jakarta.persistence.*;
 
@@ -21,7 +22,6 @@ public class CourseTag {
     private Tag tag;
 
     public CourseTag() {
-        // JPA requires a no-arg constructor
     }
 
     public CourseTag(Course course, Tag tag) {

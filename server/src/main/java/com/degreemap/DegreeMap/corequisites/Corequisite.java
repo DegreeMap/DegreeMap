@@ -26,15 +26,15 @@ public class Corequisite {
         this.connectedCourse = connectedCourse;
     }
 
-    public getId() {
+    public Long getId() {
         return id;
     }
 
-    public getCoreqCourse() {
+    public Course getCoreqCourse() {
         return coreqCourse;
     }
 
-    public getConnectedCourse() {
+    public Course getConnectedCourse() {
         return connectedCourse;
     }
 
