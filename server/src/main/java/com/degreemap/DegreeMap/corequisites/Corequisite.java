@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 @Table(name = "corequisites")
 public class Corequisite {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
