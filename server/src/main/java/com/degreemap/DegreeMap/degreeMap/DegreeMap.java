@@ -6,8 +6,9 @@ import jakarta.persistence.*;
 @Table(name = "degree_maps")
 public class DegreeMap {
 
+    // TODO refine schema for DegreeMaps and make the correct JPA entity
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;

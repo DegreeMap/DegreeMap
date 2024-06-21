@@ -10,12 +10,13 @@ import jakarta.persistence.*;
 public class CourseTag {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "courseId", nullable = false)
     private Course course;
+    // TODO make course and tag foreign keys. should be ints i think?
 
     @ManyToOne
     @JoinColumn(name = "tagId", nullable = false)
