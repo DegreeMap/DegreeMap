@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.corequisites;
+package com.degreemap.DegreeMap.courseEntities.corequisites;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +8,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/corequisites")
 public class CorequisiteController {
+
+    // TODO update returns to ResponseEntities
+
 
     @Autowired
     private CorequisiteRepository corequisiteRepository;

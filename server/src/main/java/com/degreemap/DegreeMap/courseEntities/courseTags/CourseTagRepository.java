@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.courseTags;
+package com.degreemap.DegreeMap.courseEntities.courseTags;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.corequisites;
+package com.degreemap.DegreeMap.courseEntities.corequisites;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

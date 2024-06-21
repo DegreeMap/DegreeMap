@@ -1,5 +1,5 @@
-package com.degreemap.DegreeMap.prerequisites;
-import com.degreemap.DegreeMap.courses.Course;
+package com.degreemap.DegreeMap.courseEntities.prerequisites;
+import com.degreemap.DegreeMap.courseEntities.courses.Course;
 
 import jakarta.persistence.*;
 

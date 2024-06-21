@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.catalogs;
+package com.degreemap.DegreeMap.courseEntities.catalogs;
 import jakarta.persistence.*;
 
 @Entity

@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.degreeMap;
+package com.degreemap.DegreeMap.dmEntities.degreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +9,8 @@ import java.util.List;
 @RequestMapping("/api/degreeMaps")
 public class DegreeMapController {
 
+    // TODO update returns to ResponseEntities
+    
     @Autowired
     private DegreeMapRepository degreeMapRepository;
 

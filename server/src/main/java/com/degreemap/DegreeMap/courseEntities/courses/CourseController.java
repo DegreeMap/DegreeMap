@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.courses;
+package com.degreemap.DegreeMap.courseEntities.courses;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +8,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/courses")
 public class CourseController {
+
+    // TODO update returns to ResponseEntities
+
 
     @Autowired
     private CourseRepository courseRepository;

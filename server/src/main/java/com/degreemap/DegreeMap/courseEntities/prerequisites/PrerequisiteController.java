@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.prerequisites;
+package com.degreemap.DegreeMap.courseEntities.prerequisites;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +8,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/prerequisites")
 public class PrerequisiteController {
+
+    // TODO update returns to ResponseEntities
+
 
     @Autowired
     private PrerequisiteRepository prerequisiteRepository;
