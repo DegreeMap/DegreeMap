@@ -23,6 +23,8 @@ import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
 @WebMvcTest(CourseCatalogController.class)
 public class CatalogControllerTests {
     
+    // TODO test courses
+
     @Autowired
     private MockMvc mockMvc;
 

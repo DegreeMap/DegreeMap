@@ -1,4 +1,9 @@
 package com.degreemap.DegreeMap.courseEntities.catalogs;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.degreemap.DegreeMap.courseEntities.courses.Course;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -11,6 +16,9 @@ public class CourseCatalog {
     @Column(nullable = false)
     private String name;
 
+    @OneToMany(mappedBy="courseCatalog", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses inside of it
+    private Set<Course> courses;
+
     public CourseCatalog() {
     }
 
@@ -19,6 +27,7 @@ public class CourseCatalog {
             throw new IllegalArgumentException("Name cannot be null or blank");
         }
         this.name = name;
+        courses = new HashSet<>();
     }
 
     public Long getId() {
@@ -31,11 +40,17 @@ public class CourseCatalog {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name cannot be null or blank");
         }
         this.name = name;
+    }
+
+    public void addCourse(Course course){
+        this.courses.add(course);
+    }
+    public Set<Course> getCourses(){
+        return this.courses;
     }
 }

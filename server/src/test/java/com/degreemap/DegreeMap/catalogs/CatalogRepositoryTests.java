@@ -13,6 +13,9 @@ import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
 
 @DataJpaTest
 public class CatalogRepositoryTests {
+
+    // TODO test courses
+
     @Autowired
     private CourseCatalogRepository catalogRepository;
 

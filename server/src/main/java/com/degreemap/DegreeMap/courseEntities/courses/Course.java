@@ -15,7 +15,6 @@ public class Course {
     @ManyToOne
     @JoinColumn(name = "courseCatalogId", nullable = false)
     private CourseCatalog courseCatalog;
-    // TODO make this a foreign key. Should be an int i think?
 
     @Column(nullable = false)
     private String name;

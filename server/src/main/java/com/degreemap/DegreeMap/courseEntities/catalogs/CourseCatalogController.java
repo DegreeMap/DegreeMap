@@ -18,7 +18,6 @@ public class CourseCatalogController {
         public String name;
     }
 
-    // TODO update returns to ResponseEntities
     @Autowired
     private CourseCatalogRepository courseCatalogRepository;
 
