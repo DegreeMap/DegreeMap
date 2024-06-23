@@ -48,10 +48,9 @@ public class CourseController {
                                 postRequest.college, 
                                 postRequest.department);
             
-            catalog.addCourse(course);
-            courseRepository.save(course);
+            Course savedCourse = courseRepository.save(course);
             courseCatalogRepository.save(catalog);
-            return ResponseEntity.status(HttpStatus.CREATED).body(course);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedCourse);
         }
         catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  

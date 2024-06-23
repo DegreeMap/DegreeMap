@@ -48,10 +48,14 @@ public class Course {
         this.institution = institution;
         this.college = college;
         this.department = department;
+        courseCatalog.addCourse(this);
     }
 
     public Long getId() {
         return id;
+    }
+    public void setId(long id) {
+        this.id = id;
     }
 
     public CourseCatalog getCourseCatalog() {
