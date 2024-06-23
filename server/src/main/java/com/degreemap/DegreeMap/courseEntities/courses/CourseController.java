@@ -10,7 +10,18 @@ import java.util.List;
 public class CourseController {
 
     // TODO update returns to ResponseEntities
-
+    /*
+     * Format for receiving requests from frontend.
+     */
+    static class Request {
+        public String name;
+        public int courseCatalogID;
+        public String courseCode;
+        public int credits;
+        public String institution;
+        public String college;
+        public String department;
+    }
 
     @Autowired
     private CourseRepository courseRepository;

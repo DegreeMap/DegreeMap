@@ -19,19 +19,19 @@ public class Course {
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "course_code", length = 10, nullable = false)
+    @Column(name = "course_code", length = 10)
     private String courseCode = "";
 
-    @Column(nullable = false)
+    @Column
     private int credits = 0;
 
-    @Column(nullable = false)
+    @Column
     private String institution = "";
 
-    @Column(nullable = false)
+    @Column
     private String college = "";
 
-    @Column(nullable = false)
+    @Column
     private String department = "";
 
     public Course() {
