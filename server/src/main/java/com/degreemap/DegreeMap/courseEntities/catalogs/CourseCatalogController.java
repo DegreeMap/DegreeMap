@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class CourseCatalogController {
     private CourseCatalogRepository courseCatalogRepository;
 
     @PostMapping
+    @Transactional
     public ResponseEntity<?> createCourseCatalog(@RequestBody Request postRequest) {
         try {
             CourseCatalog savedCatalog = courseCatalogRepository.save(new CourseCatalog(postRequest.name));
@@ -37,12 +39,14 @@ public class CourseCatalogController {
     }
 
     @GetMapping
+    @Transactional
     public ResponseEntity<List<CourseCatalog>> getAllCourseCatalogs() {
        List<CourseCatalog> catalogs = courseCatalogRepository.findAll(); 
         return ResponseEntity.status(HttpStatus.OK).body(catalogs);
     }
 
     @GetMapping("/{id}")
+    @Transactional
     public ResponseEntity<?> getCourseCatalogById(@PathVariable Long id) {
         try {
             return courseCatalogRepository.findById(id)
@@ -55,6 +59,7 @@ public class CourseCatalogController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<?> updateCourseCatalog(@PathVariable Long id, @RequestBody Request putRequest) {
         try {
             return courseCatalogRepository.findById(id).map(courseCatalog -> {
@@ -68,6 +73,7 @@ public class CourseCatalogController {
     }    
 
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<?> deleteCourseCatalog(@PathVariable Long id) {
         try {
             return courseCatalogRepository.findById(id).map(catalog -> {

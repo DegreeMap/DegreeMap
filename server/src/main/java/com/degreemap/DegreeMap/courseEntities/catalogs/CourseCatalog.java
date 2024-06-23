@@ -50,6 +50,9 @@ public class CourseCatalog {
     public void addCourse(Course course){
         this.courses.add(course);
     }
+    public void removeCourse(Course course){
+        this.courses.remove(course);
+    }
     public Set<Course> getCourses(){
         return this.courses;
     }
