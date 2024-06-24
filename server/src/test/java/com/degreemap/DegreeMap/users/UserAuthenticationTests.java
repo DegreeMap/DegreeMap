@@ -12,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.degreemap.DegreeMap.users.UserController.AuthResponse;
 import com.degreemap.DegreeMap.utility.JwtUtil;
-import com.degreemap.DegreeMap.utility.PasswordEncoderUtil;
 
 import java.util.Optional;
 
@@ -25,6 +25,8 @@ public class UserAuthenticationTests {
     
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @MockBean
     private UserRepository userRepository;
@@ -32,7 +34,7 @@ public class UserAuthenticationTests {
     @Test
     public void testAuthUserSuccess() throws Exception {
         String plainPassword = "Password123!";
-        String hashedPassword = PasswordEncoderUtil.hashPassword(plainPassword);
+        String hashedPassword = passwordEncoder.encode(plainPassword);
         User user = new User("test@example.com", hashedPassword);
         user.setId(1L);
 
@@ -44,7 +46,7 @@ public class UserAuthenticationTests {
                 .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + plainPassword + "\"}"))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.email").value("test@example.com"))
-            .andExpect(result -> assertTrue(PasswordEncoderUtil.matches(plainPassword, user.getPassword())));
+            .andExpect(result -> assertTrue(passwordEncoder.matches(plainPassword, user.getPassword())));
 
         String expectedToken = JwtUtil.generateToken(user.getEmail());
         AuthResponse expectedResponse = new AuthResponse(expectedToken);
@@ -59,7 +61,7 @@ public class UserAuthenticationTests {
     @Test
     public void testAuthUserFailureWrongPassword() throws Exception {
         String plainPassword = "Password123!";
-        String hashedPassword = PasswordEncoderUtil.hashPassword(plainPassword);
+        String hashedPassword = passwordEncoder.encode(plainPassword);
         User user = new User("test@example.com", hashedPassword);
         user.setId(1L);
 
@@ -71,7 +73,7 @@ public class UserAuthenticationTests {
                 .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + plainPassword + "\"}"))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.email").value("test@example.com"))
-            .andExpect(result -> assertTrue(PasswordEncoderUtil.matches(plainPassword, user.getPassword())));
+            .andExpect(result -> assertTrue(passwordEncoder.matches(plainPassword, user.getPassword())));
 
         mockMvc.perform(post("/api/users/login")
                 .contentType(MediaType.APPLICATION_JSON)

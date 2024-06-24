@@ -4,21 +4,18 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import com.degreemap.DegreeMap.auth.JpaUserDetailsService;
-import com.degreemap.DegreeMap.auth.SecurityUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.degreemap.DegreeMap.utility.JwtUtil;
-import com.degreemap.DegreeMap.utility.PasswordEncoderUtil;
 
 @RestController
 @RequestMapping("/api/users")
@@ -83,7 +80,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> registerNewUser(@RequestBody Request postRequest) throws NoSuchAlgorithmException {
         try {
-            String hashedPassword = PasswordEncoderUtil.hashPassword(postRequest.password);
+            String hashedPassword = passwordEncoder.encode(postRequest.password);
             User user = new User(postRequest.email, hashedPassword);
             User savedUser = userRepository.save(user);
             return ResponseEntity
@@ -123,7 +120,7 @@ public class UserController {
         try {
             return userRepository.findById(id).map(user -> {
                 user.setEmail(putRequest.email);
-                user.setPassword(PasswordEncoderUtil.hashPassword(putRequest.password));
+                user.setPassword(passwordEncoder.encode(putRequest.password));
                 return ResponseEntity.ok(userRepository.save(user));
             }).orElseThrow(() -> new RuntimeException("User not found with id " + id));
         }

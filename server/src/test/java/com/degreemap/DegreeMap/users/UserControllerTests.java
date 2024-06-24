@@ -15,9 +15,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.degreemap.DegreeMap.utility.PasswordEncoderUtil;
 
 @WebMvcTest(UserController.class)
 public class UserControllerTests {
@@ -27,11 +26,13 @@ public class UserControllerTests {
 
     @MockBean
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
     public void testRegisterNewUser() throws Exception {
         String plainPassword = "Password123!";
-        String hashedPassword = PasswordEncoderUtil.hashPassword(plainPassword);
+        String hashedPassword = passwordEncoder.encode(plainPassword);
         User user = new User("test@example.com", hashedPassword);
 
         given(userRepository.save(any(User.class))).willReturn(user);
@@ -41,7 +42,7 @@ public class UserControllerTests {
                 .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + plainPassword + "\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.email").value("test@example.com"))
-                .andExpect(result -> assertTrue(PasswordEncoderUtil.matches(plainPassword, user.getPassword())));
+                .andExpect(result -> assertTrue(passwordEncoder.matches(plainPassword, user.getPassword())));
     }
 
 
@@ -123,7 +124,7 @@ public class UserControllerTests {
                .content("{\"email\":\"" + "newEmail@fart.com" + "\", \"password\":\"" + "passwordFart712!" + "\"}"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.email").value("newEmail@fart.com"))
-            .andExpect(result -> assertTrue(PasswordEncoderUtil.matches("passwordFart712!", user.getPassword())));
+            .andExpect(result -> assertTrue(passwordEncoder.matches("passwordFart712!", user.getPassword())));
     }
 
     @Test

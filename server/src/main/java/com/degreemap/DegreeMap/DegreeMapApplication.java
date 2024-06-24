@@ -3,7 +3,6 @@ package com.degreemap.DegreeMap;
 import com.degreemap.DegreeMap.auth.RSAKeyRecord;
 import com.degreemap.DegreeMap.users.User;
 import com.degreemap.DegreeMap.users.UserRepository;
-import com.degreemap.DegreeMap.utility.PasswordEncoderUtil;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
