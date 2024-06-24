@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.utility;
+package com.degreemap.DegreeMap.auth.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

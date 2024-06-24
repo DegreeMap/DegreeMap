@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.degreemap.DegreeMap.users.UserController.AuthResponse;
-import com.degreemap.DegreeMap.utility.JwtUtil;
+import com.degreemap.DegreeMap.auth.jwt.JwtUtil;
 
 import java.util.Optional;
 

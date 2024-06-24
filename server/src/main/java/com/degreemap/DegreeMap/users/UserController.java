@@ -3,6 +3,7 @@ package com.degreemap.DegreeMap.users;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import com.degreemap.DegreeMap.auth.AuthService;
 import com.degreemap.DegreeMap.auth.JpaUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,12 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import com.degreemap.DegreeMap.utility.JwtUtil;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,6 +24,8 @@ public class UserController {
     private JpaUserDetailsService userDetailsService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthService authService;
 
     private Logger log = LoggerFactory.getLogger(UserController.class);
 
@@ -40,7 +39,9 @@ public class UserController {
      * Format for receiving requests from frontend.
      */
     // TODO: We can use @RequestParams arguments instead of making a new class for these simple requests.
-    // TODO: I keep it here for now because it's outside the scope of what I'm doing rn.
+    // TODO: From the frontend, we'd send requests of type `application/x-www-form-urlencoded/' with
+    // TODO: "email" and "password" fields.
+    // TODO: I keep this here for now because it's outside the scope of what I'm doing rn.
     static class Request {
         public String email;
         public String password;
@@ -58,20 +59,11 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody Request loginRequest) {
-        try {
-            UserDetails user = userDetailsService.loadUserByUsername(loginRequest.email);
-
-            if (passwordEncoder.matches(loginRequest.password, user.getPassword())) {
-                String jwtToken = JwtUtil.generateToken(user.getUsername());
-                AuthResponse response = new AuthResponse(jwtToken);
-                return ResponseEntity.ok(response);
-            }
-
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
-
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with email " + loginRequest.email);
-        }
+        return ResponseEntity.ok(
+                authService.getAccessTokenFromCredentials(
+                        loginRequest.email, loginRequest.password
+                )
+        );
     }
 
     // Create a new User
