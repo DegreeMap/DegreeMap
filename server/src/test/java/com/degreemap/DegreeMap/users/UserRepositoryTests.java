@@ -3,17 +3,21 @@ package com.degreemap.DegreeMap.users;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
+import com.degreemap.DegreeMap.config.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @DataJpaTest
+@Import(SecurityConfig.class)
 public class UserRepositoryTests {
     @Autowired
     UserRepository userRepository;
@@ -103,12 +107,12 @@ public class UserRepositoryTests {
 
     @Test
     void givenUser_whenSearchByEmail_NotFound_Failure() {
-        assertEquals(userRepository.findByEmail("Poop"), null);
+        assertEquals(userRepository.findByEmail("Poop"), Optional.empty());
     }
     
     @Test
     void givenUser_whenSearchByEmail_Empty_Failure() {
-        assertEquals(userRepository.findByEmail(null), null);
+        assertEquals(userRepository.findByEmail(null), Optional.empty());
     }
 }
 
