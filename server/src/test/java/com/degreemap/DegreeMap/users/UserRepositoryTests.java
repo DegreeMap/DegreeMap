@@ -94,7 +94,7 @@ public class UserRepositoryTests {
         User newUser = new User("example@example.com", "Password1234!");
         User insertedUser = userRepository.save(newUser);
         assertEquals(entityManager.find(User.class, insertedUser.getId()), newUser);
-        User foundUser = userRepository.findByEmail(insertedUser.getEmail());
+        User foundUser = userRepository.findByEmail(insertedUser.getEmail()).orElseThrow();
         assertEquals(insertedUser, foundUser);
     }
 

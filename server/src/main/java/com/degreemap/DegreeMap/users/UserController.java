@@ -3,18 +3,19 @@ package com.degreemap.DegreeMap.users;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import com.degreemap.DegreeMap.auth.JpaUserDetailsService;
+import com.degreemap.DegreeMap.auth.SecurityUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import com.degreemap.DegreeMap.utility.JwtUtil;
 import com.degreemap.DegreeMap.utility.PasswordEncoderUtil;
@@ -24,7 +25,14 @@ import com.degreemap.DegreeMap.utility.PasswordEncoderUtil;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository; 
+    private UserRepository userRepository;
+    @Autowired
+    private JpaUserDetailsService userDetailsService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private Logger log = LoggerFactory.getLogger(UserController.class);
+
     // @Autowired
     // private PasswordEncoder passwordEncoder;
     // TODO 1 add input validation 
@@ -34,6 +42,8 @@ public class UserController {
     /*
      * Format for receiving requests from frontend.
      */
+    // TODO: We can use @RequestParams arguments instead of making a new class for these simple requests.
+    // TODO: I keep it here for now because it's outside the scope of what I'm doing rn.
     static class Request {
         public String email;
         public String password;
@@ -51,18 +61,21 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody Request loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.email);
-        if (user != null && PasswordEncoderUtil.matches(loginRequest.password, user.getPassword())) {
-            String jwtToken = JwtUtil.generateToken(user.getEmail());
-            AuthResponse response = new AuthResponse(jwtToken);
-            return ResponseEntity.ok(response);
-        }
-        else if (user == null){
+        try {
+            UserDetails user = userDetailsService.loadUserByUsername(loginRequest.email);
+
+            if (passwordEncoder.matches(loginRequest.password, user.getPassword())) {
+                String jwtToken = JwtUtil.generateToken(user.getUsername());
+                AuthResponse response = new AuthResponse(jwtToken);
+                return ResponseEntity.ok(response);
+            }
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+
+        } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with email " + loginRequest.email);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
     }
-    
 
     // Create a new User
     // curl -X POST -H "Content-Type: application/json" -d "{\"email\":\"email\", \"password\":\"password\"}" http://localhost:8080/api/users

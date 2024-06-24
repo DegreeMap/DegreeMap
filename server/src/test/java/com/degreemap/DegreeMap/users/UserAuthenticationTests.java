@@ -18,6 +18,8 @@ import com.degreemap.DegreeMap.users.UserController.AuthResponse;
 import com.degreemap.DegreeMap.utility.JwtUtil;
 import com.degreemap.DegreeMap.utility.PasswordEncoderUtil;
 
+import java.util.Optional;
+
 @WebMvcTest(UserController.class)
 public class UserAuthenticationTests {
     
@@ -35,7 +37,7 @@ public class UserAuthenticationTests {
         user.setId(1L);
 
         given(userRepository.save(any(User.class))).willReturn(user);
-        given(userRepository.findByEmail(any(String.class))).willReturn(user);
+        given(userRepository.findByEmail(any(String.class))).willReturn(Optional.of(user));
 
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -62,7 +64,7 @@ public class UserAuthenticationTests {
         user.setId(1L);
 
         given(userRepository.save(any(User.class))).willReturn(user);
-        given(userRepository.findByEmail(any(String.class))).willReturn(user);
+        given(userRepository.findByEmail(any(String.class))).willReturn(Optional.of(user));
 
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)

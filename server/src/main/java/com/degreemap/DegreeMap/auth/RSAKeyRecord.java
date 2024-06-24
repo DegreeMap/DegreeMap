@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.config;
+package com.degreemap.DegreeMap.auth;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
