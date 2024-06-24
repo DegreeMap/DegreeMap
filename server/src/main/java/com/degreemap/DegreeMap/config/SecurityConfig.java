@@ -1,5 +1,6 @@
 package com.degreemap.DegreeMap.config;
 
+import com.degreemap.DegreeMap.auth.JpaUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,12 +22,19 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final JpaUserDetailsService userDetailsService;
+
+    public SecurityConfig(JpaUserDetailsService jpaUserDetailsService) {
+        userDetailsService = jpaUserDetailsService;
+    }
+
     @Bean
     public SecurityFilterChain loginFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .securityMatcher(new AntPathRequestMatcher("/**"))
+                .securityMatcher(new AntPathRequestMatcher("/api/users/login"))
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
+                .userDetailsService(userDetailsService)
                 .exceptionHandling(ex -> {
                     ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
                     ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
