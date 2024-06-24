@@ -50,6 +50,7 @@ public class UserController {
     /*
      * Format for Authentication Responses being sent to frontend. 
      */
+    // TODO: Phase this guy out in favor of AuthResponseDto
     static class AuthResponse {
         public String jwt;
         public AuthResponse(String jwt) {

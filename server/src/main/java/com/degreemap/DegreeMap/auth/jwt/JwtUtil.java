@@ -8,6 +8,7 @@ public class JwtUtil {
     private static final String SECRET_KEY = "Gv8bL2Ru2lerM+GgLi1nMIjV7k2kZahXlm/ALHUVmWI="; 
     // openssl rand -base64 32
 
+    // TODO: Phase this guy out in favor of JwtGenerator.generateAccessToken
     public static String generateToken(String username) {
         long expirationTime = (1000 * 60 * 60); // Token validity 1 hour
         return Jwts.builder()
