@@ -59,14 +59,6 @@ public class UserController {
         }
     }
 
-    // Current error response example:
-    // {
-    //    "timestamp": "2024-06-25T03:31:22.876+00:00",
-    //    "status": 409,
-    //    "error": "Conflict",
-    //    "path": "/api/users"
-    // }
-    // TODO: Change it to include the actual message
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody Request loginRequest,
                                               HttpServletResponse response) {
