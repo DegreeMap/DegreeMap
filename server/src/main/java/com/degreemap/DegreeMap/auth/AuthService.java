@@ -2,6 +2,8 @@ package com.degreemap.DegreeMap.auth;
 
 import com.degreemap.DegreeMap.auth.jwt.AuthResponseDto;
 import com.degreemap.DegreeMap.auth.jwt.JwtGenerator;
+import com.degreemap.DegreeMap.auth.refreshToken.RefreshTokenEntity;
+import com.degreemap.DegreeMap.auth.refreshToken.RefreshTokenRepo;
 import com.degreemap.DegreeMap.users.User;
 import com.degreemap.DegreeMap.users.UserRepository;
 import jakarta.servlet.http.Cookie;
@@ -20,12 +22,14 @@ public class AuthService {
     private final JpaUserDetailsService userDetailsService;
     private final JwtGenerator jwtGenerator;
     private final UserRepository userRepository;
+    private final RefreshTokenRepo refreshTokenRepo;
 
-    public AuthService(PasswordEncoder passwordEncoder, JpaUserDetailsService userDetailsService, JwtGenerator jwtGenerator, UserRepository userRepository) {
+    public AuthService(PasswordEncoder passwordEncoder, JpaUserDetailsService userDetailsService, JwtGenerator jwtGenerator, UserRepository userRepository, RefreshTokenRepo refreshTokenRepo) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
         this.jwtGenerator = jwtGenerator;
         this.userRepository = userRepository;
+        this.refreshTokenRepo = refreshTokenRepo;
     }
 
     /**
@@ -83,10 +87,8 @@ public class AuthService {
         }
     }
 
-    private void addRefreshTokenCookieToResponse(UserDetails userDetails,
+    private void addRefreshTokenCookieToResponse(String refreshToken,
                                                  HttpServletResponse response) {
-
-        String refreshToken = jwtGenerator.generateRefreshToken(userDetails);
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
 
@@ -124,11 +126,37 @@ public class AuthService {
         );
     }
 
+    private String createAndSaveRefreshToken(UserDetails userDetails) {
+        String refreshToken = jwtGenerator.generateRefreshToken(userDetails);
+
+        userRepository.findByEmail(userDetails.getUsername()).ifPresent(userEntity -> {
+            // revoke user's latest refresh token
+            refreshTokenRepo.findLatestRefreshTokenByUser(userEntity.getId())
+                    .ifPresent(token -> {
+                        token.setRevoked(true);
+                        refreshTokenRepo.save(token);
+                    });
+
+            // create new refresh token
+            var refreshTokenEntity = new RefreshTokenEntity(
+                    refreshToken,
+                    false,
+                    userEntity
+            );
+
+            // save it to DB
+            refreshTokenRepo.save(refreshTokenEntity);
+        });
+
+        return refreshToken;
+    }
+
     public AuthResponseDto getAccessTokenFromCredentials(String email, String password,
                                                          HttpServletResponse response) {
 
         UserDetails userDetails = authenticateUser(email, password);
-        addRefreshTokenCookieToResponse(userDetails, response);
+        String refreshToken = createAndSaveRefreshToken(userDetails);
+        addRefreshTokenCookieToResponse(refreshToken, response);
         return makeAccessTokenResponse(userDetails);
     }
 
@@ -136,7 +164,8 @@ public class AuthService {
                                                          HttpServletResponse response) {
 
         UserDetails userDetails = registerUser(email, password);
-        addRefreshTokenCookieToResponse(userDetails, response);
+        String refreshToken = createAndSaveRefreshToken(userDetails);
+        addRefreshTokenCookieToResponse(refreshToken, response);
         return makeAccessTokenResponse(userDetails);
     }
 }
