@@ -58,6 +58,14 @@ public class UserController {
         }
     }
 
+    // Current error response example:
+    // {
+    //    "timestamp": "2024-06-25T03:31:22.876+00:00",
+    //    "status": 409,
+    //    "error": "Conflict",
+    //    "path": "/api/users"
+    // }
+    // TODO: Change it to include the actual message
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody Request loginRequest) {
         return ResponseEntity.ok(
@@ -72,19 +80,13 @@ public class UserController {
     // ^ On windows USE COMMAND PROMPT
     @PostMapping
     public ResponseEntity<?> registerNewUser(@RequestBody Request postRequest) throws NoSuchAlgorithmException {
-        try {
-            String hashedPassword = passwordEncoder.encode(postRequest.password);
-            User user = new User(postRequest.email, hashedPassword);
-            User savedUser = userRepository.save(user);
-            return ResponseEntity
+        return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(savedUser);
-        }
-        catch(DataIntegrityViolationException e){
-            return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body("Registration failed: Duplicate email. Please use a different email.");
-        }
+                .body(
+                        authService.registerUserAndGetAccessToken(
+                                postRequest.email, postRequest.password
+                        )
+                );
     }
 
     // http://localhost:8080/api/users
