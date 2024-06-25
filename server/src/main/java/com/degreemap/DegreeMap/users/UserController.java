@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.degreemap.DegreeMap.auth.AuthService;
 import com.degreemap.DegreeMap.auth.JpaUserDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,10 +68,12 @@ public class UserController {
     // }
     // TODO: Change it to include the actual message
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody Request loginRequest) {
+    public ResponseEntity<?> authenticateUser(@RequestBody Request loginRequest,
+                                              HttpServletResponse response) {
         return ResponseEntity.ok(
                 authService.getAccessTokenFromCredentials(
-                        loginRequest.email, loginRequest.password
+                        loginRequest.email, loginRequest.password,
+                        response
                 )
         );
     }
@@ -79,12 +82,14 @@ public class UserController {
     // curl -X POST -H "Content-Type: application/json" -d "{\"email\":\"email\", \"password\":\"password\"}" http://localhost:8080/api/users
     // ^ On windows USE COMMAND PROMPT
     @PostMapping
-    public ResponseEntity<?> registerNewUser(@RequestBody Request postRequest) throws NoSuchAlgorithmException {
+    public ResponseEntity<?> registerNewUser(@RequestBody Request postRequest,
+                                             HttpServletResponse response) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(
                         authService.registerUserAndGetAccessToken(
-                                postRequest.email, postRequest.password
+                                postRequest.email, postRequest.password,
+                                response
                         )
                 );
     }

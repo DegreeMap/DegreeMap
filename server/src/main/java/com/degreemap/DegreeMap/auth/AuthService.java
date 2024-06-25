@@ -4,8 +4,9 @@ import com.degreemap.DegreeMap.auth.jwt.AuthResponseDto;
 import com.degreemap.DegreeMap.auth.jwt.JwtGenerator;
 import com.degreemap.DegreeMap.users.User;
 import com.degreemap.DegreeMap.users.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -82,6 +83,37 @@ public class AuthService {
         }
     }
 
+    private void addRefreshTokenCookieToResponse(UserDetails userDetails,
+                                                 HttpServletResponse response) {
+
+        String refreshToken = jwtGenerator.generateRefreshToken(userDetails);
+
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+
+        // Makes cookie inaccessible to client-side (java)scripts.
+        // Helps mitigate certain attacks, like cross-site scripting (XSS)
+        cookie.setHttpOnly(true);
+
+        // Makes it so the cookie is only sent to the client if it's being
+        // requested over a secure HTTPS connection
+        cookie.setSecure(true);
+
+        // Cookie will last 15 days. Note that the refresh token is also set
+        // to last 15 days; make sure they match.
+        cookie.setMaxAge(15 * 24 * 60 * 60);
+
+        // I have to set this explicitly because the login and register endpoints have different paths.
+        // The login endpoint will set the cookie's path to /api/users, while the register
+        // endpoint will set it to /api.
+        // Cookies are (partially) identified by path; two cookies with the same name but different
+        // paths will be treated as two different cookies. However, we want our refresh tokens (whether
+        // they are obtained through registration or logging in) to be treated the same.
+        // So, I just standardize the path here so the user will only have one refresh token cookie at a time.
+        cookie.setPath("/api/users");
+
+        response.addCookie(cookie);
+    }
+
     private AuthResponseDto makeAccessTokenResponse(UserDetails userDetails) {
         String accessToken = jwtGenerator.generateAccessToken(userDetails);
 
@@ -92,17 +124,19 @@ public class AuthService {
         );
     }
 
-    public AuthResponseDto getAccessTokenFromCredentials(String email, String password) {
+    public AuthResponseDto getAccessTokenFromCredentials(String email, String password,
+                                                         HttpServletResponse response) {
 
         UserDetails userDetails = authenticateUser(email, password);
-
+        addRefreshTokenCookieToResponse(userDetails, response);
         return makeAccessTokenResponse(userDetails);
     }
 
-    public AuthResponseDto registerUserAndGetAccessToken(String email, String password) {
+    public AuthResponseDto registerUserAndGetAccessToken(String email, String password,
+                                                         HttpServletResponse response) {
 
         UserDetails userDetails = registerUser(email, password);
-
+        addRefreshTokenCookieToResponse(userDetails, response);
         return makeAccessTokenResponse(userDetails);
     }
 }
