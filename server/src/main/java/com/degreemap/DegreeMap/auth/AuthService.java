@@ -168,4 +168,21 @@ public class AuthService {
         addRefreshTokenCookieToResponse(refreshToken, response);
         return makeAccessTokenResponse(userDetails);
     }
+
+    public AuthResponseDto getAccessTokenFromRefreshToken(String authHeader) {
+
+        if (!authHeader.startsWith("Bearer")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please check token type");
+        }
+
+        String refreshToken = authHeader.substring(7); // remove "Bearer " from the header
+
+        var refreshTokenEntity = refreshTokenRepo.findByRefreshToken(refreshToken)
+                .filter(token -> !token.isRevoked())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token is revoked"));
+
+        User user = refreshTokenEntity.getUser();
+
+        return makeAccessTokenResponse(new SecurityUser(user));
+    }
 }
