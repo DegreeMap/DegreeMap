@@ -4,6 +4,7 @@ import com.degreemap.DegreeMap.auth.JpaUserDetailsService;
 import com.degreemap.DegreeMap.auth.LogoutHandlerService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,9 +36,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain loginFilterChain(HttpSecurity httpSecurity) throws Exception {
+        public SecurityFilterChain generalAuthFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .securityMatcher(new AntPathRequestMatcher("/api/users/login"))
+                .securityMatcher(new AntPathRequestMatcher("/api/auth/**"))
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .userDetailsService(userDetailsService)
@@ -48,24 +49,11 @@ public class SecurityConfig {
                 .build();
     }
 
-    @Bean
-    public SecurityFilterChain signupFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .securityMatcher(new AntPathRequestMatcher("/api/users"))
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable)
-                .userDetailsService(userDetailsService)
-                .exceptionHandling(ex -> {
-                    ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
-                    ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
-                })
-                .build();
-    }
-
+    @Order(1)
     @Bean
     public SecurityFilterChain logoutFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .securityMatcher(new AntPathRequestMatcher("/api/users/logout/**"))
+                .securityMatcher(new AntPathRequestMatcher("/api/auth/logout"))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .userDetailsService(userDetailsService)

@@ -43,7 +43,7 @@ public class UserController {
     // TODO: From the frontend, we'd send requests of type `application/x-www-form-urlencoded/' with
     // TODO: "email" and "password" fields.
     // TODO: I keep this here for now because it's outside the scope of what I'm doing rn.
-    static class Request {
+    public static class Request {
         public String email;
         public String password;
     }
@@ -57,33 +57,6 @@ public class UserController {
         public AuthResponse(String jwt) {
             this.jwt = jwt;
         }
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody Request loginRequest,
-                                              HttpServletResponse response) {
-        return ResponseEntity.ok(
-                authService.getAccessTokenFromCredentials(
-                        loginRequest.email, loginRequest.password,
-                        response
-                )
-        );
-    }
-
-    // Create a new User
-    // curl -X POST -H "Content-Type: application/json" -d "{\"email\":\"email\", \"password\":\"password\"}" http://localhost:8080/api/users
-    // ^ On windows USE COMMAND PROMPT
-    @PostMapping
-    public ResponseEntity<?> registerNewUser(@RequestBody Request postRequest,
-                                             HttpServletResponse response) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(
-                        authService.registerUserAndGetAccessToken(
-                                postRequest.email, postRequest.password,
-                                response
-                        )
-                );
     }
 
     // http://localhost:8080/api/users
