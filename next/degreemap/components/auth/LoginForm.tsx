@@ -17,8 +17,6 @@ const LoginForm = () => {
     }
   };
 
-  console.log("I'm happning!");
-
   return (
     <form onSubmit={handleLogin}>
       <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
