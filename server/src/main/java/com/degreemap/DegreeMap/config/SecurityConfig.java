@@ -75,21 +75,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain testApiSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .securityMatcher(new AntPathRequestMatcher("/api/test/**"))
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .userDetailsService(userDetailsService)
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(ex -> {
-                    ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
-                    ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
-                })
-                .build();
-    }
-
-    @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
