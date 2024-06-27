@@ -11,7 +11,7 @@ public record AuthResponseDto(
         String accessToken,
 
         @JsonProperty
-        int accessTokenExpiry,
+        int accessTokenExpiry, // in seconds
 
         @JsonProperty
         String email
