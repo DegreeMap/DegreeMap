@@ -7,6 +7,7 @@ const CreateAccountForm = () => {
     const [status, setStatus] = useState('');
 
     const handleCreate = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         try {
             const data = await createAccount(email, password);
             if(data){
