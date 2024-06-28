@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .build();
     }
 
+    // Makes sure this filter runs before the above one
     @Order(1)
     @Bean
     public SecurityFilterChain logoutFilterChain(HttpSecurity httpSecurity) throws Exception {

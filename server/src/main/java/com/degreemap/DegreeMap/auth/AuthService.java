@@ -104,15 +104,6 @@ public class AuthService {
         // to last 15 days; make sure they match.
         cookie.setMaxAge(15 * 24 * 60 * 60);
 
-        // I have to set this explicitly because the login and register endpoints have different paths.
-        // The login endpoint will set the cookie's path to /api/users, while the register
-        // endpoint will set it to /api.
-        // Cookies are (partially) identified by path; two cookies with the same name but different
-        // paths will be treated as two different cookies. However, we want our refresh tokens (whether
-        // they are obtained through registration or logging in) to be treated the same.
-        // So, I just standardize the path here so the user will only have one refresh token cookie at a time.
-        cookie.setPath("/api/users");
-
         response.addCookie(cookie);
     }
 

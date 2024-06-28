@@ -21,7 +21,7 @@ public class ControllerExceptionHandler {
         errorDetails.put("status", ex.getStatusCode().value());
         errorDetails.put("error", ex.getBody().getTitle());
         errorDetails.put("message", ex.getReason());
-        errorDetails.put("path", request.getRequestURI()); // You can add the request path here if needed
+        errorDetails.put("path", request.getRequestURI());
 
         return new ResponseEntity<>(errorDetails, ex.getStatusCode());
     }
