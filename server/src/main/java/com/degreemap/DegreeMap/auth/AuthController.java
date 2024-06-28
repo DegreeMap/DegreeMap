@@ -1,6 +1,5 @@
 package com.degreemap.DegreeMap.auth;
 
-import com.degreemap.DegreeMap.users.UserController;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,11 +17,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody UserController.Request req,
+    public ResponseEntity<?> authenticateUser(@RequestParam String email,
+                                              @RequestParam String password,
                                               HttpServletResponse response) {
         return ResponseEntity.ok(
                 authService.getAccessTokenFromCredentials(
-                        req.email, req.password, response
+                        email, password, response
                 )
         );
     }
@@ -31,13 +31,14 @@ public class AuthController {
     // curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "email=EMAIl&password=PASSWORD" http://localhost:8080/api/auth/register
     // ^ On windows USE COMMAND PROMPT
     @PostMapping("/register")
-    public ResponseEntity<?> registerNewUser(@RequestBody UserController.Request req,
+    public ResponseEntity<?> registerNewUser(@RequestParam String email,
+                                             @RequestParam String password,
                                              HttpServletResponse response) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(
                         authService.registerUserAndGetAccessToken(
-                                req.email, req.password, response
+                                email, password, response
                         )
                 );
     }

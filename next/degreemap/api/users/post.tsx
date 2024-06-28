@@ -4,9 +4,11 @@ export const createAccount = async (email: string, password: string) => {
     const response = await fetch('http://localhost:8080/api/auth/register', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: JSON.stringify({ email, password })
+        body: new URLSearchParams({
+            email, password
+        })
       });
 
     const data = await response.json();

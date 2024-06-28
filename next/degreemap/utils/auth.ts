@@ -4,9 +4,11 @@ export async function loginUser(email: string, password: string): Promise<string
     const response = await fetch('http://localhost:8080/api/auth/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: JSON.stringify({ email, password })
+        body: new URLSearchParams({
+            email, password
+        })
       });
 
     const data = await response.json();
