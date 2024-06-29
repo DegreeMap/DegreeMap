@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
 @WebMvcTest(AuthController.class)
-@Import(WebMvcTestConfig.class)
 public class AuthControllerTests {
 
     @Autowired
