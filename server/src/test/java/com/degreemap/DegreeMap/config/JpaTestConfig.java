@@ -11,7 +11,8 @@ import org.springframework.context.annotation.Import;
         SecurityConfig.class,
         JpaUserDetailsService.class,
         LogoutHandlerService.class,
-        JwtEncryption.class
+        JwtEncryption.class,
+        PasswordEncoderConfig.class
 })
 public class JpaTestConfig {
 }
