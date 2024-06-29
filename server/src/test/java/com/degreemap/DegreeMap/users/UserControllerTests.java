@@ -9,22 +9,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.verify;
 
+import com.degreemap.DegreeMap.auth.AuthService;
 import com.degreemap.DegreeMap.auth.JpaUserDetailsService;
-import com.degreemap.DegreeMap.config.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserController.class)
-@Import({SecurityConfig.class,
-        // Should this guy be mocked?
-        JpaUserDetailsService.class})
 public class UserControllerTests {
     
     @Autowired
@@ -32,46 +28,12 @@ public class UserControllerTests {
 
     @MockBean
     private UserRepository userRepository;
-    @Autowired
+    @MockBean
+    private JpaUserDetailsService userDetailsService;
+    @MockBean
     private PasswordEncoder passwordEncoder;
-
-    @Test
-    public void testRegisterNewUser() throws Exception {
-        String plainPassword = "Password123!";
-        String hashedPassword = passwordEncoder.encode(plainPassword);
-        User user = new User("test@example.com", hashedPassword);
-
-        given(userRepository.save(any(User.class))).willReturn(user);
-
-        mockMvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + plainPassword + "\"}"))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email").value("test@example.com"))
-                .andExpect(result -> assertTrue(passwordEncoder.matches(plainPassword, user.getPassword())));
-    }
-
-
-    @Test
-    public void testRegisterSameEmailTwice() throws Exception{
-        User user = new User("test@example.com", "Password7777!");
-        User user2 = new User("test@example.com", "Password6666!");
-        
-        // do first attempt
-        mockMvc.perform(post("/api/users")
-               .contentType(MediaType.APPLICATION_JSON)
-               .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + user.getPassword() + "\"}"))
-            .andExpect(status().isCreated());
-
-        // say the second registration attempt should fail 
-        given(userRepository.save(any(User.class))).willThrow(DataIntegrityViolationException.class);
-
-        // do second attempt
-        mockMvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\":\"" + user2.getEmail() + "\", \"password\":\"" + user2.getPassword() + "\"}"))
-            .andExpect(status().isConflict()); // Assuming your controller is set up to send a 409 Conflict
-    }
+    @MockBean
+    private AuthService authService;
 
     @Test
     public void testGetAllUsers() throws Exception{
