@@ -2,6 +2,7 @@ package com.degreemap.DegreeMap.users;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,46 +12,42 @@ import static org.mockito.Mockito.verify;
 
 import com.degreemap.DegreeMap.auth.AuthService;
 import com.degreemap.DegreeMap.auth.JpaUserDetailsService;
+import com.degreemap.DegreeMap.config.PasswordEncoderConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserController.class)
+@Import(PasswordEncoderConfig.class)
 public class UserControllerTests {
     
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @MockBean
-    private UserRepository userRepository;
-    @MockBean
-    private JpaUserDetailsService userDetailsService;
-    @MockBean
-    private PasswordEncoder passwordEncoder;
-    @MockBean
-    private AuthService authService;
+    private UserService userService;
 
     @Test
     public void testGetAllUsers() throws Exception{
-        User[] users = new User[3];
-        users[0] = new User("getall0@example.com", "Password6666!");
-        users[1] = new User("getall1@example.com", "Password6666!");
-        users[2] = new User("getall2@example.com", "Password6666!");
-        given(userRepository.save(any(User.class))).willReturn(users[0]); 
-        given(userRepository.save(any(User.class))).willReturn(users[1]); 
-        given(userRepository.save(any(User.class))).willReturn(users[2]);
-        
-        for(User user : users){
-            mockMvc.perform(post("/api/users")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"email\":\"" + user.getEmail() + "\", \"password\":\"" + user.getPassword() + "\"}"))
-                .andExpect(status().isCreated());
-        }
+        given(userService.getAllUsers()).willReturn(
+                List.of(
+        new User("getall0@example.com", "Password6666!"),
+
+        new User("getall1@example.com", "Password6666!"),
+        new User("getall2@example.com", "Password6666!")
+
+
+
+                )
+        );
 
         mockMvc.perform(get("/api/users"))
         .andExpect(status().isOk())
@@ -59,77 +56,80 @@ public class UserControllerTests {
 
     @Test
     public void testGetUserById() throws Exception{
-        User user1 = new User("getall1@example.com", "Password7777!");
-        user1.setId(1L);
-        given(userRepository.findById(1L)).willReturn(Optional.of(user1));
+        User u = new User("getall1@example.com", passwordEncoder.encode("Password7777!"));
+        u.setId(1L);
+        given(userService.getUserById(1L)).willReturn(u);
 
-        mockMvc.perform(get("/api/users/" + user1.getId()))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.email").value("getall1@example.com"))
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        mockMvc.perform(get("/api/users/" + u.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value(u.getEmail()))
+                .andExpect(jsonPath("$.password").value(u.getPassword()));
     }
 
     @Test
     public void testGetUserByIdNotFound() throws Exception{
-        User user1 = new User("getall1@example.com", "Password7777!");
-        user1.setId(1L);
-        given(userRepository.findById(2L)).willReturn(Optional.of(user1));
+        long id = 0;
+        given(userService.getUserById(id))
+                .willThrow(new IllegalArgumentException());
 
-        mockMvc.perform(get("/api/users/" + user1.getId()))
-        .andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/users/" + id))
+                .andExpect(status().isNotFound());
     }
     
     @Test
     public void testEditingUser() throws Exception {
-        User user = new User("test@example.com", "Password7777!");
-        user.setId(1L);
+        User u = new User("test@example.com", "Password7777!");
+        u.setId(1L);
 
-        given(userRepository.findById(1L)).willReturn(Optional.of(user));
-        given(userRepository.save(any(User.class))).willReturn(user); 
+        String newEmail = "newEmail@fart.com";
+        String newPassword = "passwordFart712!";
 
-        mockMvc.perform(put("/api/users/" + user.getId())
-               .contentType(MediaType.APPLICATION_JSON)
-               .content("{\"email\":\"" + "newEmail@fart.com" + "\", \"password\":\"" + "passwordFart712!" + "\"}"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.email").value("newEmail@fart.com"))
-            .andExpect(result -> assertTrue(passwordEncoder.matches("passwordFart712!", user.getPassword())));
+        given(userService.updateUser(eq(1L), any(UserService.UserInfo.class)))
+                .will(invocation -> {
+                    u.setEmail(newEmail);
+                    u.setPassword(passwordEncoder.encode(newPassword));
+                    return u;
+                });
+
+        mockMvc.perform(put("/api/users/" + u.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"" + newEmail + "\", \"password\":\"" + newPassword + "\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value(newEmail))
+                .andExpect(jsonPath("$.password").value(u.getPassword()));
+
+
     }
 
     @Test
     public void testEditingUserNotFound() throws Exception {
-        User user = new User("test@example.com", "Password7777!");
-        user.setId(1L);
+        long id = 0;
 
-        given(userRepository.findById(2L)).willReturn(Optional.of(user));
-        given(userRepository.save(any(User.class))).willReturn(user); 
+        String newEmail = "GAAAAAAAAAAAAAAAAAAAAAAAA@dad.com";
+        String newPassword = "passwordDeNada";
 
-        mockMvc.perform(put("/api/users/" + user.getId())
-               .contentType(MediaType.APPLICATION_JSON)
-               .content("{\"email\":\"" + "newEmail@fart.com" + "\", \"password\":\"" + "passwordFart712!" + "\"}"))
-            .andExpect(status().isNotFound());
+        given(userService.updateUser(eq(id), any(UserService.UserInfo.class))
+        ).willThrow(new IllegalArgumentException());
+
+        mockMvc.perform(put("/api/users/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"" + newEmail + "\", \"password\":\"" + newPassword + "\"}"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void testDelete() throws Exception {
-        User user = new User("test@example.com", "Password7777!");
-        user.setId(1L);
-
-        given(userRepository.findById(1L)).willReturn(Optional.of(user));
-
-        mockMvc.perform(delete("/api/users/" + user.getId()))
-        .andExpect(status().isOk());
-
-        verify(userRepository).delete(user);
+        mockMvc.perform(delete("/api/users/1"))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testDeleteNotFound() throws Exception {
-        User user = new User("test@example.com", "Password7777!");
-        user.setId(1L);
+        long id = 0;
+        given(userService.deleteUser(id))
+                .willThrow(new IllegalArgumentException());
 
-        given(userRepository.findById(2L)).willReturn(Optional.of(user));
-
-        mockMvc.perform(delete("/api/users/" + user.getId()))
-        .andExpect(status().isNotFound());
+        mockMvc.perform(delete("/api/users/" + id))
+                .andExpect(status().isNotFound());
     }
 }
