@@ -17,7 +17,7 @@ public class CourseCatalog {
     private String name;
 
     @OneToMany(mappedBy="courseCatalog", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses related to it
-    private Set<Course> courses;
+    private Set<Course> courses = new HashSet<Course>();
 
     public CourseCatalog() {
     }
@@ -27,7 +27,6 @@ public class CourseCatalog {
             throw new IllegalArgumentException("Name cannot be null or blank");
         }
         this.name = name;
-        courses = new HashSet<>();
     }
 
     public Long getId() {

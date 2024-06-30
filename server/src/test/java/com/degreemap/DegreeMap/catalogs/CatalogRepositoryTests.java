@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Import;
 import com.degreemap.DegreeMap.config.JpaTestConfig;
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
-import com.degreemap.DegreeMap.courseEntities.courses.Course;
 
 @DataJpaTest
 @Import(JpaTestConfig.class)

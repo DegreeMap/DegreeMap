@@ -1,0 +1,20 @@
+
+some code that can be used for manual debugging 
+(when debugging controllers, without using explicit breakpoints, 
+the logs get flooded with response entity logs. in some 
+cases manual debugging with print statements can be 
+more convenient, this is how you can do that)
+
+just add .andReturn() and set it to an MvcResult object, then print each field using getters.
+
+MvcResult mvcResult = mockMvc.perform(post("/api/courses")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"name\":\"Programming Concepts\", \"courseCatalogID\":1, \"courseCode\":\"CS104\", \"credits\":3, \"institution\":\"MIT\", \"college\":\"Engineering\", \"department\":\"Computer Science\"}"))
+                            .andExpect(status().isCreated())
+                            .andExpect(jsonPath("$.name").value("Programming Concepts"))
+                            .andReturn();
+
+System.out.println(mvcResult.status());
+System.out.println(mvcResult.body());
+etc... 
+

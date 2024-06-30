@@ -22,8 +22,6 @@ import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
 @WebMvcTest(CourseController.class)
 public class CourseControllerTests {
 
-    // TODO IMPORTANT: Fix tests not passing, tests 1 and 3 have commented out unpassing code (my work was cut short)
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -44,8 +42,36 @@ public class CourseControllerTests {
         mockMvc.perform(post("/api/courses")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Programming Concepts\", \"courseCatalogID\":1, \"courseCode\":\"CS104\", \"credits\":3, \"institution\":\"MIT\", \"college\":\"Engineering\", \"department\":\"Computer Science\"}"))
-                .andExpect(status().isCreated());
-                // .andExpect(jsonPath("$.name").value("Programming Concepts"));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Programming Concepts"));
+    }
+
+    @Test
+    public void testCreateCourseNullName() throws Exception {
+        CourseCatalog catalog = new CourseCatalog("Engineering");
+        catalog.setId(1L);
+        Course course = new Course(catalog, "Programming Concepts", "CS104", 3, "MIT", "Engineering", "Computer Science");
+        given(courseCatalogRepository.findById(1L)).willReturn(Optional.of(catalog));
+        given(courseRepository.save(any(Course.class))).willReturn(course);
+
+        mockMvc.perform(post("/api/courses")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\", \"courseCatalogID\":1, \"courseCode\":\"CS104\", \"credits\":3, \"institution\":\"MIT\", \"college\":\"Engineering\", \"department\":\"Computer Science\"}"))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void testCreateCourseNullCatalog() throws Exception {
+        CourseCatalog catalog = new CourseCatalog("Engineering");
+        catalog.setId(1L);
+        Course course = new Course(catalog, "Programming Concepts", "CS104", 3, "MIT", "Engineering", "Computer Science");
+        given(courseCatalogRepository.findById(1L)).willReturn(Optional.of(catalog));
+        given(courseRepository.save(any(Course.class))).willReturn(course);
+
+        mockMvc.perform(post("/api/courses")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\", \"courseCatalogID\":\"\", \"courseCode\":\"CS104\", \"credits\":3, \"institution\":\"MIT\", \"college\":\"Engineering\", \"department\":\"Computer Science\"}"))
+                .andExpect(status().isNotFound()); // Catalog id not found.
     }
 
     @Test
@@ -69,8 +95,35 @@ public class CourseControllerTests {
         mockMvc.perform(put("/api/courses/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Advanced Data Science\", \"courseCode\":\"CS106\", \"credits\":4, \"institution\":\"MIT\", \"college\":\"Engineering\", \"department\":\"Computer Science\"}"))
-            .andExpect(status().isOk());
-            // .andExpect(jsonPath("$.name").value("Advanced Data Science"));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("Advanced Data Science"));
+    }
+
+    @Test
+    public void testUpdateCourseNullName() throws Exception {
+        CourseCatalog catalog = new CourseCatalog("Engineering");
+        catalog.setId(1L);
+        Course course = new Course(catalog, "Data Science", "CS105", 4, "MIT", "Engineering", "Computer Science");
+        course.setId(1L);
+
+        given(courseRepository.findById(1L)).willReturn(Optional.of(course));
+        given(courseRepository.save(any(Course.class))).willReturn(course);
+
+        mockMvc.perform(put("/api/courses/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\", \"courseCode\":\"CS106\", \"credits\":4, \"institution\":\"MIT\", \"college\":\"Engineering\", \"department\":\"Computer Science\"}"))
+            .andExpect(status().isConflict());
+    }
+
+
+    @Test
+    public void testUpdateCourseNotFound() throws Exception {
+        given(courseRepository.findById(1L)).willReturn(Optional.empty());
+
+        mockMvc.perform(put("/api/courses/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Advanced Data Science\", \"courseCode\":\"CS106\", \"credits\":4, \"institution\":\"MIT\", \"college\":\"Engineering\", \"department\":\"Computer Science\"}"))
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -85,4 +138,13 @@ public class CourseControllerTests {
         mockMvc.perform(delete("/api/courses/1"))
             .andExpect(status().isOk());
     }
+
+    @Test
+    public void testDeleteCourseNotFound() throws Exception {
+        given(courseRepository.findById(1L)).willReturn(Optional.empty());
+
+        mockMvc.perform(delete("/api/courses/1"))
+            .andExpect(status().isNotFound());
+    }
+
 }

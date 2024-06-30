@@ -15,9 +15,8 @@ import java.util.List;
 @RequestMapping("/api/courses")
 public class CourseController {
 
-    // TODO update returns to ResponseEntities
     /*
-     * Format for receiving requests from frontend.
+     * Format for receiving requests and sending responses to and from frontend.
      */
     static class Request {
         public String name;
@@ -51,6 +50,9 @@ public class CourseController {
             Course savedCourse = courseRepository.save(course);
             courseCatalogRepository.save(catalog);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedCourse);
+        }
+        catch(IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
         catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
@@ -90,6 +92,9 @@ public class CourseController {
                 course.setDepartment(putRequest.department);                
                 return ResponseEntity.ok(courseRepository.save(course));
             }).orElseThrow(() -> new RuntimeException("Course not found with id " + id));
+        }
+        catch(IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
         catch(RuntimeException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

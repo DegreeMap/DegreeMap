@@ -1,6 +1,7 @@
 package com.degreemap.DegreeMap.courseEntities.courses;
 
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 
@@ -14,6 +15,7 @@ public class Course {
 
     @ManyToOne
     @JoinColumn(name = "courseCatalogId", nullable = false)
+    @JsonBackReference
     private CourseCatalog courseCatalog;
 
     @Column(nullable = false)
@@ -66,6 +68,9 @@ public class Course {
     }
 
     public void setCourseCatalog(CourseCatalog courseCatalog) {
+        if (courseCatalog == null) {
+            throw new IllegalArgumentException("Course must be tied to a CourseCatalog");
+        }
         this.courseCatalog = courseCatalog;
     }
 
@@ -74,6 +79,9 @@ public class Course {
     }
 
     public void setName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be null or blank");
+        }
         this.name = name;
     }
 
