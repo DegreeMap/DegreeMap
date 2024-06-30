@@ -22,10 +22,17 @@ public class Prerequisite {
     @JoinColumn(name = "connectedCourseId", nullable = false)
     private Course connectedCourse;
 
+    // connectedCourse has prereqCourse as a prereq
+    // GCIS-124 has GCIS-123 as a prereq
+
     public Prerequisite() {
     }
 
     public Prerequisite(GradeRequirement gradeRequirement, Course prereqCourse, Course connectedCourse) {
+        if(gradeRequirement == null || prereqCourse == null || connectedCourse == null){
+            throw new IllegalArgumentException("All fields must be filled for Prerequisites");
+        }
+        
         this.gradeRequirement = gradeRequirement;
         this.prereqCourse = prereqCourse;
         this.connectedCourse = connectedCourse;

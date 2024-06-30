@@ -1,6 +1,10 @@
 package com.degreemap.DegreeMap.courseEntities.courses;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
+import com.degreemap.DegreeMap.courseEntities.prerequisites.Prerequisite;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
@@ -35,6 +39,13 @@ public class Course {
 
     @Column
     private String department = "";
+
+    @OneToMany(mappedBy = "prereqCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private Set<Prerequisite> prerequisitesForThisCourse = new HashSet<>();
+    @OneToMany(mappedBy = "connectedCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private Set<Prerequisite> prerequisitesRequiredByThisCourse = new HashSet<>();
 
     public Course() {
     }
@@ -123,5 +134,21 @@ public class Course {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public Set<Prerequisite> getPrerequisitesForThisCourse() {
+        return prerequisitesForThisCourse;
+    }
+
+    public void addPrerequisitesForThisCourse(Prerequisite prereq) {
+        this.prerequisitesForThisCourse.add(prereq);
+    }
+
+    public Set<Prerequisite> getPrerequisitesRequiredByThisCourse() {
+        return prerequisitesRequiredByThisCourse;
+    }
+
+    public void addPrerequisitesRequiredByThisCourse(Prerequisite prereq) {
+        this.prerequisitesRequiredByThisCourse.add(prereq); 
     }
 }
