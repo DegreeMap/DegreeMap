@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Secrets (private/public key, DB credentials) ###
+src/main/resources/certs/
+secret.yml

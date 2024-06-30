@@ -7,6 +7,8 @@ interface Props {
     children: React.ReactNode;
   }
 
+export const ACCESS_TOKEN = 'access_token'
+
 interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
@@ -20,7 +22,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
+    const storedToken = localStorage.getItem(ACCESS_TOKEN);
     if (storedToken) {
       setToken(storedToken);
     }
@@ -30,12 +32,12 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     await loginUser(email, password);
-    const newToken = localStorage.getItem('token');
+    const newToken = localStorage.getItem(ACCESS_TOKEN);
     setToken(newToken);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem(ACCESS_TOKEN);
     setToken(null);
   };
 
