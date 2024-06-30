@@ -3,8 +3,14 @@
 ### Info:
 TODO
 
+### Initial install:
+Go to next/degreemap directory and run:
+``` bash
+npm install
+```
+
 ### Running Front-end:
-To run the website locally, run this command in the root directory: 
+To run the website locally, run this command in the next/degreemap directory: 
 ``` bash
 npm run dev
 # or
