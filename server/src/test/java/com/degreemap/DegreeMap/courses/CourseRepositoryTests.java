@@ -5,13 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 
+import com.degreemap.DegreeMap.config.JpaTestConfig;
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
 import com.degreemap.DegreeMap.courseEntities.courses.Course;
 import com.degreemap.DegreeMap.courseEntities.courses.CourseRepository;
 
 @DataJpaTest
+@Import(JpaTestConfig.class)
 public class CourseRepositoryTests {
 
     // TODO review tests later
@@ -47,7 +50,16 @@ public class CourseRepositoryTests {
             courseRepository.save(course);
         });
 
-        assertTrue(exception.getMessage().contains("Name cannot be null or blank"));
+        assertTrue(exception.getMessage().equals("Name cannot be null or blank"));
+    }
+
+    @Test
+    void whenSaveCourseWithNullCatalog_thenThrowException() {
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            Course course = new Course(null, "hello", "CS101", 4, "MIT", "Engineering", "Computer Science");
+            courseRepository.save(course);
+        });
+        assertTrue(exception.getMessage().equals("Course must be tied to a CourseCatalog"));
     }
 
     @Test
@@ -72,6 +84,18 @@ public class CourseRepositoryTests {
         Course savedCourse = entityManager.persistAndFlush(course);
 
         courseRepository.delete(savedCourse);
+        assertNull(entityManager.find(Course.class, savedCourse.getId()));
+    }
+
+    @Test
+    void whenDeleteCatalog_thenCourseRemoved() {
+        CourseCatalog catalog = new CourseCatalog("Engineering");
+        entityManager.persistAndFlush(catalog);
+
+        Course course = new Course(catalog, "Machine Learning", "CS103", 3, "MIT", "Engineering", "Computer Science");
+        Course savedCourse = entityManager.persistAndFlush(course);
+
+        courseCatalogRepository.delete(catalog);
         assertNull(entityManager.find(Course.class, savedCourse.getId()));
     }
 }

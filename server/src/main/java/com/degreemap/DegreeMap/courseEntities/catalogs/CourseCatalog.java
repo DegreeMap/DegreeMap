@@ -16,7 +16,7 @@ public class CourseCatalog {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy="courseCatalog", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses inside of it
+    @OneToMany(mappedBy="courseCatalog", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses related to it
     private Set<Course> courses;
 
     public CourseCatalog() {

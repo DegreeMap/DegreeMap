@@ -1,20 +1,23 @@
 package com.degreemap.DegreeMap.catalogs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 
+import com.degreemap.DegreeMap.config.JpaTestConfig;
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
+import com.degreemap.DegreeMap.courseEntities.courses.Course;
 
 @DataJpaTest
+@Import(JpaTestConfig.class)
 public class CatalogRepositoryTests {
-
-    // TODO test courses
 
     @Autowired
     private CourseCatalogRepository catalogRepository;
@@ -54,5 +57,14 @@ public class CatalogRepositoryTests {
             CourseCatalog catalog = new CourseCatalog("");
             catalogRepository.save(catalog);
         });
+    }
+
+    @Test
+    void whenDeleteCatalog_thenRemoved() {
+        CourseCatalog catalog = new CourseCatalog("Engineering");
+        CourseCatalog savedCatalog = entityManager.persistAndFlush(catalog);
+
+        catalogRepository.delete(savedCatalog);
+        assertNull(entityManager.find(CourseCatalog.class, catalog.getId()));
     }
 }

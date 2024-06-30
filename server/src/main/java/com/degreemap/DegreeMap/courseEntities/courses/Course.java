@@ -42,6 +42,9 @@ public class Course {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name cannot be null or blank");
         }
+        if (courseCatalog == null) {
+            throw new IllegalArgumentException("Course must be tied to a CourseCatalog");
+        }
         this.name = name;
         this.courseCode = courseCode;
         this.credits = credits;
