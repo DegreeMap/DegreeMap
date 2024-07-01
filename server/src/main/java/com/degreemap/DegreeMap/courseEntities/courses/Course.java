@@ -139,16 +139,20 @@ public class Course {
     public Set<Prerequisite> getPrerequisitesForThisCourse() {
         return prerequisitesForThisCourse;
     }
-
     public void addPrerequisitesForThisCourse(Prerequisite prereq) {
         this.prerequisitesForThisCourse.add(prereq);
+    }
+    public void removePrerequisitesForThisCourse(Prerequisite prereq) {
+        this.prerequisitesForThisCourse.remove(prereq);
     }
 
     public Set<Prerequisite> getPrerequisitesRequiredByThisCourse() {
         return prerequisitesRequiredByThisCourse;
     }
-
     public void addPrerequisitesRequiredByThisCourse(Prerequisite prereq) {
         this.prerequisitesRequiredByThisCourse.add(prereq); 
+    }
+    public void removePrerequisitesRequiredByThisCourse(Prerequisite prereq) {
+        this.prerequisitesRequiredByThisCourse.remove(prereq); 
     }
 }
