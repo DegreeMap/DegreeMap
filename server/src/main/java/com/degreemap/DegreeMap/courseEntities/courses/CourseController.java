@@ -104,7 +104,6 @@ public class CourseController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
-        
         try {
             return courseRepository.findById(id).map(course -> {
                 CourseCatalog catalog = course.getCourseCatalog();
