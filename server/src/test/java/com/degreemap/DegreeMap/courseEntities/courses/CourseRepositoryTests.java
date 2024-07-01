@@ -15,8 +15,6 @@ import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
 @Import(JpaTestConfig.class)
 public class CourseRepositoryTests {
 
-    // TODO review tests later
-
     @Autowired
     private CourseRepository courseRepository;
     @Autowired
