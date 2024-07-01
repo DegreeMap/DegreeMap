@@ -14,27 +14,33 @@ import java.util.List;
 @RequestMapping("/api/prerequisites")
 public class PrerequisiteController {
 
-    // TODO update returns to ResponseEntities
-
+    /*
+     * Format for receiving requests and sending responses to and from frontend.
+     */
+    static class Request {
+        public Long prereqCourseId;
+        public Long connectedCourseId;
+        public GradeRequirement gradeRequirement;
+    }
 
     @Autowired
     private PrerequisiteRepository prerequisiteRepository;
-        @Autowired
+    @Autowired
     private CourseRepository courseRepository;
 
     @PostMapping
-    public ResponseEntity<?> createPrerequisite(@RequestParam Long prereqCourseId, @RequestParam Long connectedCourseId, @RequestParam GradeRequirement gradeRequirement) {
-        if(prereqCourseId == null || connectedCourseId == null || gradeRequirement == null){
+    public ResponseEntity<?> createPrerequisite(@RequestBody Request postRequest) {
+        if(postRequest.prereqCourseId == null || postRequest.connectedCourseId == null || postRequest.gradeRequirement == null){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Missing fields for Prerequisite data");
         }
         
         try {
-            Course prereqCourse = courseRepository.findById(prereqCourseId)
-                .orElseThrow(() -> new RuntimeException("Prereq Course not found with id: " + prereqCourseId));
-            Course connectedCourse = courseRepository.findById(connectedCourseId)
-                .orElseThrow(() -> new RuntimeException("Connected Course not found with id: " + connectedCourseId));
+            Course prereqCourse = courseRepository.findById(postRequest.prereqCourseId)
+                .orElseThrow(() -> new RuntimeException("Prereq Course not found with id: " + postRequest.prereqCourseId));
+            Course connectedCourse = courseRepository.findById(postRequest.connectedCourseId)
+                .orElseThrow(() -> new RuntimeException("Connected Course not found with id: " + postRequest.connectedCourseId));
     
-            Prerequisite prereq = new Prerequisite(gradeRequirement, prereqCourse, connectedCourse);
+            Prerequisite prereq = new Prerequisite(postRequest.gradeRequirement, prereqCourse, connectedCourse);
             return ResponseEntity.ok().body(prerequisiteRepository.save(prereq));
         } catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());

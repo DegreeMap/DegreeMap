@@ -41,6 +41,9 @@ public class Prerequisite {
     public Long getId() {
         return id;
     }
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public GradeRequirement getGradeRequirement() {
         return gradeRequirement;

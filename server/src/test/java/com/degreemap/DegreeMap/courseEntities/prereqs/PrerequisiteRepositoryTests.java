@@ -85,6 +85,10 @@ public class PrerequisiteRepositoryTests {
         Prerequisite savedPrerequisite = entityManager.persistAndFlush(prerequisite);
 
         prerequisiteRepository.delete(savedPrerequisite);
+        assertEquals(entityManager.find(Course.class, prereqCourse.getId()), prereqCourse);
+        assertEquals(entityManager.find(Course.class, connectedCourse.getId()), connectedCourse);
         assertNull(entityManager.find(Prerequisite.class, savedPrerequisite.getId()));
+        assertEquals(entityManager.find(Course.class, prereqCourse.getId()), prereqCourse);
+        assertEquals(entityManager.find(Course.class, connectedCourse.getId()), connectedCourse);
     }
 }

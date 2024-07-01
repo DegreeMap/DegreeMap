@@ -72,6 +72,20 @@ public class CourseControllerTests {
     }
 
     @Test
+    public void testGetCourseById() throws Exception {
+        CourseCatalog catalog = new CourseCatalog("Engineering");
+        catalog.setId(1L);
+        Course course = new Course(catalog, "Programming Concepts", "CS104", 3, "MIT", "Engineering", "Computer Science");
+        given(courseCatalogRepository.findById(1L)).willReturn(Optional.of(catalog));
+        given(courseRepository.findById(1L)).willReturn(Optional.of(course));
+
+        mockMvc.perform(get("/api/courses/1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("Programming Concepts"));
+    }
+
+
+    @Test
     public void testGetCourseByIdNotFound() throws Exception {
         given(courseRepository.findById(1L)).willReturn(Optional.empty());
 
