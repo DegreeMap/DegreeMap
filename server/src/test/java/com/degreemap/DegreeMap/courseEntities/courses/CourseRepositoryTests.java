@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.courses;
+package com.degreemap.DegreeMap.courseEntities.courses;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Import;
 import com.degreemap.DegreeMap.config.JpaTestConfig;
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
-import com.degreemap.DegreeMap.courseEntities.courses.Course;
-import com.degreemap.DegreeMap.courseEntities.courses.CourseRepository;
 
 @DataJpaTest
 @Import(JpaTestConfig.class)

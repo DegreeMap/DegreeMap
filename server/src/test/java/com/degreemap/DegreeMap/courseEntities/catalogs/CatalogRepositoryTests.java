@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.catalogs;
+package com.degreemap.DegreeMap.courseEntities.catalogs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -11,8 +11,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import com.degreemap.DegreeMap.config.JpaTestConfig;
-import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
-import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
 
 @DataJpaTest
 @Import(JpaTestConfig.class)

@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.courses;
+package com.degreemap.DegreeMap.courseEntities.courses;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -13,10 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
-import com.degreemap.DegreeMap.courseEntities.courses.Course;
-import com.degreemap.DegreeMap.courseEntities.courses.CourseController;
 import java.util.Optional;
-import com.degreemap.DegreeMap.courseEntities.courses.CourseRepository;
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
 
 @WebMvcTest(CourseController.class)
