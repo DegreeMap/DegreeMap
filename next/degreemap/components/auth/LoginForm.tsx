@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext'; // Adjust the path as necessary
+// import { useAuth } from '../../context/AuthContext'; // Adjust the path as necessary
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  // const { login } = useAuth();
+  const login = async (username: string, password: string) => {};
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

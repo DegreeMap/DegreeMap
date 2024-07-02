@@ -1,4 +1,4 @@
-import { createAccount } from "@/api/users/post";
+import { createAccount } from "@/app/api/users/post";
 import { useState } from "react";
 
 const CreateAccountForm = () => {

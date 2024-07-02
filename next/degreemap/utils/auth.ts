@@ -1,4 +1,6 @@
-import {ACCESS_TOKEN} from "@/context/AuthContext";
+// import {ACCESS_TOKEN} from "@/context/AuthContext";
+
+const ACCESS_TOKEN = "access_token";
 
 export async function loginUser(email: string, password: string): Promise<string> {
     const response = await fetch('http://localhost:8080/api/auth/login', {

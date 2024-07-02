@@ -1,7 +1,8 @@
-import { useAuth } from "@/context/AuthContext";
+// import { useAuth } from "@/context/AuthContext";
 
 const LogoutForm = () => {
-    const { logout } = useAuth();
+    // const { logout } = useAuth();
+    const logout = async () => {};
     
     const handleLogout = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
