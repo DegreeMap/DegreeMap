@@ -28,7 +28,7 @@ public class Tag {
 
     public Tag(String name) {
         if(name == null){
-            throw new IllegalArgumentException("All fields must be filled for Corequisites");
+            throw new IllegalArgumentException("All fields must be filled for Tags");
         }
         this.name = name;
     }

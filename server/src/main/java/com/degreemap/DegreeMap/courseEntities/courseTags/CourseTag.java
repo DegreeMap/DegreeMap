@@ -26,7 +26,7 @@ public class CourseTag {
 
     public CourseTag(Course course, Tag tag) {
         if(course == null || tag == null){
-            throw new IllegalArgumentException("All fields must be filled for Prerequisites");
+            throw new IllegalArgumentException("All fields must be filled for CourseTags");
         }
         this.course = course;
         this.tag = tag;
