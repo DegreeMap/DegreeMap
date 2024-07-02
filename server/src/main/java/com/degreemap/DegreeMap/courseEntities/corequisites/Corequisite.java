@@ -53,7 +53,7 @@ public class Corequisite {
         this.coreqCourse = coreqCourse;
     }
 
-    public void setConnectedCourse(Course connectedCourse) {
+    public void setConnectedCoreqCourse(Course connectedCourse) {
         this.connectedCourse = connectedCourse;
     }
 }

@@ -100,7 +100,7 @@ public class CorequisiteControllerTests {
         connectedCourse.setId(1L);
 
         coreq.setCoreqCourse(coreqCourse);
-        coreq.setConnectedCourse(connectedCourse);
+        coreq.setConnectedCoreqCourse(connectedCourse);
 
         Corequisite reciprocal = new Corequisite(connectedCourse, coreqCourse);
 
