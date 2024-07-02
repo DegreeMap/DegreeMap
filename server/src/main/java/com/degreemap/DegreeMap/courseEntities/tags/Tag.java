@@ -17,11 +17,17 @@ public class Tag {
     }
 
     public Tag(String name) {
+        if(name == null){
+            throw new IllegalArgumentException("All fields must be filled for Corequisites");
+        }
         this.name = name;
     }
 
     public Long getId() {
         return id;
+    }
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
