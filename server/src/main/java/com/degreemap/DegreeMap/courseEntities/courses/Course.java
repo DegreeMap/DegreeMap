@@ -48,12 +48,12 @@ public class Course {
     @JsonBackReference
     private Set<Prerequisite> prerequisitesRequiredByThisCourse = new HashSet<>();
 
-    // @OneToMany(mappedBy = "coreqCourse", cascade = CascadeType.ALL, orphanRemoval = true)
-    // @JsonBackReference
-    // private Set<Corequisite> corequisitesForThisCourse = new HashSet<>();
-    // @OneToMany(mappedBy = "connectedCoreqCourse", cascade = CascadeType.ALL, orphanRemoval = true)
-    // @JsonBackReference
-    // private Set<Corequisite> corequisitesRequiredByThisCourse = new HashSet<>();
+    @OneToMany(mappedBy = "coreqCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private Set<Corequisite> corequisitesForThisCourse = new HashSet<>();
+    @OneToMany(mappedBy = "connectedCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private Set<Corequisite> corequisitesRequiredByThisCourse = new HashSet<>();
 
     public Course() {
     }

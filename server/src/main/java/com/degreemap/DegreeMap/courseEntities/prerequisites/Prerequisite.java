@@ -22,7 +22,7 @@ public class Prerequisite {
     @JoinColumn(name = "connectedCourseId", nullable = false)
     private Course connectedCourse;
 
-    // connectedPrereqCourse has prereqCourse as a prereq
+    // connectedCourse has prereqCourse as a prereq
     // GCIS-124 has GCIS-123 as a prereq
 
     public Prerequisite() {
