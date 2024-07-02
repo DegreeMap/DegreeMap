@@ -3,7 +3,8 @@ package com.degreemap.DegreeMap.auth;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -31,25 +32,19 @@ public class AuthControllerTests {
     @MockBean
     private AuthService authService;
 
-    private final int ACCESS_TOKEN_EXPIRATION = 15 * 60;
-
     @Test
     public void testRegisterNewUser() throws Exception {
         String email = "u1@goop.com";
         String password = "thepass";
 
         // Mock registering a user within authService
-        given(authService.registerUserAndGetAccessToken(eq(email), eq(password), any(HttpServletResponse.class)))
-                .willReturn(new AuthResponseDto("jwt", ACCESS_TOKEN_EXPIRATION, email));
+        willDoNothing().given(authService).registerUserWithoutLogin(eq(email), eq(password));
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("email", email)
                         .param("password", password))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email").value(email))
-                .andExpect(jsonPath("$.accessToken").isString())
-                .andExpect(jsonPath("$.accessTokenExpiry").value(ACCESS_TOKEN_EXPIRATION));
+                .andExpect(status().isCreated());
     }
 
 
@@ -59,8 +54,8 @@ public class AuthControllerTests {
         String password = "thepass";
 
         // Mock registering a user within authService with a duplicate email
-        given(authService.registerUserAndGetAccessToken(eq(email), eq(password), any(HttpServletResponse.class)))
-                .willThrow(new ResponseStatusException(CONFLICT, "Email already in use"));
+        willThrow(new ResponseStatusException(CONFLICT, "Email already in use"))
+                .given(authService).registerUserWithoutLogin(eq(email), eq(password));
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -73,6 +68,7 @@ public class AuthControllerTests {
     public void testAuthUserSuccess() throws Exception {
         String email = "u2@goop.com";
         String password = "thepass";
+        int ACCESS_TOKEN_EXPIRATION = 15 * 60;
 
         // Mock authenticating a user within authService
         given(authService.getAccessTokenFromCredentials(eq(email), eq(password), any(HttpServletResponse.class)))

@@ -22,8 +22,7 @@ export default function ProfilePage() {
                 <br></br>
                 <br></br>
                 <p>you are logged in, congrats!</p>
-                {/* <LogoutForm></LogoutForm> */}
-                <button onClick={() => signOut()}>SIGN OUT HERE</button>
+                <LogoutForm></LogoutForm>
             </>
         )
     }
@@ -35,8 +34,7 @@ export default function ProfilePage() {
                 <br></br>
                 <br></br>
                 <p>you are logged out. boo!</p>
-                {/* <LoginForm></LoginForm> */}
-                <button onClick={() => signIn()}>LOG IN HERE</button>
+                <LoginForm></LoginForm>
                 <br></br>
                 <p>don't have an account? make one here</p>
                 <CreateAccountForm></CreateAccountForm>

@@ -160,6 +160,10 @@ public class AuthService {
         return makeAccessTokenResponse(userDetails);
     }
 
+    public void registerUserWithoutLogin(String email, String password) {
+        registerUser(email, password);
+    }
+
     public AuthResponseDto getAccessTokenFromRefreshToken(String authHeader) {
 
         if (!authHeader.startsWith("Bearer")) {
