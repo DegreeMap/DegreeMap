@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
 import com.degreemap.DegreeMap.courseEntities.corequisites.Corequisite;
+import com.degreemap.DegreeMap.courseEntities.courseTags.CourseTag;
 import com.degreemap.DegreeMap.courseEntities.prerequisites.Prerequisite;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -54,6 +55,10 @@ public class Course {
     @OneToMany(mappedBy = "connectedCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     private Set<Corequisite> corequisitesRequiredByThisCourse = new HashSet<>();
+
+    @OneToMany(mappedBy = "course")
+    @JsonBackReference
+    private Set<CourseTag> courseTags = new HashSet<>();
 
     public Course() {
     }

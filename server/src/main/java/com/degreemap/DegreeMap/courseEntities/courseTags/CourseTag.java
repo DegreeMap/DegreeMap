@@ -16,7 +16,6 @@ public class CourseTag {
     @ManyToOne
     @JoinColumn(name = "courseId", nullable = false)
     private Course course;
-    // TODO make course and tag foreign keys. should be ints i think?
 
     @ManyToOne
     @JoinColumn(name = "tagId", nullable = false)
@@ -32,6 +31,9 @@ public class CourseTag {
 
     public Long getId() {
         return id;
+    }
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Course getCourse() {

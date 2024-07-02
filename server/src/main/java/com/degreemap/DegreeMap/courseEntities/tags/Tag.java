@@ -1,5 +1,11 @@
 package com.degreemap.DegreeMap.courseEntities.tags;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.degreemap.DegreeMap.courseEntities.courseTags.CourseTag;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +18,10 @@ public class Tag {
 
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "tag")
+    @JsonBackReference
+    private Set<CourseTag> courseTags = new HashSet<>();
 
     public Tag() {
     }
