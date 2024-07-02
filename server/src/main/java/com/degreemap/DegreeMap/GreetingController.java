@@ -9,6 +9,8 @@ import java.util.List;
 @RequestMapping("/api/greetings")
 public class GreetingController {
 
+    // TODO delete greetings
+
 	// I provided a bunch of curl commands for you to run to test these out manually. 
 	// You can run these in any command line after running both the docker database and the spring boot application theres instructions for those in the readME.
 

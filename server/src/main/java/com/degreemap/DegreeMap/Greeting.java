@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 @Entity
 public class Greeting {
 
+    // TODO delete greetings
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
