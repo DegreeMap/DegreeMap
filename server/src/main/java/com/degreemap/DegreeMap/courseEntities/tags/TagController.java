@@ -11,14 +11,20 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tags")
 public class TagController {
+    
+    static class Request {
+        public String name;
+    }
+    
     @Autowired
     private TagRepository tagRepository; 
     
     @PostMapping
-    public ResponseEntity<?> createTag(@RequestBody Tag tag) {
+    public ResponseEntity<?> createTag(@RequestBody Request postRequest) {
         try {
-            Tag createdTag = tagRepository.save(tag);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdTag);
+            Tag newTag = new Tag(postRequest.name);
+            Tag savedTag = tagRepository.save(newTag);
+            return ResponseEntity.status(HttpStatus.OK).body(savedTag);
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Failed to create Tag");
         }
@@ -42,10 +48,10 @@ public class TagController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateTag(@PathVariable Long id, @RequestBody Tag updatedTag) {
+    public ResponseEntity<?> updateTag(@PathVariable Long id, @RequestBody Request request) {
         try {
             return tagRepository.findById(id).map(tag -> {
-                tag.setName(updatedTag.getName());
+                tag.setName(request.name);
                 tagRepository.save(tag);
                 return ResponseEntity.ok(tag);
             }).orElseThrow(() -> new RuntimeException("Tag with id " + id + " not found"));
