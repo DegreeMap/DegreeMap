@@ -26,12 +26,19 @@ public class Corequisite {
     }
 
     public Corequisite(Course coreqCourse, Course connectedCourse) {
+        if(coreqCourse == null || connectedCourse == null){
+            throw new IllegalArgumentException("All fields must be filled for Corequisites");
+        }
+        
         this.coreqCourse = coreqCourse;
         this.connectedCourse = connectedCourse;
     }
 
     public Long getId() {
         return id;
+    }
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Course getCoreqCourse() {

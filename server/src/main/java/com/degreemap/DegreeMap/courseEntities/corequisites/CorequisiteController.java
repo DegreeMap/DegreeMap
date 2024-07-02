@@ -15,8 +15,8 @@ import java.util.List;
 public class CorequisiteController {
 
     static class Request {
-        Long coreqCourseId;
-        Long connectedCourseId;
+        public Long coreqCourseId;
+        public Long connectedCourseId;
     }
 
     @Autowired
@@ -27,7 +27,7 @@ public class CorequisiteController {
     @PostMapping
     public ResponseEntity<?> createCorequisite(@RequestBody Request postRequest) {
         if(postRequest.coreqCourseId == null || postRequest.connectedCourseId == null){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Missing fields for Prerequisite data");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Missing fields for Corequisite data");
         }
         try {
             Course coreqCourse = courseRepository.findById(postRequest.coreqCourseId)

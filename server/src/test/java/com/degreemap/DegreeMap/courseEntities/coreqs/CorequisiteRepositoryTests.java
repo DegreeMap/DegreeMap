@@ -71,50 +71,34 @@ public class CorequisiteRepositoryTests {
         assertEquals(corequisite, foundReciprocal2);
     }
 
-    // @Test
-    // void whenSavePrerequisiteWithNullFields_thenThrowException() {
-    //     Exception exception = assertThrows(RuntimeException.class, () -> {
-    //         Prerequisite prerequisite = new Prerequisite(null, null, null);
-    //         prerequisiteRepository.save(prerequisite);
-    //     });
+    @Test
+    void whenSavePrerequisiteWithNullFields_thenThrowException() {
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            Corequisite corequisite = new Corequisite(null, null);
+            corequisiteRepository.save(corequisite);
+        });
 
-    //     assertTrue(exception.getMessage().contains("All fields must be filled for Prerequisites"));
-    // }
+        System.out.println("wovbwobwobwbv " + exception.getMessage());
+        assertEquals(exception.getMessage(), "All fields must be filled for Corequisites");
+    }
 
-    // @Test
-    // void whenFindByConnectedCourse_thenCorrectPrerequisite() {
-    //     CourseCatalog catalog = new CourseCatalog("Engineering");
-    //     entityManager.persist(catalog);
-    //     Course prereqCourse = new Course(catalog, "Intro to Programming", "CS100", 3, "MIT", "Engineering", "Computer Science");
-    //     Course connectedCourse = new Course(catalog, "Object-Oriented Programming", "CS200", 3, "MIT", "Engineering", "Computer Science");
-    //     entityManager.persist(prereqCourse);
-    //     entityManager.persist(connectedCourse);
+    @Test
+    void whenDeletePrerequisite_thenRemoved() {
+        CourseCatalog catalog = new CourseCatalog("Engineering");
+        entityManager.persist(catalog);
+        Course coreqCourse = new Course(catalog, "Intro to Algorithms", "CS150", 3, "MIT", "Engineering", "Computer Science");
+        Course connectedCourse = new Course(catalog, "Advanced Algorithms", "CS250", 4, "MIT", "Engineering", "Computer Science");
+        entityManager.persist(coreqCourse);
+        entityManager.persist(connectedCourse);
 
-    //     Prerequisite prerequisite = new Prerequisite(GradeRequirement.A, prereqCourse, connectedCourse);
-    //     entityManager.persist(prerequisite);
+        Corequisite corequisite = new Corequisite(coreqCourse, connectedCourse);
+        Corequisite savedCorequisite = entityManager.persistAndFlush(corequisite);
 
-    //     Prerequisite found = prerequisiteRepository.findByConnectedCourseId(connectedCourse.getId()).orElse(null);
-    //     assertNotNull(found);
-    //     assertEquals(found.getPrereqCourse(), prereqCourse);
-    // }
-
-    // @Test
-    // void whenDeletePrerequisite_thenRemoved() {
-    //     CourseCatalog catalog = new CourseCatalog("Engineering");
-    //     entityManager.persist(catalog);
-    //     Course prereqCourse = new Course(catalog, "Intro to Algorithms", "CS150", 3, "MIT", "Engineering", "Computer Science");
-    //     Course connectedCourse = new Course(catalog, "Advanced Algorithms", "CS250", 4, "MIT", "Engineering", "Computer Science");
-    //     entityManager.persist(prereqCourse);
-    //     entityManager.persist(connectedCourse);
-
-    //     Prerequisite prerequisite = new Prerequisite(GradeRequirement.A, prereqCourse, connectedCourse);
-    //     Prerequisite savedPrerequisite = entityManager.persistAndFlush(prerequisite);
-
-    //     prerequisiteRepository.delete(savedPrerequisite);
-    //     assertEquals(entityManager.find(Course.class, prereqCourse.getId()), prereqCourse);
-    //     assertEquals(entityManager.find(Course.class, connectedCourse.getId()), connectedCourse);
-    //     assertNull(entityManager.find(Prerequisite.class, savedPrerequisite.getId()));
-    //     assertEquals(entityManager.find(Course.class, prereqCourse.getId()), prereqCourse);
-    //     assertEquals(entityManager.find(Course.class, connectedCourse.getId()), connectedCourse);
-    // }
+        corequisiteRepository.delete(savedCorequisite);
+        assertEquals(entityManager.find(Course.class, coreqCourse.getId()), coreqCourse);
+        assertEquals(entityManager.find(Course.class, connectedCourse.getId()), connectedCourse);
+        assertNull(entityManager.find(Corequisite.class, savedCorequisite.getId()));
+        assertEquals(entityManager.find(Course.class, coreqCourse.getId()), coreqCourse);
+        assertEquals(entityManager.find(Course.class, connectedCourse.getId()), connectedCourse);
+    }
 }
