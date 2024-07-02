@@ -10,6 +10,7 @@ import React from "react";
 
 export default function ProfilePage() {    
     const { data: session } = useSession();
+    console.log(session);
 
     // const { isAuthenticated } = useAuth();
     
