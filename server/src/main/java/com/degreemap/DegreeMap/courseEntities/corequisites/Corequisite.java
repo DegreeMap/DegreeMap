@@ -18,6 +18,10 @@ public class Corequisite {
     @JoinColumn(name = "connectedCourseId", nullable = false)
     private Course connectedCourse;
 
+    // connectedCourse has coreqCourse as a coreq
+    // GCIS-124 has SWEN-250 as a coreq
+    // SWEN-250 has GCIS-124 as a coreq
+
     public Corequisite() {
     }
 
