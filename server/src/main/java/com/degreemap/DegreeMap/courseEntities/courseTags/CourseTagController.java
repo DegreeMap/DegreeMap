@@ -59,8 +59,7 @@ public class CourseTagController {
             return courseTagRepository.findById(id)
                     .map(courseTag -> ResponseEntity.ok(courseTag))
                     .orElseThrow(() -> new RuntimeException("CourseTag not found with id " + id));
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
         }
     }

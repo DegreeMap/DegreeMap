@@ -6,50 +6,33 @@ import jakarta.persistence.*;
 @Table(name = "degree_maps")
 public class DegreeMap {
 
-    // TODO refine schema for DegreeMaps and make the correct JPA entity
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
-    private int year;
-    private String term;
 
-    public DegreeMap() {
-        // JPA requires a no-arg constructor
-    }
+    public DegreeMap() {}
 
-    public DegreeMap(String name, int year, String term) {
+    public DegreeMap(String name) {
+        if(name == null){
+            throw new IllegalArgumentException("All fields must be filled for DegreeMaps");
+        }
         this.name = name;
-        this.year = year;
-        this.term = term;
     }
 
     public Long getId() {
         return id;
     }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public String getTerm() {
-        return term;
-    }
-
-    public void setTerm(String term) {
-        this.term = term;
     }
 }

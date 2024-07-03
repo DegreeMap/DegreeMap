@@ -1,6 +1,8 @@
 package com.degreemap.DegreeMap.dmEntities.degreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,41 +11,66 @@ import java.util.List;
 @RequestMapping("/api/degreeMaps")
 public class DegreeMapController {
 
-    // TODO update returns to ResponseEntities
+    static class Request {
+        public String name;
+    }
     
     @Autowired
     private DegreeMapRepository degreeMapRepository;
 
     @PostMapping
-    public DegreeMap createDegreeMap(@RequestBody DegreeMap degreeMap) {
-        return degreeMapRepository.save(degreeMap);
+    public ResponseEntity<?> createDegreeMap(@RequestBody Request postRequest) {
+        try {
+            DegreeMap degreeMap = new DegreeMap(postRequest.name);
+            
+            return ResponseEntity.ok(degreeMapRepository.save(degreeMap));
+        }
+        catch(IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
+        }    
     }
 
     @GetMapping
-    public List<DegreeMap> getAllDegreeMaps() {
-        return degreeMapRepository.findAll();
+    public ResponseEntity<List<DegreeMap>> getAllDegreeMaps() {
+        return ResponseEntity.ok(degreeMapRepository.findAll());
     }
 
     @GetMapping("/{id}")
-    public DegreeMap getDegreeMapById(@PathVariable Long id) {
-        return degreeMapRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DegreeMap not found with id " + id));
+    public ResponseEntity<?> getDegreeMapById(@PathVariable Long id) {
+        try {
+            return degreeMapRepository.findById(id)
+                    .map(degreeMap -> ResponseEntity.ok(degreeMap))
+                    .orElseThrow(() -> new RuntimeException("DegreeMap not found with id " + id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
+        }    
     }
 
     @PutMapping("/{id}")
-    public DegreeMap updateDegreeMap(@PathVariable Long id, @RequestBody DegreeMap updatedDegreeMap) {
-        return degreeMapRepository.findById(id).map(degreeMap -> {
-            degreeMap.setName(updatedDegreeMap.getName());
-            degreeMap.setYear(updatedDegreeMap.getYear());
-            degreeMap.setTerm(updatedDegreeMap.getTerm());
-            return degreeMapRepository.save(degreeMap);
-        }).orElseThrow(() -> new RuntimeException("DegreeMap not found with id " + id));
+    public ResponseEntity<?> updateDegreeMap(@PathVariable Long id, @RequestBody Request postRequest) {
+        try {
+            return degreeMapRepository.findById(id).map(degreeMap -> {
+                degreeMap.setName(postRequest.name);
+                return ResponseEntity.ok(degreeMapRepository.save(degreeMap));
+            }).orElseThrow(() -> new RuntimeException("DegreeMap not found with id " + id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
+        }    
     }
 
     @DeleteMapping("/{id}")
-    public void deleteDegreeMap(@PathVariable Long id) {
-        DegreeMap degreeMap = degreeMapRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DegreeMap not found with id " + id));
-        degreeMapRepository.delete(degreeMap);
+    public ResponseEntity<?> deleteDegreeMap(@PathVariable Long id) {
+        try {
+            DegreeMap degreeMap = degreeMapRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("DegreeMap not found with id " + id));
+            degreeMapRepository.delete(degreeMap);
+            degreeMapRepository.save(degreeMap);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
+        }    
     }
 }
