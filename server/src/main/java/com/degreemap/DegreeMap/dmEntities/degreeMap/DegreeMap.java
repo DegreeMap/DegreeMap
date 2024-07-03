@@ -1,5 +1,10 @@
 package com.degreemap.DegreeMap.dmEntities.degreeMap;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.degreemap.DegreeMap.dmEntities.years.Year;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +17,9 @@ public class DegreeMap {
 
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy="degreeMap", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses related to it
+    private Set<Year> years = new HashSet<Year>();
 
     public DegreeMap() {}
 
@@ -34,5 +42,15 @@ public class DegreeMap {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void addYear(Year year){
+        this.years.add(year);
+    }
+    public void removeYear(Year year){
+        this.years.remove(year);
+    }
+    public Set<Year> getYears(){
+        return this.years;
     }
 }

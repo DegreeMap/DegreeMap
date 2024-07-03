@@ -11,14 +11,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMap;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapController;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapRepository;
+import com.degreemap.DegreeMap.dmEntities.years.Year;
+import com.degreemap.DegreeMap.dmEntities.years.YearController;
+import com.degreemap.DegreeMap.dmEntities.years.YearRepository;
 
 import java.util.Optional;
 
-@WebMvcTest(DegreeMapController.class)
+@WebMvcTest(controllers = {DegreeMapController.class, YearController.class})
 public class DegreeMapControllerTests {
 
     @Autowired
@@ -26,6 +30,8 @@ public class DegreeMapControllerTests {
 
     @MockBean
     private DegreeMapRepository degreeMapRepository;
+    @MockBean
+    private YearRepository yearRepository;
 
     @Test
     public void createDegreeMap_ReturnsDegreeMap() throws Exception {
@@ -45,9 +51,12 @@ public class DegreeMapControllerTests {
         degreeMap.setId(1L);
         given(degreeMapRepository.findById(1L)).willReturn(Optional.of(degreeMap));
 
-        mockMvc.perform(get("/api/degreeMaps/1"))
+        MvcResult result = mockMvc.perform(get("/api/degreeMaps/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Mechanical Engineering"));
+                .andExpect(jsonPath("$.name").value("Mechanical Engineering"))
+                .andReturn();
+
+        System.out.println("wocwoucowucowucowvo  " + result.getResponse().getContentAsString());
     }
 
     @Test
@@ -101,5 +110,55 @@ public class DegreeMapControllerTests {
 
         mockMvc.perform(delete("/api/degreeMaps/1"))
                 .andExpect(status().isNotFound());
+    }
+
+    // Test for manually printing out DegreeMaps
+    // In VSCode, only run this test and go to Debug Console.
+
+    /*
+     * For this test, data output should look like this:
+     
+    {
+        "id":1,
+        "name":"Business Administration",
+        "years":[
+            {
+                "id":null,
+                "name":"2021-2022"
+            }
+        ]
+    }
+     
+     */
+    @Test
+    public void manuallyTestDegreeMaps() throws Exception {
+        DegreeMap degreeMap = new DegreeMap("Business Administration");
+        degreeMap.setId(1L);
+        given(degreeMapRepository.save(any(DegreeMap.class))).willReturn(degreeMap);
+        given(degreeMapRepository.findById(1L)).willReturn(Optional.of(degreeMap));
+
+        mockMvc.perform(post("/api/degreeMaps")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Business Administration\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Business Administration"));
+
+        Year year = new Year("2021-2022", degreeMap);
+        year.setId(2L);
+        given(yearRepository.save(any(Year.class))).willReturn(year);
+        given(yearRepository.findById(2L)).willReturn(Optional.of(year));
+
+        mockMvc.perform(post("/api/years")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"2021-2022\",\"degreeMapId\":1}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("2021-2022"));
+                
+        MvcResult result = mockMvc.perform(get("/api/degreeMaps/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Business Administration"))
+                .andReturn();
+
+        System.out.println("!!!! DegreeMap Data !!!! ---> " + result.getResponse().getContentAsString());
     }
 }

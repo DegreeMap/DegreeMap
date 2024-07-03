@@ -1,5 +1,3 @@
 package com.degreemap.DegreeMap.dmEntities.years;
-
-public class YearRepository {
-    
-}
+import org.springframework.data.jpa.repository.JpaRepository;
+public interface YearRepository extends JpaRepository<Year, Long> {}
