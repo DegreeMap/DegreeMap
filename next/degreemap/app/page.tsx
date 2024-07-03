@@ -27,6 +27,7 @@ export default function Home() {
         <p>home page! :)</p>  
         <NavItem navData={{name: "Maker", link: "/maker"}}></NavItem>
         <NavItem navData={{name: "Courses", link: "/courses"}}></NavItem>  
+        <NavItem navData={{name: "Dummy", link: "/dummy"}}></NavItem>
       </div>
     </div>
   );
