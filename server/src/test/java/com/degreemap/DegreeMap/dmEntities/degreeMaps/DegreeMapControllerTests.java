@@ -21,8 +21,6 @@ import java.util.Optional;
 @WebMvcTest(DegreeMapController.class)
 public class DegreeMapControllerTests {
 
-    // TODO review tests
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -53,6 +51,17 @@ public class DegreeMapControllerTests {
     }
 
     @Test
+    public void getDegreeMapById_NotFound_ReturnsError() throws Exception {
+        DegreeMap degreeMap = new DegreeMap("Mechanical Engineering");
+        degreeMap.setId(1L);
+        given(degreeMapRepository.findById(1L)).willReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/degreeMaps/1"))
+                .andExpect(status().isNotFound());
+    }
+
+
+    @Test
     public void updateDegreeMap_Found_UpdatesAndReturnsDegreeMap() throws Exception {
         DegreeMap existingDegreeMap = new DegreeMap("Information Technology");
         existingDegreeMap.setId(1L);
@@ -67,6 +76,16 @@ public class DegreeMapControllerTests {
     }
 
     @Test
+    public void updateDegreeMap_NotFound_ReturnsError() throws Exception {
+        given(degreeMapRepository.findById(1L)).willReturn(Optional.empty());
+
+        mockMvc.perform(put("/api/degreeMaps/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Updated IT\"}"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void deleteDegreeMap_Found_DeletesAndReturnsOk() throws Exception {
         DegreeMap degreeMap = new DegreeMap("Software Engineering");
         degreeMap.setId(1L);
@@ -74,14 +93,6 @@ public class DegreeMapControllerTests {
 
         mockMvc.perform(delete("/api/degreeMaps/1"))
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    public void getDegreeMapById_NotFound_ReturnsNotFound() throws Exception {
-        given(degreeMapRepository.findById(1L)).willReturn(Optional.empty());
-
-        mockMvc.perform(get("/api/degreeMaps/1"))
-                .andExpect(status().isNotFound());
     }
 
     @Test

@@ -34,6 +34,14 @@ public class DegreeMapRepositoryTests {
     }
 
     @Test
+    public void whenSaveDegreeMap_NullFields_thenFailure() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            DegreeMap dm = new DegreeMap(null);
+            degreeMapRepository.save(dm);
+        });
+    }
+
+    @Test
     public void whenDeleteDegreeMap_thenNotFound() {
         DegreeMap degreeMap = new DegreeMap("Electrical Engineering");
         entityManager.persist(degreeMap);
