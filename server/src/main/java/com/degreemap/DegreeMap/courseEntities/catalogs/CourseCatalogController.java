@@ -35,7 +35,9 @@ public class CourseCatalogController {
         catch (DataIntegrityViolationException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-        
+        catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
+        }
     }
 
     @GetMapping
@@ -62,13 +64,19 @@ public class CourseCatalogController {
     @Transactional
     public ResponseEntity<?> updateCourseCatalog(@PathVariable Long id, @RequestBody Request putRequest) {
         try {
+            if(putRequest.name == null){
+                throw new IllegalArgumentException("Missing field for Tag");
+            }
             return courseCatalogRepository.findById(id).map(courseCatalog -> {
                 courseCatalog.setName(putRequest.name);
                 return ResponseEntity.ok(courseCatalogRepository.save(courseCatalog));
             }).orElseThrow(() -> new RuntimeException("CourseCatalog not found with id " + id));
         }
-        catch(RuntimeException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        catch(IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
         }
     }    
 

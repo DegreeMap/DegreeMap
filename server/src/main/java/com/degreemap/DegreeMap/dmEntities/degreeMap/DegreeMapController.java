@@ -22,7 +22,6 @@ public class DegreeMapController {
     public ResponseEntity<?> createDegreeMap(@RequestBody Request postRequest) {
         try {
             DegreeMap degreeMap = new DegreeMap(postRequest.name);
-            
             return ResponseEntity.ok(degreeMapRepository.save(degreeMap));
         }
         catch(IllegalArgumentException e){
@@ -65,7 +64,7 @@ public class DegreeMapController {
     public ResponseEntity<?> deleteDegreeMap(@PathVariable Long id) {
         try {
             DegreeMap degreeMap = degreeMapRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("DegreeMap not found with id " + id));
+                .orElseThrow(() -> new RuntimeException("DegreeMap not found with id " + id));
             degreeMapRepository.delete(degreeMap);
             degreeMapRepository.save(degreeMap);
             return ResponseEntity.ok().build();

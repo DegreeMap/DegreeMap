@@ -25,8 +25,15 @@ public class TagController {
             Tag newTag = new Tag(postRequest.name);
             Tag savedTag = tagRepository.save(newTag);
             return ResponseEntity.status(HttpStatus.OK).body(savedTag);
-        } catch (DataIntegrityViolationException e) {
+        } 
+        catch(IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+        catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Failed to create Tag");
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
         }
     }
 
@@ -50,12 +57,20 @@ public class TagController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTag(@PathVariable Long id, @RequestBody Request request) {
         try {
+            if(request.name == null){
+                throw new IllegalArgumentException("Missing field for Tag");
+            }
+            
             return tagRepository.findById(id).map(tag -> {
                 tag.setName(request.name);
                 tagRepository.save(tag);
                 return ResponseEntity.ok(tag);
             }).orElseThrow(() -> new RuntimeException("Tag with id " + id + " not found"));
-        } catch (RuntimeException e) {
+        } 
+        catch(IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+        catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
         }
     }

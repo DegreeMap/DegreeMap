@@ -16,14 +16,14 @@ import java.util.List;
 @SpringBootApplication
 @EnableConfigurationProperties(RSAKeyRecord.class)
 public class DegreeMapApplication {
+	
 	public static void main(String[] args) {
 		SpringApplication.run(DegreeMapApplication.class, args);
 	}
 
 	@Bean
 	@Profile("dev")
-	CommandLineRunner commandLineRunner(UserRepository userRepository,
-										PasswordEncoder encoder) {
+	CommandLineRunner commandLineRunner(UserRepository userRepository, PasswordEncoder encoder) {
 		return args -> {
 			User u1 = new User("u1@god.com", encoder.encode("thepass"));
 			User u2 = new User("u2@god.com", encoder.encode("thepass"));
@@ -31,4 +31,5 @@ public class DegreeMapApplication {
 			userRepository.saveAll(List.of(u1, u2));
 		};
 	}
+	
 }

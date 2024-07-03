@@ -83,6 +83,9 @@ public class CourseController {
     @Transactional
     public ResponseEntity<?> updateCourse(@PathVariable Long id, @RequestBody Request putRequest) {
         try {
+            if(putRequest.name == null){
+                throw new IllegalArgumentException("Missing field for Tag");
+            }
             return courseRepository.findById(id).map(course -> {
                 course.setName(putRequest.name);
                 course.setCourseCode(putRequest.courseCode);
