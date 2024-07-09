@@ -37,7 +37,7 @@ public class YearController {
                 .orElseThrow(() -> new RuntimeException("DegreeMap not found with id " + postRequest.degreeMapId));
             
             Year year = new Year(postRequest.name, degreeMap);
-            degreeMap.addYear(year);
+            degreeMap.getYears().add(year);
             degreeMapRepository.save(degreeMap);
             return ResponseEntity.ok(yearRepository.save(year));
         }
