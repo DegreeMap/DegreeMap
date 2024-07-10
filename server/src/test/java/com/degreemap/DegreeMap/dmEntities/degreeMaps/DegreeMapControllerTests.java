@@ -16,16 +16,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMap;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapController;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapRepository;
-import com.degreemap.DegreeMap.dmEntities.terms.Term;
-import com.degreemap.DegreeMap.dmEntities.terms.TermController;
-import com.degreemap.DegreeMap.dmEntities.terms.TermRepository;
-import com.degreemap.DegreeMap.dmEntities.years.Year;
-import com.degreemap.DegreeMap.dmEntities.years.YearController;
-import com.degreemap.DegreeMap.dmEntities.years.YearRepository;
 
 import java.util.Optional;
 
-@WebMvcTest(controllers = {DegreeMapController.class, YearController.class, TermController.class})
+@WebMvcTest(DegreeMapController.class)
 public class DegreeMapControllerTests {
 
     @Autowired
@@ -33,10 +27,6 @@ public class DegreeMapControllerTests {
 
     @MockBean
     private DegreeMapRepository degreeMapRepository;
-    @MockBean
-    private YearRepository yearRepository;
-    @MockBean
-    private TermRepository termRepository;
 
     @Test
     public void createDegreeMap_ReturnsDegreeMap() throws Exception {
@@ -115,58 +105,5 @@ public class DegreeMapControllerTests {
 
         mockMvc.perform(delete("/api/degreeMaps/1"))
                 .andExpect(status().isNotFound());
-    }
-
-    // Test for manually printing out DegreeMaps
-    // In VSCode, only run this test and go to Debug Console.
-
-    /*
-     * For this test, data output should look like this:
-     
-    {
-        "id":1,
-        "name":"Business Administration",
-        "years":[
-            {
-                "id":null,
-                "name":"2021-2022"
-            }
-        ]
-    }
-     
-     */
-    @Test
-    public void manuallyTestDegreeMaps() throws Exception {
-        DegreeMap degreeMap = new DegreeMap("Business Administration");
-        degreeMap.setId(1L);
-        given(degreeMapRepository.save(any(DegreeMap.class))).willReturn(degreeMap);
-        given(degreeMapRepository.findById(1L)).willReturn(Optional.of(degreeMap));
-
-        mockMvc.perform(post("/api/degreeMaps")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"Business Administration\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Business Administration"));
-
-        Year year = new Year("2021-2022", degreeMap);
-        year.setId(2L);
-        degreeMap.getYears().add(year);
-        
-        Term fall = new Term("Fall", year);
-        fall.setId(3L);
-        year.addTerm(fall);
-        Term spring = new Term("Spring", year);
-        spring.setId(4L);
-        year.addTerm(spring);
-        Term summer = new Term("Summer", year);
-        summer.setId(5L);
-        year.addTerm(summer);
-
-        MvcResult result = mockMvc.perform(get("/api/degreeMaps/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Business Administration"))
-                .andReturn();
-
-        System.out.println("\n!!!! DegreeMap Data !!!! \n" + result.getResponse().getContentAsString());
     }
 }
