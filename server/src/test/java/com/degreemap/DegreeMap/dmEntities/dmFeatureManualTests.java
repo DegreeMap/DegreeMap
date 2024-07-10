@@ -47,7 +47,7 @@ public class dmFeatureManualTests {
      
     {
         "id":1,
-        "name":"Business Administration",
+        "name":"SE Associates Degree",
         "years":[
                     {
                         "id":3,
