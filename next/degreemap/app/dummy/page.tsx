@@ -8,13 +8,11 @@ import React, { useEffect, useState } from 'react';
 const Page: React.FC = () => {
     const { data: session } = useSession();
     const [msg, setMsg] = useState<string>('');
-    const BAD_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcyMDA0MjA1OSwiaWF0IjoxNzIwMDQyMDU5fQ.UfltFEauBbLi52-_IvC5djYM41vK9F-9pukgkmNx85Q"
 
     const getData = async () => {
         const res = await fetch('http://localhost:8080/api/dummy/hello', {
             method: 'GET',
             headers: {
-                // "Authorization": "Bearer " + BAD_KEY,
                 "Authorization": "Bearer " + session?.user.accessToken,
             }
         });
