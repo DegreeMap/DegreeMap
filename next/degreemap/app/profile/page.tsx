@@ -4,13 +4,17 @@ import CreateAccountForm from "@/components/auth/CreateAccountForm";
 import LoginForm from "@/components/auth/LoginForm";
 import LogoutForm from "@/components/auth/LogoutForm";
 import NavBar from "@/components/nav/navbars";
-import { useAuth } from "@/context/AuthContext";
+// import { useAuth } from "@/context/AuthContext";
+import { signIn, signOut, useSession } from "next-auth/react";
 import React from "react";
 
 export default function ProfilePage() {    
-    const { isAuthenticated } = useAuth();
+    const { data: session } = useSession();
+    console.log(session);
+
+    // const { isAuthenticated } = useAuth();
     
-    if(isAuthenticated){
+    if(session?.user){
         return (
             <>
                 <NavBar></NavBar>

@@ -18,6 +18,7 @@ export default function NavBar({navItems}: NavBarProps) {
         { name: "Maker", link: "/maker" },
         { name: "Courses", link: "/courses" },
         { name: "Profile", link: "/profile" },
+        { name: "Dummy", link: "/dummy" }
     ];
     // defaultNavData = [
     //     { name: "Maker", link: "/maker" },

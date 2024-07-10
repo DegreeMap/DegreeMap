@@ -1,4 +1,4 @@
-import {ACCESS_TOKEN} from "@/context/AuthContext";
+import { signIn } from "next-auth/react";
 
 export const createAccount = async (email: string, password: string) => {
     const response = await fetch('http://localhost:8080/api/auth/register', {
@@ -11,12 +11,14 @@ export const createAccount = async (email: string, password: string) => {
         })
       });
 
-    const data = await response.json();
-
-    if(response.ok){
-        localStorage.setItem(ACCESS_TOKEN, data.accessToken);
-        return data.accesstoken;
-    } else {
+    if (!response.ok) {
+        const data = await response.json();
         throw new Error(data.message || 'Failed to login');
     }
+
+    // After registering the user, sign in the user
+    signIn("credentials", {
+        username: email,
+        password: password,
+    })
 }

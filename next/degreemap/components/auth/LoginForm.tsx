@@ -1,15 +1,21 @@
+import { signIn } from 'next-auth/react';
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext'; // Adjust the path as necessary
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await login(email, password);
+      await signIn("credentials", {
+        username: email,
+        password: password,
+
+        // If we want to redirect user to different page
+        // redirect: true,
+        // callbackUrl: "/profile"
+      });
       console.log('Login successful');
     } catch (error) {
       console.error('Login failed:', error);

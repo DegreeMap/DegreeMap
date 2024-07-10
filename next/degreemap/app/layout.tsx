@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
+import Provider from "@/components/auth/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,9 +14,9 @@ export default async function RootLayout({children,}: Readonly<{children: React.
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
+        <Provider>
           {children}  
-        </AuthProvider>
+        </Provider>
       </body>
     </html>
   );

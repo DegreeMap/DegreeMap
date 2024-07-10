@@ -1,12 +1,11 @@
-import { useAuth } from "@/context/AuthContext";
+import { signOut } from "next-auth/react";
 
 const LogoutForm = () => {
-    const { logout } = useAuth();
     
     const handleLogout = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
-            await logout();
+            await signOut();
             console.log('Logout successful');
         } catch (error) {
             console.error('Logout failed:', error);

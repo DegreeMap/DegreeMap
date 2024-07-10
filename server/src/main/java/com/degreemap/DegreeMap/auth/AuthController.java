@@ -34,13 +34,11 @@ public class AuthController {
     public ResponseEntity<?> registerNewUser(@RequestParam String email,
                                              @RequestParam String password,
                                              HttpServletResponse response) {
+
+        authService.registerUserWithoutLogin(email, password);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(
-                        authService.registerUserAndGetAccessToken(
-                                email, password, response
-                        )
-                );
+                .build();
     }
 
     @PostMapping("/refresh-token")
