@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.degreemap.DegreeMap.courseEntities.courseTags.CourseTag;
 import com.degreemap.DegreeMap.dmEntities.blocks.Block;
+import com.degreemap.DegreeMap.dmEntities.courseTerms.CourseTerm;
 import com.degreemap.DegreeMap.dmEntities.years.Year;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -29,7 +29,7 @@ public class Term {
 
     @OneToMany(mappedBy = "term")
     @JsonBackReference
-    private Set<CourseTag> courseTags = new HashSet<>();
+    private Set<CourseTerm> courseTerms = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "yearId", nullable = false)

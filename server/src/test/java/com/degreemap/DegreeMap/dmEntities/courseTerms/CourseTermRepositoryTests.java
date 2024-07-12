@@ -2,6 +2,7 @@ package com.degreemap.DegreeMap.dmEntities.courseTerms;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.degreemap.DegreeMap.config.JpaTestConfig;
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
@@ -13,12 +14,12 @@ import com.degreemap.DegreeMap.dmEntities.terms.Term;
 import com.degreemap.DegreeMap.dmEntities.terms.TermRepository;
 import com.degreemap.DegreeMap.dmEntities.years.Year;
 
+import org.hibernate.PropertyValueException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,14 +44,12 @@ public class CourseTermRepositoryTests {
     public void shouldSaveCourseTerm() {
         CourseCatalog catalog = new CourseCatalog("Engineering");
         entityManager.persist(catalog);
-
         Course course = new Course(catalog, "Data Structures", "CS101", 4, "MIT", "Engineering", "Computer Science");
         Course savedCourse = courseRepository.save(course);
         CourseCatalog savedCatalog = courseCatalogRepository.save(course.getCourseCatalog());
         assertEquals(entityManager.find(Course.class, savedCourse.getId()), course);
         assertEquals(savedCatalog.getCourses().size(), 1);
         assertEquals(savedCatalog.getCourses().contains(savedCourse), true);
-        
         entityManager.persist(course);
 
         DegreeMap dm = new DegreeMap("College");
@@ -60,12 +59,13 @@ public class CourseTermRepositoryTests {
         Term term = new Term("Fall 2021", year);
         entityManager.persist(term);
         entityManager.flush();
-
-        entityManager.persist(term);
+        Term found = termRepository.findById(term.getId()).orElse(null);
+        assertNotNull(found);
+        assertEquals(found.getName(), term.getName());
+        assertEquals(found.getYear().getName(), year.getName());
 
         CourseTerm courseTerm = new CourseTerm(course, term);
         CourseTerm savedCourseTerm = courseTermRepository.save(courseTerm);
-        
         assertThat(savedCourseTerm).isNotNull();
         assertThat(savedCourseTerm.getId()).isNotNull();
         assertThat(savedCourseTerm.getCourse()).isEqualTo(course);
@@ -74,10 +74,27 @@ public class CourseTermRepositoryTests {
 
     @Test
     public void shouldFindCourseTermById() {
-        Course course = new Course();
+        CourseCatalog catalog = new CourseCatalog("Engineering");
+        entityManager.persist(catalog);
+        Course course = new Course(catalog, "Data Structures", "CS101", 4, "MIT", "Engineering", "Computer Science");
+        Course savedCourse = courseRepository.save(course);
+        CourseCatalog savedCatalog = courseCatalogRepository.save(course.getCourseCatalog());
+        assertEquals(entityManager.find(Course.class, savedCourse.getId()), course);
+        assertEquals(savedCatalog.getCourses().size(), 1);
+        assertEquals(savedCatalog.getCourses().contains(savedCourse), true);
         entityManager.persist(course);
-        Term term = new Term();
+
+        DegreeMap dm = new DegreeMap("College");
+        entityManager.persist(dm);
+        Year year = new Year("2021-2022", dm); 
+        entityManager.persist(year);
+        Term term = new Term("Fall 2021", year);
         entityManager.persist(term);
+        entityManager.flush();
+        Term found = termRepository.findById(term.getId()).orElse(null);
+        assertNotNull(found);
+        assertEquals(found.getName(), term.getName());
+        assertEquals(found.getYear().getName(), year.getName());
 
         CourseTerm courseTerm = new CourseTerm(course, term);
         CourseTerm savedCourseTerm = entityManager.persistFlushFind(courseTerm);
@@ -90,30 +107,91 @@ public class CourseTermRepositoryTests {
 
     @Test
     public void shouldDeleteCourseTerm() {
-        Course course = new Course();
+        CourseCatalog catalog = new CourseCatalog("Engineering");
+        entityManager.persist(catalog);
+        Course course = new Course(catalog, "Data Structures", "CS101", 4, "MIT", "Engineering", "Computer Science");
+        Course savedCourse = courseRepository.save(course);
+        CourseCatalog savedCatalog = courseCatalogRepository.save(course.getCourseCatalog());
+        assertEquals(entityManager.find(Course.class, savedCourse.getId()), course);
+        assertEquals(savedCatalog.getCourses().size(), 1);
+        assertEquals(savedCatalog.getCourses().contains(savedCourse), true);
         entityManager.persist(course);
-        Term term = new Term();
+
+        DegreeMap dm = new DegreeMap("College");
+        entityManager.persist(dm);
+        Year year = new Year("2021-2022", dm); 
+        entityManager.persist(year);
+        Term term = new Term("Fall 2021", year);
         entityManager.persist(term);
+        entityManager.flush();
+        Term found = termRepository.findById(term.getId()).orElse(null);
+        assertNotNull(found);
+        assertEquals(found.getName(), term.getName());
+        assertEquals(found.getYear().getName(), year.getName());
 
         CourseTerm courseTerm = new CourseTerm(course, term);
         CourseTerm savedCourseTerm = entityManager.persistFlushFind(courseTerm);
+        assertThat(savedCourseTerm).isNotNull();
+        assertThat(savedCourseTerm.getId()).isNotNull();
+        assertThat(savedCourseTerm.getCourse()).isEqualTo(course);
+        assertThat(savedCourseTerm.getTerm()).isEqualTo(term);
+
         courseTermRepository.delete(savedCourseTerm);
 
         Optional<CourseTerm> deletedCourseTerm = courseTermRepository.findById(savedCourseTerm.getId());
         assertThat(deletedCourseTerm).isEmpty();
+        assertEquals(entityManager.find(Course.class, savedCourse.getId()), course);
+        Term found2 = termRepository.findById(term.getId()).orElse(null);
+        assertNotNull(found2);
+        assertEquals(found2.getName(), term.getName());
+        assertEquals(found2.getYear().getName(), year.getName());
     }
 
     @Test
     public void shouldFindAllCourseTerms() {
-        Course course1 = new Course();
+        CourseCatalog catalog = new CourseCatalog("Engineering");
+        entityManager.persist(catalog);
+        Course course1 = new Course(catalog, "Data Structures", "CS101", 4, "MIT", "Engineering", "Computer Science");
+        Course savedCourse = courseRepository.save(course1);
+        CourseCatalog savedCatalog = courseCatalogRepository.save(course1.getCourseCatalog());
+        assertEquals(entityManager.find(Course.class, savedCourse.getId()), course1);
+        assertEquals(savedCatalog.getCourses().size(), 1);
+        assertEquals(savedCatalog.getCourses().contains(savedCourse), true);
         entityManager.persist(course1);
-        Term term1 = new Term();
-        entityManager.persist(term1);
 
-        Course course2 = new Course();
+        DegreeMap dm = new DegreeMap("College");
+        entityManager.persist(dm);
+        Year year = new Year("2021-2022", dm); 
+        entityManager.persist(year);
+        Term term1 = new Term("Fall 2021", year);
+        entityManager.persist(term1);
+        entityManager.flush();
+        Term found = termRepository.findById(term1.getId()).orElse(null);
+        assertNotNull(found);
+        assertEquals(found.getName(), term1.getName());
+        assertEquals(found.getYear().getName(), year.getName());
+
+        CourseCatalog catalog2 = new CourseCatalog("Engineering");
+        entityManager.persist(catalog2);
+        Course course2 = new Course(catalog2, "Data Structures", "CS101", 4, "MIT", "Engineering", "Computer Science");
+        Course savedCourse2 = courseRepository.save(course2);
+        CourseCatalog savedCatalog2 = courseCatalogRepository.save(course2.getCourseCatalog());
+        assertEquals(entityManager.find(Course.class, savedCourse2.getId()), course2);
+        assertEquals(savedCatalog2.getCourses().size(), 1);
+        assertEquals(savedCatalog2.getCourses().contains(savedCourse2), true);
         entityManager.persist(course2);
-        Term term2 = new Term();
+
+        DegreeMap dm2 = new DegreeMap("College");
+        entityManager.persist(dm2);
+        Year year2 = new Year("2021-2022", dm2); 
+        entityManager.persist(year2);
+        Term term2 = new Term("Fall 2021", year2);
         entityManager.persist(term2);
+        entityManager.flush();
+        Term found2 = termRepository.findById(term2.getId()).orElse(null);
+        assertNotNull(found2);
+        assertEquals(found2.getName(), term2.getName());
+        assertEquals(found2.getYear().getName(), year2.getName());
 
         CourseTerm courseTerm1 = new CourseTerm(course1, term1);
         entityManager.persist(courseTerm1);
@@ -126,12 +204,13 @@ public class CourseTermRepositoryTests {
 
     @Test
     public void shouldThrowExceptionWhenCourseOrTermIsNull() {
-        Course course = new Course();
-        entityManager.persist(course);
-        Term term = null;
-
-        CourseTerm courseTerm = new CourseTerm(course, term);
-        org.junit.jupiter.api.Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
+        org.junit.jupiter.api.Assertions.assertThrows(PropertyValueException.class, () -> {
+            // Excuse the horrible method declaration
+            Course course = new Course();
+            entityManager.persist(course);
+            Term term = null;
+    
+            CourseTerm courseTerm = new CourseTerm(course, term);
             courseTermRepository.save(courseTerm);
         });
     }
