@@ -34,7 +34,7 @@ public class CourseTagController {
             Course course = courseRepository.findById(postRequest.courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found with id " + postRequest.courseId));
             Tag tag = tagRepository.findById(postRequest.tagId)
-                .orElseThrow(() -> new RuntimeException("Tag not found with id " + postRequest.courseId));
+                .orElseThrow(() -> new RuntimeException("Tag not found with id " + postRequest.tagId));
             
             CourseTag courseTag = new CourseTag(course, tag);
             
