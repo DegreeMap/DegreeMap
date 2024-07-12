@@ -1,8 +1,11 @@
 package com.degreemap.DegreeMap.dmEntities.terms;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.degreemap.DegreeMap.courseEntities.courseTags.CourseTag;
 import com.degreemap.DegreeMap.dmEntities.blocks.Block;
 import com.degreemap.DegreeMap.dmEntities.years.Year;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -23,6 +26,10 @@ public class Term {
     private List<Block> blocks = new ArrayList<Block>();
     // TODO There can only be one block. I'm in a rush so I don't have time to research if there's a way to only have one associated.
     // research it later :/ (im guessing @OneToOne)
+
+    @OneToMany(mappedBy = "term")
+    @JsonBackReference
+    private Set<CourseTag> courseTags = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "yearId", nullable = false)

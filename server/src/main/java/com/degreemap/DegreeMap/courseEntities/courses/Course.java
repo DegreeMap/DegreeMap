@@ -1,12 +1,13 @@
 package com.degreemap.DegreeMap.courseEntities.courses;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
 import com.degreemap.DegreeMap.courseEntities.corequisites.Corequisite;
 import com.degreemap.DegreeMap.courseEntities.courseTags.CourseTag;
 import com.degreemap.DegreeMap.courseEntities.prerequisites.Prerequisite;
+import com.degreemap.DegreeMap.dmEntities.courseTerms.CourseTerm;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
@@ -44,21 +45,24 @@ public class Course {
 
     @OneToMany(mappedBy = "prereqCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
-    private Set<Prerequisite> prerequisitesForThisCourse = new HashSet<>();
+    private List<Prerequisite> prerequisitesForThisCourse = new ArrayList<>();
     @OneToMany(mappedBy = "connectedCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
-    private Set<Prerequisite> prerequisitesRequiredByThisCourse = new HashSet<>();
+    private List<Prerequisite> prerequisitesRequiredByThisCourse = new ArrayList<>();
 
     @OneToMany(mappedBy = "coreqCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
-    private Set<Corequisite> corequisitesForThisCourse = new HashSet<>();
+    private List<Corequisite> corequisitesForThisCourse = new ArrayList<>();
     @OneToMany(mappedBy = "connectedCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
-    private Set<Corequisite> corequisitesRequiredByThisCourse = new HashSet<>();
+    private List<Corequisite> corequisitesRequiredByThisCourse = new ArrayList<>();
 
     @OneToMany(mappedBy = "course")
     @JsonBackReference
-    private Set<CourseTag> courseTags = new HashSet<>();
+    private List<CourseTag> courseTags = new ArrayList<>();
+    @OneToMany(mappedBy = "course")
+    @JsonBackReference
+    private List<CourseTerm> courseTerms = new ArrayList<>();
 
     public Course() {
     }
@@ -149,7 +153,7 @@ public class Course {
         this.department = department;
     }
 
-    public Set<Prerequisite> getPrerequisitesForThisCourse() {
+    public List<Prerequisite> getPrerequisitesForThisCourse() {
         return prerequisitesForThisCourse;
     }
     public void addPrerequisitesForThisCourse(Prerequisite prereq) {
@@ -159,7 +163,7 @@ public class Course {
         this.prerequisitesForThisCourse.remove(prereq);
     }
 
-    public Set<Prerequisite> getPrerequisitesRequiredByThisCourse() {
+    public List<Prerequisite> getPrerequisitesRequiredByThisCourse() {
         return prerequisitesRequiredByThisCourse;
     }
     public void addPrerequisitesRequiredByThisCourse(Prerequisite prereq) {
