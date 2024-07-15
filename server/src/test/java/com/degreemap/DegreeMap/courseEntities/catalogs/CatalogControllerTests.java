@@ -19,8 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(CourseCatalogController.class)
 public class CatalogControllerTests {
     
-    // TODO test courses
-
     @Autowired
     private MockMvc mockMvc;
 
