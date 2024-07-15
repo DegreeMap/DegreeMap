@@ -17,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.degreemap.DegreeMap.dmEntities.blocks.BlockController;
+import com.degreemap.DegreeMap.dmEntities.courseTerms.CourseTermController;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMap;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapController;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapRepository;
@@ -27,7 +29,7 @@ import com.degreemap.DegreeMap.dmEntities.years.Year;
 import com.degreemap.DegreeMap.dmEntities.years.YearController;
 import com.degreemap.DegreeMap.dmEntities.years.YearRepository;
 
-@WebMvcTest(controllers = {DegreeMapController.class, YearController.class, TermController.class})
+@WebMvcTest(controllers = {DegreeMapController.class, YearController.class, TermController.class, CourseTermController.class, BlockController.class,})
 public class dmFeatureManualTests {
     @Autowired
     private MockMvc mockMvc;

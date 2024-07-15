@@ -38,7 +38,7 @@ public class BlockController {
             // TODO add logic to make sure there aren't courses tied to the term (throw runtime)
 
             Block block = new Block(postRequest.name, term);
-            term.addBlock(block);
+            term.setBlock(block);
             termRepository.save(term);
             return ResponseEntity.ok(blockRepository.save(block));
         }
@@ -84,7 +84,7 @@ public class BlockController {
             Block block = blockRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Block not found with id " + id));
             Term term = block.getTerm();
-            term.removeBlock(block);
+            term.deleteBlock();
             blockRepository.delete(block);
             blockRepository.save(block);
             termRepository.save(term);

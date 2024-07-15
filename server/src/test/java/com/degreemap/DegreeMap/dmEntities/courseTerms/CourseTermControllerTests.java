@@ -38,7 +38,7 @@ public class CourseTermControllerTests {
 
     @Test
     public void createCourseTermTest() throws Exception {
-        Course course = new Course(); // You might want to add specific fields
+        Course course = new Course(); 
         course.setId(1L);
         Term term = new Term();
         term.setId(2L);

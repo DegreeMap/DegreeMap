@@ -1,9 +1,7 @@
 package com.degreemap.DegreeMap.dmEntities.terms;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.degreemap.DegreeMap.dmEntities.blocks.Block;
 import com.degreemap.DegreeMap.dmEntities.courseTerms.CourseTerm;
@@ -22,14 +20,14 @@ public class Term {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy="term", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses related to it
-    private List<Block> blocks = new ArrayList<Block>();
+    @OneToOne(mappedBy="term", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses related to it
+    private Block block;
     // TODO There can only be one block. I'm in a rush so I don't have time to research if there's a way to only have one associated.
     // research it later :/ (im guessing @OneToOne)
 
     @OneToMany(mappedBy = "term")
     @JsonBackReference
-    private Set<CourseTerm> courseTerms = new HashSet<>();
+    private List<CourseTerm> courseTerms = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "yearId", nullable = false)
@@ -67,19 +65,31 @@ public class Term {
         this.year = year;
     }
 
-    public List<Block> getBlocks() {
-        return blocks;
+    public Block getBlock() {
+        return block;
     }
-    public void addBlock(Block block) {
-        // TODO: Fix this horrid code
-        
-        List<Block> newBlocks = new ArrayList<>();
-        newBlocks.add(block);
-
-        this.blocks = newBlocks;
+    public void setBlock(Block block) {
+        if(this.courseTerms.isEmpty()){
+            this.block = block;
+        } else {
+            throw new RuntimeException("Term must not have any Courses in order to assign a Block to it");   
+        }
+    }
+    public void deleteBlock(){
+        this.block = null;
     }
 
-    public void removeBlock(Block block) {
-        this.blocks.remove(block);
+    public List<CourseTerm> getCourseTerms(){
+        return this.courseTerms;
+    }
+    public void addCourseTerm(CourseTerm courseTerm){
+        if(this.block != null){
+            this.courseTerms.add(courseTerm);
+        } else {
+            throw new RuntimeException("Term must not be assigned a Block in order to have Courses");   
+        }
+    }
+    public void removeCourseTerm(CourseTerm courseTerm){
+        this.courseTerms.remove(courseTerm);
     }
 }
