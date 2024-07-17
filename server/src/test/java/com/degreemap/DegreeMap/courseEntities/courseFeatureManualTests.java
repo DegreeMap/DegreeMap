@@ -81,6 +81,8 @@ public class courseFeatureManualTests {
         "name":"Machine Learning"
     }
 
+    ...
+
     **/
 
     @Test
