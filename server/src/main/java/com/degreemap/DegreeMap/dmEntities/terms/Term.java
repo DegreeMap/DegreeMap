@@ -1,5 +1,10 @@
 package com.degreemap.DegreeMap.dmEntities.terms;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.degreemap.DegreeMap.dmEntities.blocks.Block;
+import com.degreemap.DegreeMap.dmEntities.courseTerms.CourseTerm;
 import com.degreemap.DegreeMap.dmEntities.years.Year;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -14,6 +19,14 @@ public class Term {
 
     @Column(nullable = false)
     private String name;
+
+    @OneToOne(mappedBy="term", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses related to it
+    private Block block;
+    // TODO There can only be one block. I'm in a rush so I don't have time to research if there's a way to only have one associated.
+    // research it later :/ (im guessing @OneToOne)
+
+    @OneToMany(mappedBy = "term")
+    private List<CourseTerm> courseTerms = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "yearId", nullable = false)
@@ -49,5 +62,33 @@ public class Term {
     }
     public void setYear(Year year) {
         this.year = year;
+    }
+
+    public Block getBlock() {
+        return block;
+    }
+    public void setBlock(Block block) {
+        if(this.courseTerms.isEmpty()){
+            this.block = block;
+        } else {
+            throw new RuntimeException("Term must not have any Courses in order to assign a Block to it");   
+        }
+    }
+    public void deleteBlock(){
+        this.block = null;
+    }
+
+    public List<CourseTerm> getCourseTerms(){
+        return this.courseTerms;
+    }
+    public void addCourseTerm(CourseTerm courseTerm){
+        if(this.block == null){
+            this.courseTerms.add(courseTerm);
+        } else {
+            throw new RuntimeException("Term must not be assigned a Block in order to have Courses");   
+        }
+    }
+    public void removeCourseTerm(CourseTerm courseTerm){
+        this.courseTerms.remove(courseTerm);
     }
 }

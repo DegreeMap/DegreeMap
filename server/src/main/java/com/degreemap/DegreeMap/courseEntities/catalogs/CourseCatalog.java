@@ -1,6 +1,6 @@
 package com.degreemap.DegreeMap.courseEntities.catalogs;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.degreemap.DegreeMap.courseEntities.courses.Course;
 
@@ -17,7 +17,7 @@ public class CourseCatalog {
     private String name;
 
     @OneToMany(mappedBy="courseCatalog", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses related to it
-    private Set<Course> courses = new HashSet<Course>();
+    private List<Course> courses = new ArrayList<Course>();
 
     public CourseCatalog() {
     }
@@ -52,7 +52,7 @@ public class CourseCatalog {
     public void removeCourse(Course course){
         this.courses.remove(course);
     }
-    public Set<Course> getCourses(){
+    public List<Course> getCourses(){
         return this.courses;
     }
 }
