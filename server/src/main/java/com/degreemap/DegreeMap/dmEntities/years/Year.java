@@ -1,7 +1,7 @@
 package com.degreemap.DegreeMap.dmEntities.years;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMap;
 import com.degreemap.DegreeMap.dmEntities.terms.Term;
@@ -20,7 +20,7 @@ public class Year {
     private String name;
 
     @OneToMany(mappedBy="year", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses related to it
-    private Set<Term> terms = new HashSet<Term>();
+    private List<Term> terms = new ArrayList<Term>();
 
     @ManyToOne
     @JoinColumn(name = "degreeMapId", nullable = false)
@@ -58,7 +58,7 @@ public class Year {
         this.degreeMap = degreeMap;
     }
 
-    public Set<Term> getTerms() {
+    public List<Term> getTerms() {
         return terms;
     }    
     public void addTerm(Term term) {

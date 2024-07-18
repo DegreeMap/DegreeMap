@@ -69,8 +69,89 @@ public class dmFeatureManualTests {
         {
             "id":1,
             "name":"SE Associates Degree",
-            "years":[{"id":3,"name":"2022-2023","terms":[{"id":7,"name":"Fall","block":null,"courseTerms":[]},{"id":9,"name":"Summer","block":null,"courseTerms":[]},{"id":8,"name":"Spring","block":null,"courseTerms":[]}]},{"id":2,"name":"2021-2022","terms":[{"id":5,"name":"Spring","block":null,"courseTerms":[]},{"id":4,"name":"Fall","block":null,"courseTerms":[]},{"id":6,"name":"Summer","block":null,"courseTerms":[]}]}]}
-     */
+            "years": [
+              {
+                "id": 3,
+                "name": "2022-2023",
+                "terms": [
+                  {
+                    "id": 8,
+                    "name": "Spring",
+                    "block": null,
+                    "courseTerms": []
+                  },
+                  {
+                    "id": 9,
+                    "name": "Summer",
+                    "block": {
+                      "id": 2,
+                      "name": "Summer Break"
+                    },
+                    "courseTerms": []
+                  },
+                  {
+                    "id": 7,
+                    "name": "Fall",
+                    "block": null,
+                    "courseTerms": []
+                  }
+                ]
+              },
+              {
+                "id": 2,
+                "name": "2021-2022",
+                "terms": [
+                  {
+                    "id": 6,
+                    "name": "Summer",
+                    "block": {
+                      "id": 1,
+                      "name": "Summer Break"
+                    },
+                    "courseTerms": []
+                  },
+                  {
+                    "id": 5,
+                    "name": "Spring",
+                    "block": null,
+                    "courseTerms": [
+                      {
+                        "id": 2,
+                        "course": {
+                          "id": 4,
+                          "name": "Personal SoftDev",
+                          "courseCode": "SWEN-250",
+                          "credits": 4,
+                          "institution": "RIT",
+                          "college": "Golisano",
+                          "department": "Software Engineering"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": 4,
+                    "name": "Fall",
+                    "block": null,
+                    "courseTerms": [
+                      {
+                        "id": 1,
+                        "course": {
+                          "id": 2,
+                          "name": "SoftDev I",
+                          "courseCode": "GCIS-123",
+                          "credits": 4,
+                          "institution": "RIT",
+                          "college": "Golisano",
+                          "department": "Software Engineering"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+}     */
     @Test
     public void manuallyTestDegreeMaps() throws Exception {
         DegreeMap degreeMap = new DegreeMap("SE Associates Degree");
