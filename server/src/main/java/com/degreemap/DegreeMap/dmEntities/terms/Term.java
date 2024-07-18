@@ -26,7 +26,6 @@ public class Term {
     // research it later :/ (im guessing @OneToOne)
 
     @OneToMany(mappedBy = "term")
-    @JsonBackReference
     private List<CourseTerm> courseTerms = new ArrayList<>();
 
     @ManyToOne

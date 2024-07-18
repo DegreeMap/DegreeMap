@@ -17,6 +17,17 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
+import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogController;
+import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
+import com.degreemap.DegreeMap.courseEntities.courses.Course;
+import com.degreemap.DegreeMap.courseEntities.courses.CourseController;
+import com.degreemap.DegreeMap.courseEntities.courses.CourseRepository;
+import com.degreemap.DegreeMap.dmEntities.blocks.Block;
+import com.degreemap.DegreeMap.dmEntities.blocks.BlockController;
+import com.degreemap.DegreeMap.dmEntities.blocks.BlockRepository;
+import com.degreemap.DegreeMap.dmEntities.courseTerms.CourseTermController;
+import com.degreemap.DegreeMap.dmEntities.courseTerms.CourseTermRepository;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMap;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapController;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapRepository;
@@ -27,8 +38,8 @@ import com.degreemap.DegreeMap.dmEntities.years.Year;
 import com.degreemap.DegreeMap.dmEntities.years.YearController;
 import com.degreemap.DegreeMap.dmEntities.years.YearRepository;
 
-@WebMvcTest(controllers = {DegreeMapController.class, YearController.class, TermController.class})
-public class dmFeatureManualTests2 {
+@WebMvcTest(controllers = {DegreeMapController.class, YearController.class, TermController.class, BlockController.class, CourseTermController.class, CourseController.class, CourseCatalogController.class})
+public class dmFeatureManualTests {
     @Autowired
     private MockMvc mockMvc;
 
@@ -38,6 +49,15 @@ public class dmFeatureManualTests2 {
     private YearRepository yearRepository;
     @MockBean
     private TermRepository termRepository;
+    @MockBean
+    private BlockRepository blockRepository;
+    @MockBean
+    private CourseTermRepository courseTermRepository;
+
+    @MockBean
+    private CourseCatalogRepository courseCatalogRepository;
+    @MockBean
+    private CourseRepository courseRepository;
     
     // Test for manually printing out DegreeMaps
     // In VSCode, only run this test and go to Debug Console.
@@ -117,5 +137,53 @@ public class dmFeatureManualTests2 {
                 .andReturn();
 
         System.out.println("\n!!!! DegreeMap Data !!!! \n" + result.getResponse().getContentAsString());
+
+        // Adding 2 courses and 1 block
+
+        CourseCatalog catalog = new CourseCatalog("RIT Course Catalog");
+        catalog.setId(1L);
+        given(courseCatalogRepository.findById(1L)).willReturn(Optional.of(catalog));
+        given(courseCatalogRepository.save(any(CourseCatalog.class))).willReturn(catalog);
+        MvcResult catalogResult = mockMvc.perform(post("/api/course-catalogs")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"" + catalog.getName() + "\"}"))
+                        .andExpect(status().isCreated())
+                        .andExpect(jsonPath("$.name").value("RIT Course Catalog"))
+                        .andReturn();
+        System.out.println("\n!!!! Catalog Data !!!! \n" + catalogResult.getResponse().getContentAsString());
+
+        Course gcis123 = new Course(catalog, "SoftDev I", "GCIS-123", 4, "RIT", "Golisano", "Software Engineering");
+        gcis123.setId(2L);
+        given(courseRepository.findById(2L)).willReturn(Optional.of(gcis123));
+        MvcResult gcis123Result = mockMvc.perform(get("/api/courses/2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("SoftDev I"))
+                .andReturn();
+        System.out.println("\n!!!! GCIS-123 Data !!!! \n" + gcis123Result.getResponse().getContentAsString());
+
+        Course swen250 = new Course(catalog, "Personal SoftDev", "SWEN-250", 4, "RIT", "Golisano", "Software Engineering");
+        swen250.setId(4L);
+        given(courseRepository.findById(4L)).willReturn(Optional.of(swen250));
+        MvcResult swen250Result = mockMvc.perform(get("/api/courses/4"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Personal SoftDev"))
+                .andReturn();
+        System.out.println("\n!!!! SWEN-250 Data !!!! \n" + swen250Result.getResponse().getContentAsString());
+
+        Block summerBlock = new Block("Summer Break", summer);
+        summerBlock.setId(1L);
+        given(blockRepository.findById(1L)).willReturn(Optional.of(summerBlock));
+        MvcResult blockResult = mockMvc.perform(get("/api/blocks/1"))
+                .andExpect(status().isOk())
+                .andReturn();
+        System.out.println("\n!!!! Summer Block 1 Data !!!! \n" + blockResult.getResponse().getContentAsString());
+
+        Block summerBlock2 = new Block("Summer Break", summer2);
+        summerBlock2.setId(2L);
+        given(blockRepository.findById(2L)).willReturn(Optional.of(summerBlock2));
+        MvcResult blockResult2 = mockMvc.perform(get("/api/blocks/2"))
+                .andExpect(status().isOk())
+                .andReturn();
+        System.out.println("\n!!!! Summer Block 2 Data !!!! \n" + blockResult2.getResponse().getContentAsString());
     }
 }

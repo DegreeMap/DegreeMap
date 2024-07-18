@@ -2,6 +2,7 @@ package com.degreemap.DegreeMap.dmEntities.courseTerms;
 
 import com.degreemap.DegreeMap.courseEntities.courses.Course;
 import com.degreemap.DegreeMap.dmEntities.terms.Term;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 
@@ -18,6 +19,7 @@ public class CourseTerm {
 
     @ManyToOne
     @JoinColumn(name = "termId", nullable = false)
+    @JsonBackReference
     private Term term;
 
     public CourseTerm() {}
