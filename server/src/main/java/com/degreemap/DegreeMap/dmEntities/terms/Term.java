@@ -82,7 +82,7 @@ public class Term {
         return this.courseTerms;
     }
     public void addCourseTerm(CourseTerm courseTerm){
-        if(this.block != null){
+        if(this.block == null){
             this.courseTerms.add(courseTerm);
         } else {
             throw new RuntimeException("Term must not be assigned a Block in order to have Courses");   

@@ -28,6 +28,7 @@ public class Block {
         }
         this.name = name;
         this.term = term;
+        term.setBlock(this);
     }
 
     public Long getId() {

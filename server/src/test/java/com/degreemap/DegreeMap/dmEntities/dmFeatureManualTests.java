@@ -26,6 +26,7 @@ import com.degreemap.DegreeMap.courseEntities.courses.CourseRepository;
 import com.degreemap.DegreeMap.dmEntities.blocks.Block;
 import com.degreemap.DegreeMap.dmEntities.blocks.BlockController;
 import com.degreemap.DegreeMap.dmEntities.blocks.BlockRepository;
+import com.degreemap.DegreeMap.dmEntities.courseTerms.CourseTerm;
 import com.degreemap.DegreeMap.dmEntities.courseTerms.CourseTermController;
 import com.degreemap.DegreeMap.dmEntities.courseTerms.CourseTermRepository;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMap;
@@ -64,32 +65,11 @@ public class dmFeatureManualTests {
 
     /*
      * For this test, data output should look like this:
-     
-    {
-        "id":1,
-        "name":"SE Associates Degree",
-        "years":[
-                    {
-                        "id":3,
-                        "name":"2022-2023",
-                        "terms":[
-                            {"id":8,"name":"Spring"},
-                            {"id":9,"name":"Summer"},
-                            {"id":7,"name":"Fall"}
-                        ]
-                    },
-                    {
-                        "id":2,
-                        "name":"2021-2022",
-                        "terms":[
-                            {"id":6,"name":"Summer"},
-                            {"id":4,"name":"Fall"},
-                            {"id":5,"name":"Spring"}
-                        ]
-                    }
-                ]
-    }
-     
+        !!!! DegreeMap Data !!!! 
+        {
+            "id":1,
+            "name":"SE Associates Degree",
+            "years":[{"id":3,"name":"2022-2023","terms":[{"id":7,"name":"Fall","block":null,"courseTerms":[]},{"id":9,"name":"Summer","block":null,"courseTerms":[]},{"id":8,"name":"Spring","block":null,"courseTerms":[]}]},{"id":2,"name":"2021-2022","terms":[{"id":5,"name":"Spring","block":null,"courseTerms":[]},{"id":4,"name":"Fall","block":null,"courseTerms":[]},{"id":6,"name":"Summer","block":null,"courseTerms":[]}]}]}
      */
     @Test
     public void manuallyTestDegreeMaps() throws Exception {
@@ -185,5 +165,28 @@ public class dmFeatureManualTests {
                 .andExpect(status().isOk())
                 .andReturn();
         System.out.println("\n!!!! Summer Block 2 Data !!!! \n" + blockResult2.getResponse().getContentAsString());
+
+        CourseTerm term123 = new CourseTerm(gcis123, fall);
+        term123.setId(1L);
+        given(courseTermRepository.findById(1L)).willReturn(Optional.of(term123));
+        MvcResult ct123 = mockMvc.perform(get("/api/courseTerms/1"))
+                .andExpect(status().isOk())
+                .andReturn();
+        System.out.println("\n!!!! CourseTerm 123 Data !!!! \n" + ct123.getResponse().getContentAsString());
+        
+        CourseTerm term250 = new CourseTerm(swen250, spring);
+        term250.setId(2L);
+        given(courseTermRepository.findById(2L)).willReturn(Optional.of(term250));
+        MvcResult ct250 = mockMvc.perform(get("/api/courseTerms/2"))
+                .andExpect(status().isOk())
+                .andReturn();
+        System.out.println("\n!!!! CourseTerm 250 Data !!!! \n" + ct250.getResponse().getContentAsString());
+
+        MvcResult updatedResult = mockMvc.perform(get("/api/degreeMaps/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("SE Associates Degree"))
+                .andReturn();
+
+        System.out.println("\n!!!! DegreeMap Data !!!! \n" + updatedResult.getResponse().getContentAsString());
     }
 }

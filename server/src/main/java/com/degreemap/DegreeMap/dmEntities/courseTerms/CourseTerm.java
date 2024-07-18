@@ -30,6 +30,7 @@ public class CourseTerm {
         }
         this.course = course;
         this.term = term;
+        term.addCourseTerm(this);
     }
 
     public Long getId() {
