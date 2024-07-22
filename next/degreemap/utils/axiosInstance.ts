@@ -15,6 +15,10 @@ const tokenRefreshInterceptor = api.interceptors.request.use(async (config) => {
         return config;
     }
 
+    if (session.error) {
+        throw new Error(session.error);
+    }
+
     const acccessToken = session.accessToken;
     const acccessTokenExpires = new Date(session.accessTokenExpires).getTime(); // Unix timestamp
 

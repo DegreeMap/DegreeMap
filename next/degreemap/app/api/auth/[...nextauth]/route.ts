@@ -94,7 +94,6 @@ async function refreshAccessToken(token: any) {
         if (!refreshCookie) {
             return {
                 ...token,
-                // TODO: Use these errors
                 error: 'NoRefreshTokenError'
             }
         }
@@ -117,7 +116,6 @@ async function refreshAccessToken(token: any) {
         console.dir(error);
         return {
             ...token,
-            // TODO: Use these errors
             error: 'RefreshAccessTokenError'
         }
     

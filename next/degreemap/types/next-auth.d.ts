@@ -8,5 +8,6 @@ declare module "next-auth" {
         user: {
             email: string,
         }
+        error: string | null,
     }
 }
