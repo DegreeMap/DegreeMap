@@ -1,24 +1,13 @@
-// import {ACCESS_TOKEN} from "@/context/AuthContext";
+// import axios from "axios";
+// import { useSession } from "next-auth/react";
 
-const ACCESS_TOKEN = "access_token";
+// export const useAuthRequewst = () => {
+//     const { acccessToken, setAccessToken } = useSession();
 
-export async function loginUser(email: string, password: string): Promise<string> {
-    const response = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-            email, password
-        })
-      });
-
-    const data = await response.json();
-
-    if(response.ok){
-        localStorage.setItem(ACCESS_TOKEN, data.accessToken);
-        return data.accesstoken;
-    } else {
-        throw new Error(data.message || 'Failed to login');
-    }
-}
+//     const refreshToken = async () => {
+//         const res = await axios.post("http://localhost:8080/api/auth/refresh", {}, { withCredentials: true });
+//         if (res.status === 200) {
+//             setAccessToken(res.data.accessToken);
+//         }
+//     }
+// }
