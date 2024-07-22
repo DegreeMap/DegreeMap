@@ -23,29 +23,10 @@ const tokenRefreshInterceptor = api.interceptors.request.use(async (config) => {
         return config;
     }
 
-    // Get a new access token
-
-    const refreshCookie = getCookie('refreshToken');
-
-    if (!refreshCookie) {
-        signOut();
-        return config;
-    }
-
-    const res = await fetch("http://localhost:8080/api/auth/refresh-token", {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${refreshCookie}`
-        }
-    });
-
-    const { acccessToken: newAccessToken } = await res.json();
-
-    config.headers['Authorization'] = `Bearer ${newAccessToken}`;
-    return config;
+    throw new Error("Access token expired");
 
 }, (error) => {
-    console.error("Error refreshing token");
+    console.error("An error occurred with the request interceptor:");
     console.dir(error);
     signOut();
     return Promise.reject(error);
