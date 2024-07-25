@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
+
 @Service
 public class AuthService {
 
@@ -97,12 +99,16 @@ public class AuthService {
         cookie.setHttpOnly(true);
 
         // Makes it so the cookie is only sent to the client if it's being
-        // requested over a secure HTTPS connection
-        cookie.setSecure(true);
+        // requested over a secure HTTPS connection.
+        // Set to true in prod
+        cookie.setSecure(false);
 
         // Cookie will last 15 days. Note that the refresh token is also set
         // to last 15 days; make sure they match.
         cookie.setMaxAge(15 * 24 * 60 * 60);
+
+        cookie.setDomain("localhost");
+        cookie.setPath("/");
 
         response.addCookie(cookie);
     }
@@ -113,6 +119,7 @@ public class AuthService {
         return new AuthResponseDto(
                 accessToken,
                 15 * 60, // 15 mins
+                Date.from(new Date().toInstant().plusSeconds(7)),
                 userDetails.getUsername()
         );
     }

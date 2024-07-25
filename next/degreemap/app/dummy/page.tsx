@@ -1,6 +1,7 @@
 // A page for testing protected routes
 "use client"
 import NavBar from '@/components/nav/navbars';
+import api from '@/utils/axiosInstance';
 
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
@@ -10,19 +11,27 @@ const Page: React.FC = () => {
     const [msg, setMsg] = useState<string>('');
 
     const getData = async () => {
-        const res = await fetch('http://localhost:8080/api/dummy/hello', {
-            method: 'GET',
-            headers: {
-                "Authorization": "Bearer " + session?.user.accessToken,
+
+        try {
+            const res = await api.get('/dummy/hello');
+
+
+
+
+            return res.data.message;
+        } catch (error: any) {
+            
+            // Runs when the server returns non-200 status code
+            
+            if (error.response?.status === 401) {
+                console.error('401 MOMENT');
+                console.dir(error); 
+                return 'unauthorized, so you can\'t see it :(';
             }
-        });
 
-        if (!res.ok) {
-            return res.status === 401 ? "Unauthorized, so you can't see it :(" : 'Backend error: ' + res.status;
+            console.error('Error fetching dummy data: ', error);
+            return 'An error occurred';
         }
-
-        const data = await res.json();
-        return data.message;
     }
 
     useEffect(() => {

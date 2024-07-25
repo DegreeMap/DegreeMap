@@ -1,5 +1,7 @@
+import axios from "axios";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { cookies } from "next/headers";
 
 const handler = NextAuth({
     providers: [
@@ -27,8 +29,14 @@ const handler = NextAuth({
                         ["password", credentials?.password ?? ""]
                     ]).toString(),
                     headers: { "Content-Type": "application/x-www-form-urlencoded" }
-                })
-                const user = await res.json()
+                });
+
+                const refreshCookie = res.headers.get('Set-Cookie')!!;
+                const refreshToken = refreshCookie.split('=')[1].split(';')[0];
+
+                cookies().set('refreshToken', refreshToken);
+
+                const user = await res.json();
 
                 // If no error and we have user data, return it
                 if (res.ok && user) {
@@ -39,15 +47,79 @@ const handler = NextAuth({
             }
         })
     ],
+    secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         async jwt({ token, user }) {
-            return { ...token, ...user };
+            // When user is logged in for the first time
+
+            if (user) {
+                token.accessToken = user.accessToken;
+                token.accessTokenExpires = new Date(user.expiresAt).getTime();
+            }
+
+            // If token has not expired, return it
+            if (token?.accessTokenExpires && Date.now() < token.accessTokenExpires) {
+                return token;
+            }
+
+            // Access token has expired, try to update it
+            return refreshAccessToken(token);
         },
         async session({ session, token, user }) {
-            session.user = token as any;
+
+            // Check if token is expired
+            const accessTokenExpires = new Date(token.accessTokenExpires as string).getTime();
+
+            if (accessTokenExpires && Date.now() < accessTokenExpires) {
+                session.accessToken = token.accessToken as any;
+                session.accessTokenExpires = token.accessTokenExpires as any;
+                return session;
+            }
+
+            // Token has expired, refresh it
+
+            token = await refreshAccessToken(token);
+
+            session.accessToken = token.accessToken as any;
+            session.accessTokenExpires = token.accessTokenExpires as any;
             return session;
         },
     }
-})
+});
+
+async function refreshAccessToken(token: any) {
+    try {
+        const refreshCookie = cookies().get('refreshToken');
+
+        if (!refreshCookie) {
+            return {
+                ...token,
+                error: 'NoRefreshTokenError'
+            }
+        }
+
+        const res = await axios.post("http://localhost:8080/api/auth/refresh-token", {}, {
+            headers: {
+                'Authorization': `Bearer ${refreshCookie.value}`
+            }
+        });
+        const data = res.data;
+
+        return {
+            ...token,
+            accessToken: data.accessToken,
+            accessTokenExpires: data.expiresAt,
+        }
+
+    } catch (error) {
+        console.error("Error refreshing token from route.ts");
+        console.dir(error);
+        return {
+            ...token,
+            error: 'RefreshAccessTokenError'
+        }
+    
+    }
+}
 
 export { handler as GET, handler as POST };
