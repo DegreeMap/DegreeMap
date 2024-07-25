@@ -19,6 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+
 @WebMvcTest(AuthController.class)
 public class AuthControllerTests {
 
@@ -68,7 +72,11 @@ public class AuthControllerTests {
 
         // Mock authenticating a user within authService
         given(authService.getAccessTokenFromCredentials(eq(email), eq(password), any(HttpServletResponse.class)))
-                .willReturn(new AuthResponseDto("jwt", ACCESS_TOKEN_EXPIRATION, email));
+                .willReturn(new AuthResponseDto("jwt",
+                        ACCESS_TOKEN_EXPIRATION,
+                        Date.from(Instant.now().plus(ACCESS_TOKEN_EXPIRATION, ChronoUnit.MINUTES)),
+                        email
+                ));
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
