@@ -2,6 +2,7 @@ package com.degreemap.DegreeMap.users;
 
 import com.degreemap.DegreeMap.auth.refreshToken.RefreshTokenEntity;
 import com.degreemap.DegreeMap.users.userCatalog.UserCourseCatalog;
+import com.degreemap.DegreeMap.users.userDm.UserDegreeMap;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -38,8 +39,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RefreshTokenEntity> refreshTokens;
 
-    @OneToMany(mappedBy = "courseCatalog", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserCourseCatalog> userCourseCatalogs = new ArrayList<UserCourseCatalog>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserDegreeMap> userDegreeMaps = new ArrayList<UserDegreeMap>();
 
     public User() {
     }
@@ -89,5 +93,15 @@ public class User {
     }
     public void removeUserCC(UserCourseCatalog userCC){
         this.userCourseCatalogs.remove(userCC);
+    }
+
+    public List<UserDegreeMap> getUserDMs(){
+        return this.userDegreeMaps;
+    }
+    public void addUserDM(UserDegreeMap userDM){
+        this.userDegreeMaps.add(userDM);
+    }
+    public void removeUserDM(UserDegreeMap userDM){
+        this.userDegreeMaps.remove(userDM);
     }
 }

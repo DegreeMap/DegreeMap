@@ -1,4 +1,4 @@
-package com.degreemap.DegreeMap.users.userCatalog;
+package com.degreemap.DegreeMap.users.userDm;
 
 import java.util.List;
 
@@ -13,41 +13,41 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
-import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
+import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMap;
+import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapRepository;
 import com.degreemap.DegreeMap.users.User;
 import com.degreemap.DegreeMap.users.UserRepository;
 
 @RestController
-@RequestMapping("/api/userCourseCatalog")
-public class UserCourseCatalogController {
+@RequestMapping("/api/userDegreeMap")
+public class UserDegreeMapController {
     static class Request {
         public Long userId;
-        public Long catalogId;
+        public Long degreeMapId;
     }
 
     @Autowired
-    public UserCourseCatalogRepository userCcRepository;
+    public UserDegreeMapRepository userDmRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private CourseCatalogRepository ccRepository;
+    private DegreeMapRepository dmRepository;
 
     @PostMapping
-    public ResponseEntity<?> createUserCC(@RequestBody Request postRequest) {
+    public ResponseEntity<?> createUserDM(@RequestBody Request postRequest) {
         try {
             User user = userRepository.findById(postRequest.userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + postRequest.userId));
-            CourseCatalog cc = ccRepository.findById(postRequest.catalogId)
-                .orElseThrow(() -> new RuntimeException("Catalog not found with id " + postRequest.catalogId));
+            DegreeMap dm = dmRepository.findById(postRequest.degreeMapId)
+                .orElseThrow(() -> new RuntimeException("DegreeMap not found with id " + postRequest.degreeMapId));
             
-            UserCourseCatalog userCC = new UserCourseCatalog(user, cc);
+            UserDegreeMap userDm = new UserDegreeMap(user, dm);
             
-            user.addUserCC(userCC);
-            cc.addUserCC(userCC);
+            user.addUserDM(userDm);
+            dm.addUserDM(userDm);
             userRepository.save(user);
-            ccRepository.save(cc);
-            return ResponseEntity.ok(userCcRepository.save(userCC));
+            dmRepository.save(dm);
+            return ResponseEntity.ok(userDmRepository.save(userDm));
         }
         catch(IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -58,16 +58,16 @@ public class UserCourseCatalogController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserCourseCatalog>> getAllUserCCs() {
-        return ResponseEntity.ok(userCcRepository.findAll());
+    public ResponseEntity<List<UserDegreeMap>> getAllUserDMs() {
+        return ResponseEntity.ok(userDmRepository.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserCCById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserDMById(@PathVariable Long id) {
         try {
-            return userCcRepository.findById(id)
-                    .map(userCC -> ResponseEntity.ok(userCC))
-                    .orElseThrow(() -> new RuntimeException("UserCourseCatalog not found with id " + id));
+            return userDmRepository.findById(id)
+                    .map(userDM -> ResponseEntity.ok(userDM))
+                    .orElseThrow(() -> new RuntimeException("UserDegreeMap not found with id " + id));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  
         }
@@ -89,18 +89,18 @@ public class UserCourseCatalogController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUserCC(@PathVariable Long id) {
         try {
-            return userCcRepository.findById(id).map(userCC -> {
-                userCcRepository.delete(userCC);
-                User user = userCC.getUser();
-                CourseCatalog cc = userCC.getCourseCatalog(); 
+            return userDmRepository.findById(id).map(userDM -> {
+                userDmRepository.delete(userDM);
+                User user = userDM.getUser();
+                DegreeMap dm = userDM.getDegreeMap(); 
 
-                user.removeUserCC(userCC);
-                cc.removeUserCC(userCC);
+                user.removeUserDM(userDM);
+                dm.removeUserDM(userDM);
                 userRepository.save(user);
-                ccRepository.save(cc);
+                dmRepository.save(dm);
 
                 return ResponseEntity.ok().build();
-            }).orElseThrow(() -> new RuntimeException("UserCourseCatalog not found with id " + id));
+            }).orElseThrow(() -> new RuntimeException("UserDegreeMap not found with id " + id));
         }
         catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

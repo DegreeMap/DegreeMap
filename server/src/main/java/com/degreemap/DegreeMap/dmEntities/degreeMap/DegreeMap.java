@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.degreemap.DegreeMap.dmEntities.years.Year;
+import com.degreemap.DegreeMap.users.userDm.UserDegreeMap;
 
 import jakarta.persistence.*;
 
@@ -20,6 +21,9 @@ public class DegreeMap {
 
     @OneToMany(mappedBy="degreeMap", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses related to it
     private List<Year> years = new ArrayList<Year>();
+
+    @OneToMany(mappedBy = "degreeMap", cascade = CascadeType.ALL)
+    private List<UserDegreeMap> userDegreeMaps = new ArrayList<UserDegreeMap>();
 
     public DegreeMap() {}
 
@@ -52,5 +56,15 @@ public class DegreeMap {
     }
     public List<Year> getYears(){
         return this.years;
+    }
+
+    public List<UserDegreeMap> getUserDMs(){
+        return this.userDegreeMaps;
+    }
+    public void addUserDM(UserDegreeMap userDM){
+        this.userDegreeMaps.add(userDM);
+    }
+    public void removeUserDM(UserDegreeMap userDM){
+        this.userDegreeMaps.remove(userDM);
     }
 }
