@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.degreemap.DegreeMap.courseEntities.courses.Course;
+import com.degreemap.DegreeMap.users.userCatalog.UserCourseCatalog;
 
 import jakarta.persistence.*;
 
@@ -18,6 +19,9 @@ public class CourseCatalog {
 
     @OneToMany(mappedBy="courseCatalog", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses related to it
     private List<Course> courses = new ArrayList<Course>();
+
+    @OneToMany(mappedBy = "courseCatalog", cascade = CascadeType.ALL)
+    private List<UserCourseCatalog> userCourseCatalogs = new ArrayList<UserCourseCatalog>();
 
     public CourseCatalog() {
     }
@@ -54,5 +58,15 @@ public class CourseCatalog {
     }
     public List<Course> getCourses(){
         return this.courses;
+    }
+
+    public List<UserCourseCatalog> getUserCCs(){
+        return this.userCourseCatalogs;
+    }
+    public void addUserCC(UserCourseCatalog userCC){
+        this.userCourseCatalogs.add(userCC);
+    }
+    public void removeCourseTerm(UserCourseCatalog userCC){
+        this.userCourseCatalogs.remove(userCC);
     }
 }

@@ -22,8 +22,6 @@ public class Term {
 
     @OneToOne(mappedBy="term", cascade = CascadeType.ALL) // <-- cascadetype all means when you delete a CourseCatalog, it deletes all Courses related to it
     private Block block;
-    // TODO There can only be one block. I'm in a rush so I don't have time to research if there's a way to only have one associated.
-    // research it later :/ (im guessing @OneToOne)
 
     @OneToMany(mappedBy = "term")
     private List<CourseTerm> courseTerms = new ArrayList<>();

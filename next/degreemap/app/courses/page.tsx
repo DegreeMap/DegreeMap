@@ -5,7 +5,7 @@ export default function SearchCourses() {
     return (
         <>
             <NavBar></NavBar>
-            <p>Search Courses Page!</p>
+            <p>Course Catalog Page!</p>
         </>
     );
 }
