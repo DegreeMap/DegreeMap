@@ -87,7 +87,7 @@ public class User {
     public void addUserCC(UserCourseCatalog userCC){
         this.userCourseCatalogs.add(userCC);
     }
-    public void removeCourseTerm(UserCourseCatalog userCC){
+    public void removeUserCC(UserCourseCatalog userCC){
         this.userCourseCatalogs.remove(userCC);
     }
 }
