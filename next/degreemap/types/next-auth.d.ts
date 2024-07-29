@@ -6,6 +6,7 @@ declare module "next-auth" {
         expires: string,
         accessTokenExpires: string,
         user: {
+            id: number,
             email: string,
         }
         error: string | null,

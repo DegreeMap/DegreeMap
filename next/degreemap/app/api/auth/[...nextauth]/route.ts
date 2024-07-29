@@ -38,12 +38,22 @@ const handler = NextAuth({
 
                 const user = await res.json();
 
-                // If no error and we have user data, return it
-                if (res.ok && user) {
-                    return user
+                // If we error, we return the error message
+                if (!res.ok || user.error) {
+                    return null;
                 }
-                // Return null if user data could not be retrieved
-                return null
+
+                // Make a request to get the ID of the user
+                const idRes = await fetch("http://localhost:8080/api/users/id_of/" + user.email, {
+                    headers: {
+                        "Authorization": `Bearer ${user.accessToken}`
+                    }
+                });
+
+                const id = await idRes.text();
+
+                return { ...user, id };
+
             }
         })
     ],
@@ -66,13 +76,15 @@ const handler = NextAuth({
             return refreshAccessToken(token);
         },
         async session({ session, token, user }) {
-
             // Check if token is expired
             const accessTokenExpires = new Date(token.accessTokenExpires as string).getTime();
 
             if (accessTokenExpires && Date.now() < accessTokenExpires) {
                 session.accessToken = token.accessToken as any;
                 session.accessTokenExpires = token.accessTokenExpires as any;
+
+                const id = parseInt(token.sub!!);
+                session.user.id = id;
                 return session;
             }
 
@@ -82,6 +94,9 @@ const handler = NextAuth({
 
             session.accessToken = token.accessToken as any;
             session.accessTokenExpires = token.accessTokenExpires as any;
+
+            const id = parseInt(token.sub!!);
+            session.user.id = id;
             return session;
         },
     }

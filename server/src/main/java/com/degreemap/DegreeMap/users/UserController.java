@@ -42,6 +42,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("/id_of/{email}")
+    public ResponseEntity<?> getIdByEmail(@PathVariable String email){
+        try {
+            return ResponseEntity.ok(userService.getUserByEmail(email).getId());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(NOT_FOUND, e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody Request putRequest) {
         var userInfo = new UserService.UserInfo(
