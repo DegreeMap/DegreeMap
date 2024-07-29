@@ -53,6 +53,10 @@ const Page: React.FC = () => {
             <div>
                 <h1>Protected page</h1>
                 <h2>MESSAGE: {msg}</h2>
+                {/* How to access user's ID */}
+                {session &&
+                    <h2>Your ID is {session.user.id}</h2>
+                }
             </div>
         </>
     );
