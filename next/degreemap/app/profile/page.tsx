@@ -4,9 +4,8 @@
 import React from 'react';
 import { Button } from 'reactstrap';
 import NavBar from '@/components/nav/navbars';
-import { getSession, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { signOut } from 'next-auth/react';
-import { GetServerSideProps } from 'next';
 import authenticateComponent from '@/components/auth/authenticateComponent';
 
 function Profile() {
