@@ -2,13 +2,13 @@
 
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 
 export default function authenticateComponent(Component: any) {
     return function AuthedComponent(props: any) {
         const { data: session } = useSession();
 
-        useEffect(() => {
+        useLayoutEffect(() => {
             if (!session) {
                redirect('/login_signup');
             }

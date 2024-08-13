@@ -1,19 +1,25 @@
 "use client"
 
-import CreateAccountForm from "@/components/auth/CreateAccountForm";
 import AuthForm from "@/components/auth/AuthForm";
-import LogoutForm from "@/components/auth/LogoutForm";
 import NavBar from "@/components/nav/navbars";
-// import { useAuth } from "@/context/AuthContext";
-import { signIn, signOut, useSession } from "next-auth/react";
-import React from "react";
-import { Alert, Col, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import { useSession } from "next-auth/react";
+import React, { useLayoutEffect } from "react";
+import { redirect } from "next/navigation";
 
-export default function ProfilePage() {    
-    const { data: session } = useSession();
+export default function LoginSignupPage() {
+    const { data: session, status } = useSession();
     console.log(session);
 
-    // const { isAuthenticated } = useAuth();
+    useLayoutEffect(() => {
+        // If we're already authenticated, redirect to profile page
+        if (session)
+            redirect("/profile");
+    }, [session]);
+
+    // Don't render the screen if we're not unauthenticated
+    // (status can be 'loading', 'authenticated', or 'unauthenticated')
+    if (status != 'unauthenticated')
+        return null;
 
     return <>
         <NavBar></NavBar>
@@ -24,31 +30,4 @@ export default function ProfilePage() {
         <AuthForm></AuthForm>
     </>
     
-    if(session?.user){
-        return (
-            <>
-                <NavBar></NavBar>
-                <p>profile page!</p>
-                <br></br>
-                <br></br>
-                <p>you are logged in, congrats!</p>
-                <LogoutForm></LogoutForm>
-            </>
-        )
-    }
-    else {
-        return (
-            <>
-                <NavBar></NavBar>
-                <p>profile page!</p>
-                <br></br>
-                <br></br>
-                <p>you are logged out. boo!</p>
-                <AuthForm></AuthForm>
-                <br></br>
-                <p>don't have an account? make one here</p>
-                <CreateAccountForm></CreateAccountForm>
-            </>
-        );
-    }
 }
