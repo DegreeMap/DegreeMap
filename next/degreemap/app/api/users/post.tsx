@@ -17,8 +17,9 @@ export const createAccount = async (email: string, password: string) => {
     }
 
     // After registering the user, sign in the user
-    signIn("credentials", {
+    return signIn("credentials", {
         username: email,
         password: password,
-    })
+        redirect: false,
+    });
 }

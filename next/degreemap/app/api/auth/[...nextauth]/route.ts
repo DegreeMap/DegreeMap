@@ -31,17 +31,17 @@ const handler = NextAuth({
                     headers: { "Content-Type": "application/x-www-form-urlencoded" }
                 });
 
-                const refreshCookie = res.headers.get('Set-Cookie')!!;
-                const refreshToken = refreshCookie.split('=')[1].split(';')[0];
-
-                cookies().set('refreshToken', refreshToken);
-
                 const user = await res.json();
 
                 // If we error, we return the error message
                 if (!res.ok || user.error) {
                     return null;
                 }
+
+                const refreshCookie = res.headers.get('Set-Cookie')!!;
+                const refreshToken = refreshCookie.split('=')[1].split(';')[0];
+
+                cookies().set('refreshToken', refreshToken);
 
                 // Make a request to get the ID of the user
                 const idRes = await fetch("http://localhost:8080/api/users/id_of/" + user.email, {
