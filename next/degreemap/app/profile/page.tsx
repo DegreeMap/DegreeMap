@@ -7,8 +7,9 @@ import NavBar from '@/components/nav/navbars';
 import { getSession, useSession } from 'next-auth/react';
 import { signOut } from 'next-auth/react';
 import { GetServerSideProps } from 'next';
+import authenticateComponent from '@/components/auth/AuthenticateComponent';
 
-export default function Profile() {
+function Profile() {
     const { data: session } = useSession();
 
     const handleLogout = async () => {
@@ -38,3 +39,5 @@ export default function Profile() {
     </div>
   );
 }
+
+export default authenticateComponent(Profile);
