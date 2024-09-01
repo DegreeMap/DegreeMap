@@ -2,6 +2,7 @@ package com.degreemap.DegreeMap.users.userDm;
 
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMap;
 import com.degreemap.DegreeMap.users.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 
@@ -14,6 +15,7 @@ public class UserDegreeMap {
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
+    @JsonBackReference
     private User user;
     
     @ManyToOne

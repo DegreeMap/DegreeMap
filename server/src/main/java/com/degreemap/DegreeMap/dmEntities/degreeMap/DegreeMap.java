@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.degreemap.DegreeMap.dmEntities.years.Year;
 import com.degreemap.DegreeMap.users.userDm.UserDegreeMap;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 
@@ -23,6 +24,7 @@ public class DegreeMap {
     private List<Year> years = new ArrayList<Year>();
 
     @OneToMany(mappedBy = "degreeMap", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<UserDegreeMap> userDegreeMaps = new ArrayList<UserDegreeMap>();
 
     public DegreeMap() {}
@@ -58,7 +60,7 @@ public class DegreeMap {
         return this.years;
     }
 
-    public List<UserDegreeMap> getUserDMs(){
+    public List<UserDegreeMap> getUserDegreeMaps(){
         return this.userDegreeMaps;
     }
     public void addUserDM(UserDegreeMap userDM){

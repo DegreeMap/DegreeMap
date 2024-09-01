@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.degreemap.DegreeMap.courseEntities.courses.Course;
 import com.degreemap.DegreeMap.users.userCatalog.UserCourseCatalog;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 
@@ -21,6 +22,7 @@ public class CourseCatalog {
     private List<Course> courses = new ArrayList<Course>();
 
     @OneToMany(mappedBy = "courseCatalog", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<UserCourseCatalog> userCourseCatalogs = new ArrayList<UserCourseCatalog>();
 
     public CourseCatalog() {
@@ -60,7 +62,7 @@ public class CourseCatalog {
         return this.courses;
     }
 
-    public List<UserCourseCatalog> getUserCCs(){
+    public List<UserCourseCatalog> getUserCourseCatalogs(){
         return this.userCourseCatalogs;
     }
     public void addUserCC(UserCourseCatalog userCC){

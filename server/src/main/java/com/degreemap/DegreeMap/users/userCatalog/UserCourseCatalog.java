@@ -2,11 +2,12 @@ package com.degreemap.DegreeMap.users.userCatalog;
 
 import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
 import com.degreemap.DegreeMap.users.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table
+@Table(name = "user_course_catalogs")
 public class UserCourseCatalog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +15,7 @@ public class UserCourseCatalog {
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
+    @JsonBackReference
     private User user;
     
     @ManyToOne
