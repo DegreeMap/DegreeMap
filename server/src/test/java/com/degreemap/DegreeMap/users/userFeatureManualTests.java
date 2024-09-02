@@ -165,10 +165,53 @@ public class userFeatureManualTests {
                 .andReturn();
 
         System.out.println("\n!!!! User Data !!!! \n" + userResult2.getResponse().getContentAsString());
+        
+        /*
 
+{
+  "id": 1,
+  "email": "degreeMap@gmail.com",
+  "password": "$2a$10$hsUD1NUnr1oZb9Y40REZM.E9aNOXhwy/DMm1NxIhwysVfoWe1CVhe",
+  "refreshTokens": null,
+  "userCCs": [
+    {
+      "id": 1,
+      "courseCatalog": {
+        "id": 1,
+        "name": "RIT Course Catalog",
+        "courses": []
+      }
+    },
+    {
+      "id": 2,
+      "courseCatalog": {
+        "id": 2,
+        "name": "MCC Course Catalog",
+        "courses": []
+      }
+    }
+  ],
+  "userDMs": [
+    {
+      "id": 1,
+      "degreeMap": {
+        "id": 2,
+        "name": "SE Associates Degree",
+        "years": []
+      }
+    },
+    {
+      "id": 2,
+      "degreeMap": {
+        "id": null,
+        "name": "CE Minor Degree",
+        "years": []
+      }
+    }
+  ]
+}
 
-
-
+        */
 
     }
 }
