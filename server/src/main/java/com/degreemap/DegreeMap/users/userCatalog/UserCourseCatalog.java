@@ -30,6 +30,9 @@ public class UserCourseCatalog {
         }
         this.user = user;
         this.courseCatalog = catalog;
+        
+        this.user.addUserCC(this);
+        this.courseCatalog.addUserCC(this);
     }
 
     public Long getId() {

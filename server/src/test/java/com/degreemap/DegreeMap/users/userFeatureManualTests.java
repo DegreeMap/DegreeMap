@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,8 +29,10 @@ import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMap;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapController;
 import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapRepository;
+import com.degreemap.DegreeMap.users.userCatalog.UserCourseCatalog;
 import com.degreemap.DegreeMap.users.userDm.UserDegreeMap;
 import com.degreemap.DegreeMap.users.userDm.UserDegreeMapController;
+import com.degreemap.DegreeMap.users.userDm.UserDegreeMapRepository;
 
 @WebMvcTest(controllers = {UserController.class, DegreeMapController.class, CourseCatalogController.class, AuthController.class, UserDegreeMapController.class, })
 @Import(PasswordEncoderConfig.class)
@@ -51,6 +52,8 @@ public class userFeatureManualTests {
     private DegreeMapRepository degreeMapRepository;
     @MockBean
     private CourseCatalogRepository courseCatalogRepository;
+    @MockBean
+    private UserDegreeMapRepository udmRepo;
 
     @Test
     public void manuallyTestUsers() throws Exception {
@@ -107,8 +110,19 @@ public class userFeatureManualTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("CE Minor Degree"))
                 .andReturn();
-
+                
         System.out.println("\n!!!! DegreeMap 2 Data !!!! \n" + dm2Result.getResponse().getContentAsString());
+                
+        UserDegreeMap userDM2 = new UserDegreeMap(user, degreeMap2);
+        userDM2.setId(2L);
+
+        MvcResult newUserResult = mockMvc.perform(get("/api/users/" + user.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value(user.getEmail()))
+                .andExpect(jsonPath("$.password").value(user.getPassword()))
+                .andReturn();
+
+        System.out.println("\n!!!! User Data !!!! \n" + newUserResult.getResponse().getContentAsString());
 
         CourseCatalog rit = new CourseCatalog("RIT Course Catalog");
         rit.setId(1L);
@@ -122,7 +136,10 @@ public class userFeatureManualTests {
                         .andExpect(jsonPath("$.name").value("RIT Course Catalog"))
                         .andReturn();
 
-        System.out.println("\n!!!! RIT Catalog Data !!!! \n" + ritCatalogResult.getResponse().getContentAsString());
+        System.out.println("\n!!!! RIT Catalog 1 Data !!!! \n" + ritCatalogResult.getResponse().getContentAsString());
+
+        UserCourseCatalog ucc1 = new UserCourseCatalog(user, rit);
+        ucc1.setId(1L);
 
         CourseCatalog mcc = new CourseCatalog("MCC Course Catalog");
         mcc.setId(2L);
@@ -136,16 +153,22 @@ public class userFeatureManualTests {
                         .andExpect(jsonPath("$.name").value("MCC Course Catalog"))
                         .andReturn();
 
-        System.out.println("\n!!!! MCC Catalog Data !!!! \n" + mccCatalogResult.getResponse().getContentAsString());
+        System.out.println("\n!!!! MCC Catalog 2 Data !!!! \n" + mccCatalogResult.getResponse().getContentAsString());
 
+        UserCourseCatalog ucc2 = new UserCourseCatalog(user, mcc);
+        ucc2.setId(2L);
 
-        MvcResult newUserResult = mockMvc.perform(get("/api/users/" + user.getId()))
+        MvcResult userResult2 = mockMvc.perform(get("/api/users/" + user.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value(user.getEmail()))
                 .andExpect(jsonPath("$.password").value(user.getPassword()))
                 .andReturn();
 
-        System.out.println("\n!!!! New User Data !!!! \n" + newUserResult.getResponse().getContentAsString());
+        System.out.println("\n!!!! User Data !!!! \n" + userResult2.getResponse().getContentAsString());
+
+
+
+
 
     }
 }

@@ -30,6 +30,9 @@ public class UserDegreeMap {
         }
         this.user = user;
         this.degreeMap = degreeMap;
+        
+        this.user.addUserDM(this);
+        this.degreeMap.addUserDM(this);
     }
 
     public Long getId() {
