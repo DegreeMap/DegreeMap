@@ -13,12 +13,9 @@ const Page: React.FC = () => {
     const getData = async () => {
 
         try {
-            const res = await api.get('/dummy/hello');
+            const response = await api.get('/dummy/hello');
 
-
-
-
-            return res.data.message;
+            return response.data.message;
         } catch (error: any) {
             
             // Runs when the server returns non-200 status code
