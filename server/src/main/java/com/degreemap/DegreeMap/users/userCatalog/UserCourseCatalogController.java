@@ -27,7 +27,7 @@ public class UserCourseCatalogController {
     }
 
     @Autowired
-    public UserCourseCatalogRepository userCcRepository;
+    private UserCourseCatalogRepository userCcRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
