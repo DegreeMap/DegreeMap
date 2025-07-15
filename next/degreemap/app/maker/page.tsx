@@ -26,6 +26,8 @@ export default function DegreeMapMaker() {
     const [years, setYears] = useState<Year[]>([]);
 	const [nextId, setNextId] = useState(1);
 	const [dropdownOpen, setDropdownOpen] = useState<{ yearId: number; termId: number } | null>(null);
+    const [editingYearId, setEditingYearId] = useState<number | null>(null);
+	const [yearNameDraft, setYearNameDraft] = useState<string>("");
 
 	const addYear = () => {
 		const newYear: Year = {
@@ -63,6 +65,16 @@ export default function DegreeMapMaker() {
 		setNextId((id) => id + 1);
 		setDropdownOpen(null);
 	};
+
+	const handleYearNameSave = (yearId: number) => {
+		setYears((prev) =>
+			prev.map((year) =>
+				year.id === yearId ? { ...year, name: yearNameDraft } : year
+			)
+		);
+		setEditingYearId(null);
+	};
+
 	return (
 		<div className="h-screen flex flex-col">
 			<NavBar />
@@ -70,18 +82,36 @@ export default function DegreeMapMaker() {
             <div className="flex-1 overflow-auto p-4 max-w-[1400px] w-full mx-auto bg-gray-200">
                 {/* Year Container */}
                 <div className="flex gap-4 overflow-x-auto">
-					{/* ------ YEARS ------ */}
                     {years.map((year) => (
 						<div key={year.id} className="border p-4 rounded-lg bg-gray-100 min-w-[220px]">
-							<h2 className="text-lg font-semibold mb-2">{year.name}</h2>
+														{editingYearId === year.id ? (
+								<input
+									type="text"
+									value={yearNameDraft}
+									onChange={(e) => setYearNameDraft(e.target.value)}
+									onBlur={() => handleYearNameSave(year.id)}
+									autoFocus
+									className="text-lg font-semibold mb-2 bg-white border rounded px-2 py-1 w-full"
+								/>
+							) : (
+								<h2
+									className="text-lg font-semibold mb-2 cursor-pointer"
+									onClick={() => {
+										setEditingYearId(year.id);
+										setYearNameDraft(year.name);
+									}}
+								>
+									{year.name}
+								</h2>
+							)}
+                            {/* Term Container */}
 							<div className="flex gap-4">
-                                {/* ------ TERMS ------ */}
 								{year.terms.map((term) => (
                                     <div>
                                         <h3 className="font-medium border-b mb-2">{term.name}</h3>
-                                        <div key={term.id} className="bg-white border p-2 rounded relative">
+                                        <div key={term.id} className="bg-white border p-2 rounded relative flex flex-col items-center">
                                             <div className="space-y-1">
-                                                {/* ------ COURSES / BLOCKS ------ */}
+                                                {/* Course / Block Container*/}
                                                 {term.blocks.map((block) => (
                                                     <div
                                                         key={block.id}
