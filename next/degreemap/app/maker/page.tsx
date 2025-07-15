@@ -23,8 +23,9 @@ interface Year {
 }
 
 export default function DegreeMapMaker() {
-	const [years, setYears] = useState<Year[]>([]);
+    const [years, setYears] = useState<Year[]>([]);
 	const [nextId, setNextId] = useState(1);
+	const [dropdownOpen, setDropdownOpen] = useState<{ yearId: number; termId: number } | null>(null);
 
 	const addYear = () => {
 		const newYear: Year = {
@@ -60,8 +61,8 @@ export default function DegreeMapMaker() {
 			})
 		);
 		setNextId((id) => id + 1);
+		setDropdownOpen(null);
 	};
-
 	return (
 		<div>
 			<NavBar />
@@ -72,8 +73,8 @@ export default function DegreeMapMaker() {
 						<div key={year.id} className="border p-4 rounded-lg bg-gray-100">
 							<h2 className="text-lg font-semibold mb-2">{year.name}</h2>
 							<div className="flex gap-4">
-								{year.terms.map((term) => (
-									<div key={term.id} className="bg-white border p-2 w-48 rounded">
+                            {year.terms.map((term) => (
+									<div key={term.id} className="bg-white border p-2 w-48 rounded relative">
 										<h3 className="font-medium border-b mb-2">{term.name}</h3>
 										<div className="space-y-1">
 											{term.blocks.map((block) => (
@@ -87,17 +88,34 @@ export default function DegreeMapMaker() {
 												</div>
 											))}
 										</div>
-										<div className="mt-2 space-x-1">
+										<div className="mt-2 relative">
 											<Button
-												onClick={() => addBlockToTerm(year.id, term.id, "course")}
+												onClick={() =>
+													setDropdownOpen(
+														dropdownOpen?.yearId === year.id && dropdownOpen?.termId === term.id
+															? null
+															: { yearId: year.id, termId: term.id }
+													)
+												}
 											>
-												add course
+												+
 											</Button>
-											<Button
-												onClick={() => addBlockToTerm(year.id, term.id, "block")}
-											>
-												add block
-											</Button>
+											{dropdownOpen?.yearId === year.id && dropdownOpen?.termId === term.id && (
+												<div className="absolute z-10 mt-2 w-32 bg-white border rounded shadow">
+													<button
+														className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+														onClick={() => addBlockToTerm(year.id, term.id, "course")}
+													>
+														Add Course
+													</button>
+													<button
+														className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+														onClick={() => addBlockToTerm(year.id, term.id, "block")}
+													>
+														Add Block
+													</button>
+												</div>
+											)}
 										</div>
 									</div>
 								))}
