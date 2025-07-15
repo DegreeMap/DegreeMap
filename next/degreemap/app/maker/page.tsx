@@ -28,6 +28,8 @@ export default function DegreeMapMaker() {
 	const [dropdownOpen, setDropdownOpen] = useState<{ yearId: number; termId: number } | null>(null);
     const [editingYearId, setEditingYearId] = useState<number | null>(null);
 	const [yearNameDraft, setYearNameDraft] = useState<string>("");
+    const [editingTermId, setEditingTermId] = useState<number | null>(null);
+	const [termNameDraft, setTermNameDraft] = useState<string>("");
 
 	const addYear = () => {
 		const newYear: Year = {
@@ -75,6 +77,15 @@ export default function DegreeMapMaker() {
 		setEditingYearId(null);
 	};
 
+    const handleTermNameSave = (termId: number) => {
+		setYears((prev) =>
+			prev.map((term) =>
+				term.id === termId ? { ...term, name: termNameDraft } : term
+			)
+		);
+		setEditingTermId(null);
+	};
+
 	return (
 		<div className="h-screen flex flex-col">
 			<NavBar />
@@ -84,8 +95,9 @@ export default function DegreeMapMaker() {
                 <div className="flex gap-4 overflow-x-auto">
                     {years.map((year) => (
 						<div key={year.id} className="border p-4 rounded-lg bg-gray-100 min-w-[220px]">
-														{editingYearId === year.id ? (
-								<input
+							{editingYearId === year.id ? (
+								// Input Year Component
+                                <input
 									type="text"
 									value={yearNameDraft}
 									onChange={(e) => setYearNameDraft(e.target.value)}
@@ -95,7 +107,7 @@ export default function DegreeMapMaker() {
 								/>
 							) : (
 								<h2
-									className="text-lg font-semibold mb-2 cursor-pointer"
+									className="text-lg font-semibold mb-2 cursor-text"
 									onClick={() => {
 										setEditingYearId(year.id);
 										setYearNameDraft(year.name);
@@ -107,9 +119,30 @@ export default function DegreeMapMaker() {
                             {/* Term Container */}
 							<div className="flex gap-4">
 								{year.terms.map((term) => (
-                                    <div>
-                                        <h3 className="font-medium border-b mb-2">{term.name}</h3>
-                                        <div key={term.id} className="bg-white border p-2 rounded relative flex flex-col items-center">
+                                    <div key={term.id}>
+                                        {editingTermId === term.id ? (
+                                            // Input Term Component
+                                            <input
+							            		type="text"
+							            		value={termNameDraft}
+							            		onChange={(e) => setTermNameDraft(e.target.value)}
+							            		onBlur={() => handleTermNameSave(term.id)}
+							            		autoFocus
+							            		className="text-lg font-semibold mb-2 bg-white border rounded px-2 py-1 max-w-sm"
+							            	/>
+							            ) : (
+								            <h3
+								            	className="text-lg font-semibold mb-2 cursor-text"
+								            	onClick={() => {
+								            		setEditingTermId(term.id);
+								            		setTermNameDraft(term.name);
+								            	}}
+								            >
+								            	{term.name}
+								            </h3>
+							            )}
+                                        {/* <h3 className="font-medium border-b mb-2">{term.name}</h3> */}
+                                        <div className="bg-white border p-2 rounded relative flex flex-col items-center">
                                             <div className="space-y-1">
                                                 {/* Course / Block Container*/}
                                                 {term.blocks.map((block) => (
