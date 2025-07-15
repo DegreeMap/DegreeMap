@@ -65,7 +65,47 @@ export default function DegreeMapMaker() {
 	return (
 		<div>
 			<NavBar />
-            <p>degree map maker!</p>
+			<div className="p-4">
+				<Button onClick={addYear}>add year</Button>
+				<div className="mt-4 space-y-4 gap-4 flex">
+					{years.map((year) => (
+						<div key={year.id} className="border p-4 rounded-lg bg-gray-100">
+							<h2 className="text-lg font-semibold mb-2">{year.name}</h2>
+							<div className="flex gap-4">
+								{year.terms.map((term) => (
+									<div key={term.id} className="bg-white border p-2 w-48 rounded">
+										<h3 className="font-medium border-b mb-2">{term.name}</h3>
+										<div className="space-y-1">
+											{term.blocks.map((block) => (
+												<div
+													key={block.id}
+													className={`p-1 rounded text-sm ${
+														block.type === "course" ? "bg-pink-300" : "bg-blue-300"
+													}`}
+												>
+													{block.name}
+												</div>
+											))}
+										</div>
+										<div className="mt-2 space-x-1">
+											<Button
+												onClick={() => addBlockToTerm(year.id, term.id, "course")}
+											>
+												add course
+											</Button>
+											<Button
+												onClick={() => addBlockToTerm(year.id, term.id, "block")}
+											>
+												add block
+											</Button>
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
 		</div>
 	);
 }
