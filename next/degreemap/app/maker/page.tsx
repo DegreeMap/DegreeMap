@@ -64,44 +64,50 @@ export default function DegreeMapMaker() {
 		setDropdownOpen(null);
 	};
 	return (
-		<div>
+		<div className="h-screen flex flex-col">
 			<NavBar />
-			<div className="p-4">
-				<Button onClick={addYear}>add year</Button>
-				<div className="mt-4 space-y-4 gap-4 flex">
-					{years.map((year) => (
-						<div key={year.id} className="border p-4 rounded-lg bg-gray-100">
+            {/* DegreeMap Container */}
+            <div className="flex-1 overflow-auto p-4 max-w-[1400px] w-full mx-auto bg-gray-200">
+                {/* Year Container */}
+                <div className="flex gap-4 overflow-x-auto">
+					{/* ------ YEARS ------ */}
+                    {years.map((year) => (
+						<div key={year.id} className="border p-4 rounded-lg bg-gray-100 min-w-[220px]">
 							<h2 className="text-lg font-semibold mb-2">{year.name}</h2>
 							<div className="flex gap-4">
-                            {year.terms.map((term) => (
-									<div key={term.id} className="bg-white border p-2 w-48 rounded relative">
-										<h3 className="font-medium border-b mb-2">{term.name}</h3>
-										<div className="space-y-1">
-											{term.blocks.map((block) => (
-												<div
-													key={block.id}
-													className={`p-1 rounded text-sm ${
-														block.type === "course" ? "bg-pink-300" : "bg-blue-300"
-													}`}
-												>
-													{block.name}
-												</div>
-											))}
-										</div>
-										<div className="mt-2 relative">
-											<Button
-												onClick={() =>
-													setDropdownOpen(
-														dropdownOpen?.yearId === year.id && dropdownOpen?.termId === term.id
-															? null
-															: { yearId: year.id, termId: term.id }
-													)
-												}
-											>
-												+
-											</Button>
-											{dropdownOpen?.yearId === year.id && dropdownOpen?.termId === term.id && (
-												<div className="absolute z-10 mt-2 w-32 bg-white border rounded shadow">
+                                {/* ------ TERMS ------ */}
+								{year.terms.map((term) => (
+                                    <div>
+                                        <h3 className="font-medium border-b mb-2">{term.name}</h3>
+                                        <div key={term.id} className="bg-white border p-2 rounded relative">
+                                            <div className="space-y-1">
+                                                {/* ------ COURSES / BLOCKS ------ */}
+                                                {term.blocks.map((block) => (
+                                                    <div
+                                                        key={block.id}
+                                                        className={`p-1 rounded text-sm ${
+                                                            block.type === "course" ? "bg-pink-300" : "bg-blue-300"
+                                                        }`}
+                                                    >
+                                                        {block.name}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div className="mt-2 relative items-center justify-center">
+                                                <Button
+                                                    color="bg-gray-500"
+                                                    onClick={() =>
+                                                        setDropdownOpen(
+                                                            dropdownOpen?.yearId === year.id && dropdownOpen?.termId === term.id
+                                                                ? null
+                                                                : { yearId: year.id, termId: term.id }
+                                                        )
+                                                    }
+                                                >
+                                                    +
+                                                </Button>
+                                                {dropdownOpen?.yearId === year.id && dropdownOpen?.termId === term.id && (
+												<div className="absolute z-50 mt-2 w-32 bg-white border rounded shadow left-0">
 													<button
 														className="block w-full text-left px-4 py-2 hover:bg-gray-100"
 														onClick={() => addBlockToTerm(year.id, term.id, "course")}
@@ -116,12 +122,16 @@ export default function DegreeMapMaker() {
 													</button>
 												</div>
 											)}
-										</div>
+                                            </div>
+                                        </div>
 									</div>
 								))}
 							</div>
 						</div>
 					))}
+					<div className="flex items-center">
+						<Button onClick={addYear}>+</Button>
+					</div>
 				</div>
 			</div>
 		</div>
