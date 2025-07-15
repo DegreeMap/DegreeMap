@@ -79,9 +79,12 @@ export default function DegreeMapMaker() {
 
     const handleTermNameSave = (termId: number) => {
 		setYears((prev) =>
-			prev.map((term) =>
-				term.id === termId ? { ...term, name: termNameDraft } : term
-			)
+			prev.map((year) => ({
+				...year,
+				terms: year.terms.map((term) =>
+					term.id === termId ? { ...term, name: termNameDraft } : term
+				),
+			}))
 		);
 		setEditingTermId(null);
 	};
@@ -128,7 +131,7 @@ export default function DegreeMapMaker() {
 							            		onChange={(e) => setTermNameDraft(e.target.value)}
 							            		onBlur={() => handleTermNameSave(term.id)}
 							            		autoFocus
-							            		className="text-lg font-semibold mb-2 bg-white border rounded px-2 py-1 max-w-sm"
+							            		className="text-lg font-semibold mb-2 bg-white border rounded px-2 py-1 w-40 max-w-sm"
 							            	/>
 							            ) : (
 								            <h3
