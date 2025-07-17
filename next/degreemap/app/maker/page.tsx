@@ -95,7 +95,7 @@ export default function DegreeMapMaker() {
             {/* DegreeMap Container */}
             <div className="flex-1 overflow-auto p-4 max-w-[1400px] w-full mx-auto bg-gray-200">
                 {/* Year Container */}
-                <div className="flex gap-4 overflow-x-auto">
+                <div className="flex gap-4 overflow-x-auto h-full">
                     {years.map((year) => (
 						<div key={year.id} className="border p-4 rounded-lg bg-gray-100 min-w-[220px]">
 							{editingYearId === year.id ? (
@@ -120,7 +120,7 @@ export default function DegreeMapMaker() {
 								</h2>
 							)}
                             {/* Term Container */}
-							<div className="flex gap-4">
+							<div className="flex gap-4 overflow-x-auto h-full relative">
 								{year.terms.map((term) => (
                                     <div key={term.id}>
                                         {editingTermId === term.id ? (
