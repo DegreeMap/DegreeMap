@@ -93,11 +93,11 @@ export default function DegreeMapMaker() {
 		<div className="h-screen flex flex-col">
 			<NavBar />
             {/* DegreeMap Container */}
-            <div className="flex-1 overflow-auto p-4 max-w-[1400px] w-full mx-auto bg-gray-200">
+            <div className="flex-1 w-full mx-auto overflow-hidden bg-gray-200">
                 {/* Year Container */}
-                <div className="flex gap-4 overflow-x-auto h-full">
+                <div className="flex gap-x-2 overflow-x-auto h-full py-4 pl-4">
                     {years.map((year) => (
-						<div key={year.id} className="border p-4 rounded-lg bg-gray-100 min-w-[220px]">
+						<div key={year.id} className="border p-3 rounded-lg bg-gray-100 flex-shrink-0">
 							{editingYearId === year.id ? (
 								// Input Year Component
                                 <input
@@ -106,11 +106,11 @@ export default function DegreeMapMaker() {
 									onChange={(e) => setYearNameDraft(e.target.value)}
 									onBlur={() => handleYearNameSave(year.id)}
 									autoFocus
-									className="text-lg font-semibold mb-2 bg-white border rounded px-2 py-1 w-full"
+									className="text-base font-semibold mb-2 bg-white border rounded px-2 py-1 w-full"
 								/>
 							) : (
 								<h2
-									className="text-lg font-semibold mb-2 cursor-text"
+									className="text-base font-semibold mb-2 cursor-text"
 									onClick={() => {
 										setEditingYearId(year.id);
 										setYearNameDraft(year.name);
@@ -120,9 +120,9 @@ export default function DegreeMapMaker() {
 								</h2>
 							)}
                             {/* Term Container */}
-							<div className="flex gap-4 overflow-x-auto h-full relative">
+							<div className="flex gap-x-2 h-full">
 								{year.terms.map((term) => (
-                                    <div key={term.id}>
+                                    <div key={term.id} className="w-24 max-w-sm">
                                         {editingTermId === term.id ? (
                                             // Input Term Component
                                             <input
@@ -131,11 +131,11 @@ export default function DegreeMapMaker() {
 							            		onChange={(e) => setTermNameDraft(e.target.value)}
 							            		onBlur={() => handleTermNameSave(term.id)}
 							            		autoFocus
-							            		className="text-lg font-semibold mb-2 bg-white border rounded px-2 py-1 w-40 max-w-sm"
+							            		className="text-sm font-medium mb-2 bg-white border rounded px-2 py-1 w-full"
 							            	/>
 							            ) : (
 								            <h3
-								            	className="text-lg font-semibold mb-2 cursor-text"
+								            	className="text-sm font-medium mb-2 cursor-text"
 								            	onClick={() => {
 								            		setEditingTermId(term.id);
 								            		setTermNameDraft(term.name);
@@ -144,14 +144,13 @@ export default function DegreeMapMaker() {
 								            	{term.name}
 								            </h3>
 							            )}
-                                        {/* <h3 className="font-medium border-b mb-2">{term.name}</h3> */}
                                         <div className="bg-white border p-2 rounded relative flex flex-col items-center">
-                                            <div className="space-y-1">
+                                            <div className="space-y-1 w-full">
                                                 {/* Course / Block Container*/}
                                                 {term.blocks.map((block) => (
                                                     <div
                                                         key={block.id}
-                                                        className={`p-1 rounded text-sm ${
+                                                        className={`p-1 w-full rounded text-sm ${
                                                             block.type === "course" ? "bg-pink-300" : "bg-blue-300"
                                                         }`}
                                                     >
