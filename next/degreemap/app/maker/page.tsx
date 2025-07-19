@@ -5,9 +5,12 @@ import NavBar from "@/components/nav/navbars";
 import { Button } from "@/components/ui/button";
 
 interface CourseBlock {
-    id: number;
-	name: string;
+	id: number;
+	name: string; // TODO delete soon
 	type: "course" | "block";
+	title?: string;
+	code?: string;
+	credits?: number;
 }
 
 interface Term {
@@ -45,28 +48,44 @@ export default function DegreeMapMaker() {
 		setYears([...years, newYear]);
 	};
 
-	const addBlockToTerm = (yearId: number, termId: number, type: "course" | "block") => {
-		setYears((prevYears) =>
-			prevYears.map((year) => {
-				if (year.id !== yearId) return year;
-				return {
-					...year,
-					terms: year.terms.map((term) => {
-						if (term.id !== termId) return term;
-						return {
-							...term,
-							blocks: [
-								...term.blocks,
-								{ id: nextId, name: `${type} ${term.blocks.length + 1}`, type },
-							],
-						};
-					}),
-				};
-			})
-		);
-		setNextId((id) => id + 1);
-		setDropdownOpen(null);
-	};
+    const addBlockToTerm = (yearId: number, termId: number, type: "course" | "block") => {
+        const newBlock: CourseBlock =
+            type === "course"
+                ? {
+                    id: nextId,
+                    name: "",
+                    type,
+                    title: "Software Dev I",
+                    code: "GCIS-123",
+                    credits: 4,
+                }
+                : {
+                    id: nextId,
+                    name: `Block ${nextId}`,
+                    type,
+                };
+    
+        setYears((prevYears) =>
+            prevYears.map((year) =>
+                year.id !== yearId
+                    ? year
+                    : {
+                        ...year,
+                        terms: year.terms.map((term) =>
+                            term.id !== termId
+                                ? term
+                                : {
+                                    ...term,
+                                    blocks: [...term.blocks, newBlock],
+                                }
+                        ),
+                    }
+            )
+        );
+        setNextId((id) => id + 1);
+        setDropdownOpen(null);
+    };
+    
 
 	const handleYearNameSave = (yearId: number) => {
 		setYears((prev) =>
@@ -151,10 +170,20 @@ export default function DegreeMapMaker() {
                                                     <div
                                                         key={block.id}
                                                         className={`p-1 w-full rounded text-sm ${
-                                                            block.type === "course" ? "bg-pink-300" : "bg-blue-300"
+                                                            block.type === "course" ? "bg-orange-400" : "bg-blue-300"
                                                         }`}
                                                     >
-                                                        {block.name}
+                                                        {block.type === "course" ? (
+                                                        	<div className="bg-orange-400 text-white text-xs text-center rounded-t px-1 py-1">
+                                                        		{block.title}
+                                                        		<div className="bg-white text-black font-bold mt-1 rounded-b px-1">
+                                                        			<h3	className="text-[.7rem] font-semibold">{block.code}</h3>
+                                                        			<h3	className="text-[.7rem] font-semibold">({block.credits})</h3>
+                                                        		</div>
+                                                        	</div>
+                                                        ) : (
+                                                        	<div className="bg-blue-300 p-1 rounded text-sm">{block.name}</div>
+                                                        )}
                                                     </div>
                                                 ))}
                                             </div>
