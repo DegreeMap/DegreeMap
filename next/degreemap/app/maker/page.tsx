@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import NavBar from "@/components/nav/navbars";
 import { Button } from "@/components/ui/button";
+import { CourseCard } from "@/components/ui/CourseCard";
 
 interface CourseBlock {
 	id: number;
@@ -174,13 +175,12 @@ export default function DegreeMapMaker() {
                                                         }`}
                                                     >
                                                         {block.type === "course" ? (
-                                                        	<div className="bg-orange-400 text-white text-xs text-center rounded-t px-1 py-1">
-                                                        		{block.title}
-                                                        		<div className="bg-white text-black font-bold mt-1 rounded-b px-1">
-                                                        			<h3	className="text-[.7rem] font-semibold">{block.code}</h3>
-                                                        			<h3	className="text-[.7rem] font-semibold">({block.credits})</h3>
-                                                        		</div>
-                                                        	</div>
+                                                        	<CourseCard
+                                                                key={block.id}
+                                                                title={block.title}
+                                                                code={block.code}
+                                                                credits={block.credits}
+                                                            />
                                                         ) : (
                                                         	<div className="bg-blue-300 p-1 rounded text-sm">{block.name}</div>
                                                         )}
