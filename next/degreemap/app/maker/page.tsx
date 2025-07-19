@@ -5,6 +5,7 @@ import NavBar from "@/components/nav/navbars";
 import { Button } from "@/components/ui/button";
 import { CourseCard } from "@/components/ui/CourseCard";
 import { CourseCardModal } from "@/components/ui/CourseCardModal";
+import { BlockColumn } from "@/components/ui/BlockColumn";
 
 // interface CourseBlock {
 // 	id: number;
@@ -161,7 +162,7 @@ export default function DegreeMapMaker() {
                 {/* Year Container */}
                 <div className="flex gap-x-2 overflow-x-auto h-full py-4 pl-4">
                     {years.map((year) => (
-						<div key={year.id} className="border p-3 rounded-lg bg-gray-100 flex-shrink-0">
+						<div key={year.id} className="border p-3 rounded-lg bg-gray-100 flex-shrink-0 h-full flex flex-col">
 							{editingYearId === year.id ? (
 								// Input Year Component
                                 <input
@@ -186,7 +187,7 @@ export default function DegreeMapMaker() {
                             {/* Term Container */}
 							<div className="flex gap-x-2 h-full">
 								{year.terms.map((term) => (
-                                    <div key={term.id} className="w-24 max-w-sm">
+                                    <div key={term.id} className="w-24 max-w-sm flex flex-col">
                                         {editingTermId === term.id ? (
                                             // Input Term Component
                                             <input
@@ -208,8 +209,8 @@ export default function DegreeMapMaker() {
 								            	{term.name}
 								            </h3>
 							            )}
-                                        <div className="bg-white border p-2 rounded relative flex flex-col items-center">
-                                            <div className="space-y-1 w-full">
+                                        <div className="bg-white border p-2 rounded flex-1 flex flex-col items-center overflow-hidden">
+                                            <div className="space-y-1 w-full overflow-auto">
                                                 {/* Course / Block Container*/}
                                                 {term.courses.map((course) => (
                                                     <div key={course.id} className={"p-1 w-full rounded text-sm"}>
@@ -224,7 +225,10 @@ export default function DegreeMapMaker() {
                                                 ))}
                                                 {term.blocks.map((block) => (
                                                     <div key={block.id} className={"p-1 w-full rounded text-sm"}>
-                                                        <div className="bg-blue-300 p-1 rounded text-sm">{block.title}</div>
+                                                        <BlockColumn
+                                                            key={block.id}
+                                                            title={block.title}
+                                                        />
                                                     </div>
                                                 ))}
                                                 <CourseCardModal
