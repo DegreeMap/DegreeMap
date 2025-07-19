@@ -4,6 +4,19 @@ import React, { useState } from "react";
 import NavBar from "@/components/nav/navbars";
 import { Button } from "@/components/ui/button";
 import { CourseCard } from "@/components/ui/CourseCard";
+import { CourseCardModal } from "@/components/ui/CourseCardModal";
+
+interface Course {
+    id: number,
+    title: string,
+    code: string,
+    credits:number
+}
+
+interface Block {
+    id: number,
+    title: string
+}
 
 interface CourseBlock {
 	id: number;
@@ -34,6 +47,29 @@ export default function DegreeMapMaker() {
 	const [yearNameDraft, setYearNameDraft] = useState<string>("");
     const [editingTermId, setEditingTermId] = useState<number | null>(null);
 	const [termNameDraft, setTermNameDraft] = useState<string>("");
+    const [selectedCourse, setSelectedCourse] = useState<CourseBlock | null>(null);
+    const [isModalOpen, setModalOpen] = useState(false);
+
+    const handleEditBlock = (block: CourseBlock) => {
+    	setSelectedCourse(block);
+    	setModalOpen(true);
+    };
+
+    const handleSaveBlock = (updated: { title: string; code: string; credits: number }) => {
+    	setYears((prev) =>
+    		prev.map((year) => ({
+    			...year,
+    			terms: year.terms.map((term) => ({
+    				...term,
+    				blocks: term.blocks.map((b) =>
+    					b.id === selectedCourse?.id ? { ...b, ...updated } : b
+    				),
+    			})),
+    		}))
+    	);
+    	setModalOpen(false);
+    	setSelectedCourse(null);
+    };
 
 	const addYear = () => {
 		const newYear: Year = {
@@ -180,12 +216,23 @@ export default function DegreeMapMaker() {
                                                                 title={block.title}
                                                                 code={block.code}
                                                                 credits={block.credits}
+                                                                onClick={() => handleEditBlock(block)}
                                                             />
                                                         ) : (
-                                                        	<div className="bg-blue-300 p-1 rounded text-sm">{block.name}</div>
+                                                            <div className="bg-blue-300 p-1 rounded text-sm">{block.name}</div>
                                                         )}
                                                     </div>
                                                 ))}
+                                                <CourseCardModal
+	                                                course={
+	                                                	selectedCourse?.title && selectedCourse?.code && selectedCourse?.credits !== undefined
+	                                                		? selectedCourse as { title: string; code: string; credits: number }
+	                                                		: { title: "", code: "", credits: 0 }
+	                                                }
+                                                    isOpen={isModalOpen}
+                                                    onClose={() => setModalOpen(false)}
+                                                    onSave={handleSaveBlock}
+                                                />
                                             </div>
                                             <div className="mt-2 relative items-center justify-center">
                                                 <Button
