@@ -6,31 +6,32 @@ import { Button } from "@/components/ui/button";
 import { CourseCard } from "@/components/ui/CourseCard";
 import { CourseCardModal } from "@/components/ui/CourseCardModal";
 
+// interface CourseBlock {
+// 	id: number;
+// 	name: string; // TODO delete soon
+// 	type: "course" | "block";
+// 	title?: string;
+// 	code?: string;
+// 	credits?: number;
+// }
+
 interface Course {
-    id: number,
-    title: string,
-    code: string,
-    credits:number
+	id: number;
+	title: string;
+	code: string;
+	credits: number;
 }
 
 interface Block {
-    id: number,
-    title: string
-}
-
-interface CourseBlock {
 	id: number;
-	name: string; // TODO delete soon
-	type: "course" | "block";
-	title?: string;
-	code?: string;
-	credits?: number;
+	title: string;
 }
 
 interface Term {
 	id: number;
 	name: string;
-	blocks: CourseBlock[];
+	courses: Course[];
+	blocks: Block[];
 }
 
 interface Year {
@@ -42,20 +43,20 @@ interface Year {
 export default function DegreeMapMaker() {
     const [years, setYears] = useState<Year[]>([]);
 	const [nextId, setNextId] = useState(1);
-	const [dropdownOpen, setDropdownOpen] = useState<{ yearId: number; termId: number } | null>(null);
+	const [dropdownOpen, setDropdownOpen] = useState<{yearId: number; termId: number} | null>(null);
     const [editingYearId, setEditingYearId] = useState<number | null>(null);
 	const [yearNameDraft, setYearNameDraft] = useState<string>("");
     const [editingTermId, setEditingTermId] = useState<number | null>(null);
 	const [termNameDraft, setTermNameDraft] = useState<string>("");
-    const [selectedCourse, setSelectedCourse] = useState<CourseBlock | null>(null);
+    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const handleEditBlock = (block: CourseBlock) => {
-    	setSelectedCourse(block);
+    const handleEditCourse = (course: Course) => {
+    	setSelectedCourse(course);
     	setModalOpen(true);
     };
 
-    const handleSaveBlock = (updated: { title: string; code: string; credits: number }) => {
+    const handleSaveCourse = (updated: { title: string; code: string; credits: number }) => {
     	setYears((prev) =>
     		prev.map((year) => ({
     			...year,
@@ -78,46 +79,53 @@ export default function DegreeMapMaker() {
 			terms: ["Fall", "Spring", "Summer"].map((term, index) => ({
 				id: nextId + index + 1,
 				name: term,
-				blocks: [],
+                courses: [],
+				blocks: []
 			})),
 		};
 		setNextId((id) => id + 4);
 		setYears([...years, newYear]);
 	};
 
-    const addBlockToTerm = (yearId: number, termId: number, type: "course" | "block") => {
-        const newBlock: CourseBlock =
-            type === "course"
-                ? {
-                    id: nextId,
-                    name: "",
-                    type,
-                    title: "Software Dev I",
-                    code: "GCIS-123",
-                    credits: 4,
-                }
-                : {
-                    id: nextId,
-                    name: `Block ${nextId}`,
-                    type,
-                };
-    
+    const addCourseToTerm = (yearId: number, termId: number) => {
+        const newCourse: Course = {
+            id: nextId,
+            title: "Degree Map I",
+            code: "DEGM-101",
+            credits: 4
+        }
+
         setYears((prevYears) =>
-            prevYears.map((year) =>
-                year.id !== yearId
-                    ? year
-                    : {
-                        ...year,
-                        terms: year.terms.map((term) =>
-                            term.id !== termId
-                                ? term
-                                : {
-                                    ...term,
-                                    blocks: [...term.blocks, newBlock],
-                                }
-                        ),
+            prevYears.map((year) => year.id !== yearId? year: {
+                ...year,
+                terms: year.terms.map((term) =>
+                    term.id !== termId ? term: {
+                        ...term, 
+                        courses: [...term.courses, newCourse],
                     }
-            )
+                ),
+            })
+        );
+        setNextId((id) => id + 1);
+        setDropdownOpen(null);
+    }
+
+    const addBlockToTerm = (yearId: number, termId: number) => {
+        const newBlock: Block = {
+            id: nextId,
+            title: `Internship`,
+        };
+
+        setYears((prevYears) =>
+            prevYears.map((year) => year.id !== yearId? year: {
+                ...year,
+                terms: year.terms.map((term) =>
+                    term.id !== termId ? term: {
+                        ...term, 
+                        blocks: [...term.blocks, newBlock],
+                    }
+                ),
+            })
         );
         setNextId((id) => id + 1);
         setDropdownOpen(null);
@@ -203,24 +211,20 @@ export default function DegreeMapMaker() {
                                         <div className="bg-white border p-2 rounded relative flex flex-col items-center">
                                             <div className="space-y-1 w-full">
                                                 {/* Course / Block Container*/}
+                                                {term.courses.map((course) => (
+                                                    <div key={course.id} className={"p-1 w-full rounded text-sm"}>
+                                                        <CourseCard
+                                                            key={course.id}
+                                                            title={course.title}
+                                                            code={course.code}
+                                                            credits={course.credits}
+                                                            onClick={() => handleEditCourse(course)}
+                                                        />
+                                                    </div>
+                                                ))}
                                                 {term.blocks.map((block) => (
-                                                    <div
-                                                        key={block.id}
-                                                        className={`p-1 w-full rounded text-sm ${
-                                                            block.type === "course" ? "bg-orange-400" : "bg-blue-300"
-                                                        }`}
-                                                    >
-                                                        {block.type === "course" ? (
-                                                        	<CourseCard
-                                                                key={block.id}
-                                                                title={block.title}
-                                                                code={block.code}
-                                                                credits={block.credits}
-                                                                onClick={() => handleEditBlock(block)}
-                                                            />
-                                                        ) : (
-                                                            <div className="bg-blue-300 p-1 rounded text-sm">{block.name}</div>
-                                                        )}
+                                                    <div key={block.id} className={"p-1 w-full rounded text-sm"}>
+                                                        <div className="bg-blue-300 p-1 rounded text-sm">{block.title}</div>
                                                     </div>
                                                 ))}
                                                 <CourseCardModal
@@ -231,7 +235,7 @@ export default function DegreeMapMaker() {
 	                                                }
                                                     isOpen={isModalOpen}
                                                     onClose={() => setModalOpen(false)}
-                                                    onSave={handleSaveBlock}
+                                                    onSave={handleSaveCourse}
                                                 />
                                             </div>
                                             <div className="mt-2 relative items-center justify-center">
@@ -251,13 +255,13 @@ export default function DegreeMapMaker() {
 												<div className="absolute z-50 mt-2 w-32 bg-white border rounded shadow left-0">
 													<button
 														className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-														onClick={() => addBlockToTerm(year.id, term.id, "course")}
+														onClick={() => addCourseToTerm(year.id, term.id)}
 													>
 														Add Course
 													</button>
 													<button
 														className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-														onClick={() => addBlockToTerm(year.id, term.id, "block")}
+														onClick={() => addBlockToTerm(year.id, term.id)}
 													>
 														Add Block
 													</button>
