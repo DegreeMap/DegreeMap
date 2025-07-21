@@ -6,55 +6,17 @@ import { Button } from "@/components/ui/button";
 import { CourseCard } from "@/components/ui/CourseCard";
 import { CourseCardModal } from "@/components/ui/CourseCardModal";
 import { BlockColumn } from "@/components/ui/BlockColumn";
-
-// interface CourseBlock {
-// 	id: number;
-// 	name: string; // TODO delete soon
-// 	type: "course" | "block";
-// 	title?: string;
-// 	code?: string;
-// 	credits?: number;
-// }
-
-interface Course {
-	id: number;
-	title: string;
-	code: string;
-	credits: number;
-}
-
-interface Block {
-	id: number;
-	title: string;
-}
-
-interface Term {
-	id: number;
-	name: string;
-	courses: Course[];
-	blocks: Block[];
-}
-
-interface Year {
-	id: number;
-	name: string;
-	terms: Term[];
-}
+import { TermColumn } from "@/components/ui/TermColumn";
 
 export default function DegreeMapMaker() {
     const [years, setYears] = useState<Year[]>([]);
 	const [nextId, setNextId] = useState(1);
-	const [dropdownOpen, setDropdownOpen] = useState<{yearId: number; termId: number} | null>(null);
     const [editingYearId, setEditingYearId] = useState<number | null>(null);
 	const [yearNameDraft, setYearNameDraft] = useState<string>("");
-    const [editingTermId, setEditingTermId] = useState<number | null>(null);
-	const [termNameDraft, setTermNameDraft] = useState<string>("");
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-    const [isModalOpen, setModalOpen] = useState(false);
 
     const handleEditCourse = (course: Course) => {
     	setSelectedCourse(course);
-    	setModalOpen(true);
     };
 
     const handleSaveCourse = (updated: { title: string; code: string; credits: number }) => {
@@ -69,7 +31,6 @@ export default function DegreeMapMaker() {
     			})),
     		}))
     	);
-    	setModalOpen(false);
     	setSelectedCourse(null);
     };
 
@@ -88,7 +49,7 @@ export default function DegreeMapMaker() {
 		setYears([...years, newYear]);
 	};
 
-    const addCourseToTerm = (yearId: number, termId: number) => {
+    const handleAddCourse = (yearId: number, termId: number) => {
         const newCourse: Course = {
             id: nextId,
             title: "Degree Map I",
@@ -108,10 +69,9 @@ export default function DegreeMapMaker() {
             })
         );
         setNextId((id) => id + 1);
-        setDropdownOpen(null);
     }
 
-    const addBlockToTerm = (yearId: number, termId: number) => {
+    const handleAddBlock = (yearId: number, termId: number) => {
         const newBlock: Block = {
             id: nextId,
             title: `Internship`,
@@ -129,7 +89,6 @@ export default function DegreeMapMaker() {
             })
         );
         setNextId((id) => id + 1);
-        setDropdownOpen(null);
     };
     
 
@@ -142,16 +101,15 @@ export default function DegreeMapMaker() {
 		setEditingYearId(null);
 	};
 
-    const handleTermNameSave = (termId: number) => {
+    const handleTermNameSave = (termId: number, newTermName: string) => {
 		setYears((prev) =>
 			prev.map((year) => ({
 				...year,
 				terms: year.terms.map((term) =>
-					term.id === termId ? { ...term, name: termNameDraft } : term
+					term.id === termId ? { ...term, name: newTermName } : term
 				),
 			}))
 		);
-		setEditingTermId(null);
 	};
 
 	return (
@@ -185,97 +143,13 @@ export default function DegreeMapMaker() {
 								</h2>
 							)}
                             {/* Term Container */}
-							<div className="flex gap-x-2 h-full">
-								{year.terms.map((term) => (
-                                    <div key={term.id} className="w-24 max-w-sm flex flex-col">
-                                        {editingTermId === term.id ? (
-                                            // Input Term Component
-                                            <input
-							            		type="text"
-							            		value={termNameDraft}
-							            		onChange={(e) => setTermNameDraft(e.target.value)}
-							            		onBlur={() => handleTermNameSave(term.id)}
-							            		autoFocus
-							            		className="text-sm font-medium mb-2 bg-white border rounded px-2 py-1 w-full"
-							            	/>
-							            ) : (
-								            <h3
-								            	className="text-sm font-medium mb-2 cursor-text"
-								            	onClick={() => {
-								            		setEditingTermId(term.id);
-								            		setTermNameDraft(term.name);
-								            	}}
-								            >
-								            	{term.name}
-								            </h3>
-							            )}
-                                        <div className="bg-white border p-2 rounded flex-1 flex flex-col items-center overflow-hidden">
-                                            <div className="space-y-1 w-full overflow-auto">
-                                                {/* Course / Block Container*/}
-                                                {term.courses.map((course) => (
-                                                    <div key={course.id} className={"p-1 w-full rounded text-sm"}>
-                                                        <CourseCard
-                                                            key={course.id}
-                                                            title={course.title}
-                                                            code={course.code}
-                                                            credits={course.credits}
-                                                            onClick={() => handleEditCourse(course)}
-                                                        />
-                                                    </div>
-                                                ))}
-                                                {term.blocks.map((block) => (
-                                                    <div key={block.id} className={"p-1 w-full rounded text-sm"}>
-                                                        <BlockColumn
-                                                            key={block.id}
-                                                            title={block.title}
-                                                        />
-                                                    </div>
-                                                ))}
-                                                <CourseCardModal
-	                                                course={
-	                                                	selectedCourse?.title && selectedCourse?.code && selectedCourse?.credits !== undefined
-	                                                		? selectedCourse as { title: string; code: string; credits: number }
-	                                                		: { title: "", code: "", credits: 0 }
-	                                                }
-                                                    isOpen={isModalOpen}
-                                                    onClose={() => setModalOpen(false)}
-                                                    onSave={handleSaveCourse}
-                                                />
-                                            </div>
-                                            <div className="mt-2 relative items-center justify-center">
-                                                <Button
-                                                    color="bg-gray-500"
-                                                    onClick={() =>
-                                                        setDropdownOpen(
-                                                            dropdownOpen?.yearId === year.id && dropdownOpen?.termId === term.id
-                                                                ? null
-                                                                : { yearId: year.id, termId: term.id }
-                                                        )
-                                                    }
-                                                >
-                                                    +
-                                                </Button>
-                                                {dropdownOpen?.yearId === year.id && dropdownOpen?.termId === term.id && (
-												<div className="absolute z-50 mt-2 w-32 bg-white border rounded shadow left-0">
-													<button
-														className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-														onClick={() => addCourseToTerm(year.id, term.id)}
-													>
-														Add Course
-													</button>
-													<button
-														className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-														onClick={() => addBlockToTerm(year.id, term.id)}
-													>
-														Add Block
-													</button>
-												</div>
-											)}
-                                            </div>
-                                        </div>
-									</div>
-								))}
-							</div>
+                            <TermColumn
+                                year={year}
+                                handleAddBlock={handleAddBlock}
+                                handleAddCourse={handleAddCourse}
+                                handleEditCourse={handleEditCourse}
+                                handleTermNameSave={handleTermNameSave}
+                            />
 						</div>
 					))}
 					<div className="flex items-center">
