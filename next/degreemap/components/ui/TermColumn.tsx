@@ -1,19 +1,17 @@
 import React, { useState } from "react"
-import { CourseCardModal } from "./CourseCardModal";
 import { CourseCard } from "./CourseCard";
 import { BlockColumn } from "./BlockColumn";
 import { Button } from "./button";
 
 interface TermColumnProps {
     year: Year
-    title?: string;
     handleTermNameSave: (termId: number, newTermName: string) => void;
     handleEditCourse: (course: Course) => void;
     handleAddCourse: (yearId: number, termId: number) => void;
     handleAddBlock: (yearId: number, termId: number) => void;
 }
 
-export const TermColumn: React.FC<TermColumnProps> = ({ year, title, handleAddCourse, handleAddBlock, handleEditCourse, handleTermNameSave }) => {
+export const TermColumn: React.FC<TermColumnProps> = ({ year, handleAddCourse, handleAddBlock, handleEditCourse, handleTermNameSave }) => {
     const [dropdownOpen, setDropdownOpen] = useState<{yearId: number; termId: number} | null>(null);
     const [editingTermId, setEditingTermId] = useState<number | null>(null);
 	const [termNameDraft, setTermNameDraft] = useState<string>("");
@@ -21,7 +19,7 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, title, handleAddCo
     return (
         <div className="flex gap-x-2 h-full">
             {year.terms.map((term) => (
-                <div key={term.id} className="w-24 max-w-sm flex flex-col">
+                <div key={term.id} className="w-24 max-w-sm flex flex-col group relative">
                     {editingTermId === term.id ? (
                         // Input Term Component
                         <input
@@ -69,18 +67,9 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, title, handleAddCo
                                     />
                                 </div>
                             ))}
-                            {/* <CourseCardModal
-                                course={
-                                    selectedCourse?.title && selectedCourse?.code && selectedCourse?.credits !== undefined
-                                        ? selectedCourse as { title: string; code: string; credits: number }
-                                        : { title: "", code: "", credits: 0 }
-                                }
-                                isOpen={isModalOpen}
-                                onClose={() => setModalOpen(false)}
-                                onSave={handleSaveCourse}
-                            /> */}
                         </div>
-                        <div className="mt-2 relative items-center justify-center">
+                        <div className="mt-2 absolute bottom-2 right-2 opacity-0 scale-95 
+                        transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:scale-100 flex items-center justify-center">
                             <Button
                                 color="bg-gray-500"
                                 onClick={() =>
@@ -97,13 +86,19 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, title, handleAddCo
                             <div className="absolute z-50 mt-2 w-32 bg-white border rounded shadow left-0">
                                 <button
                                     className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                                    onClick={() => handleAddCourse(year.id, term.id)}
+                                    onClick={() => {
+                                        handleAddCourse(year.id, term.id)
+                                        setDropdownOpen(null)
+                                    }}
                                 >
                                     Add Course
                                 </button>
                                 <button
                                     className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                                    onClick={() => handleAddBlock(year.id, term.id)}
+                                    onClick={() => {
+                                        handleAddBlock(year.id, term.id)
+                                        setDropdownOpen(null)
+                                    }}
                                 >
                                     Add Block
                                 </button>
