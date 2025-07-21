@@ -7,12 +7,10 @@ interface TermColumnProps {
     year: Year
     handleTermNameSave: (termId: number, newTermName: string) => void;
     handleEditCourse: (course: Course) => void;
-    handleAddCourse: (yearId: number, termId: number) => void;
-    handleAddBlock: (yearId: number, termId: number) => void;
+    onRequestDropdownOpen: (yearId: number, termId: number, rect: DOMRect) => void
 }
 
-export const TermColumn: React.FC<TermColumnProps> = ({ year, handleAddCourse, handleAddBlock, handleEditCourse, handleTermNameSave }) => {
-    const [dropdownOpen, setDropdownOpen] = useState<{yearId: number; termId: number} | null>(null);
+export const TermColumn: React.FC<TermColumnProps> = ({ year, handleEditCourse, handleTermNameSave, onRequestDropdownOpen }) => {
     const [editingTermId, setEditingTermId] = useState<number | null>(null);
 	const [termNameDraft, setTermNameDraft] = useState<string>("");
 
@@ -21,7 +19,6 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleAddCourse, h
             {year.terms.map((term) => (
                 <div key={term.id} className="w-[5.5rem] max-w-sm flex flex-col group relative">
                     {editingTermId === term.id ? (
-                        // Input Term Component
                         <input
                             type="text"
                             value={termNameDraft}
@@ -45,8 +42,8 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleAddCourse, h
                             {term.name}
                         </h3>
                     )}
-                    <div className="bg-white border p-1 rounded flex-1 flex flex-col items-center overflow-hidden">
-                        <div className="space-y-1 w-full overflow-auto">
+                    <div className="bg-white border p-1 rounded flex-1 flex flex-col items-center ">
+                        <div className="space-y-1 w-full ">
                             {/* Course / Block Container*/}
                             {term.courses.map((course) => (
                                 <div key={course.id} className={"p-1 w-full rounded text-sm"}>
@@ -72,38 +69,13 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleAddCourse, h
                         transition-all duration-100 ease-in-out group-hover:opacity-100 group-hover:scale-100">
                             <Button
                                 color="bg-gray-500"
-                                onClick={() =>
-                                    setDropdownOpen(
-                                        dropdownOpen?.yearId === year.id && dropdownOpen?.termId === term.id
-                                            ? null
-                                            : { yearId: year.id, termId: term.id }
-                                    )
-                                }
+                                onClick={(e) => {
+                                    const rect = e.currentTarget.getBoundingClientRect();
+                                    onRequestDropdownOpen(year.id, term.id, rect);
+                                }}
                             >
                                 +
                             </Button>
-                            {dropdownOpen?.yearId === year.id && dropdownOpen?.termId === term.id && (
-                            <div className="absolute z-50 mt-2 w-32 bg-white border rounded shadow left-0">
-                                <button
-                                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                                    onClick={() => {
-                                        handleAddCourse(year.id, term.id)
-                                        setDropdownOpen(null)
-                                    }}
-                                >
-                                    Add Course
-                                </button>
-                                <button
-                                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                                    onClick={() => {
-                                        handleAddBlock(year.id, term.id)
-                                        setDropdownOpen(null)
-                                    }}
-                                >
-                                    Add Block
-                                </button>
-                            </div>
-                        )}
                         </div>
                     </div>
                 </div>

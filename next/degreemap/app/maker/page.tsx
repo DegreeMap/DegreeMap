@@ -3,9 +3,6 @@
 import React, { useState } from "react";
 import NavBar from "@/components/nav/navbars";
 import { Button } from "@/components/ui/button";
-import { CourseCard } from "@/components/ui/CourseCard";
-import { CourseCardModal } from "@/components/ui/CourseCardModal";
-import { BlockColumn } from "@/components/ui/BlockColumn";
 import { TermColumn } from "@/components/ui/TermColumn";
 
 export default function DegreeMapMaker() {
@@ -14,6 +11,8 @@ export default function DegreeMapMaker() {
     const [editingYearId, setEditingYearId] = useState<number | null>(null);
 	const [yearNameDraft, setYearNameDraft] = useState<string>("");
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+	const [addDropdownOpen, setAddDropdownOpen] = useState<{ yearId: number; termId: number } | null>(null);
+	const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
 
     const handleEditCourse = (course: Course) => {
     	setSelectedCourse(course);
@@ -116,9 +115,9 @@ export default function DegreeMapMaker() {
 		<div className="h-screen flex flex-col">
 			<NavBar />
             {/* DegreeMap Container */}
-            <div className="flex-1 w-full mx-auto overflow-hidden bg-gray-200">
+            <div className="flex-1 w-full mx-auto bg-gray-200">
                 {/* Year Container */}
-                <div className="flex gap-x-2 overflow-x-auto h-full py-4 pl-4">
+                <div className="flex gap-x-2 h-full py-4 pl-4">
                     {years.map((year) => (
 						<div key={year.id} className="border p-3 rounded-lg bg-gray-100 flex-shrink-0 h-full flex flex-col">
 							{editingYearId === year.id ? (
@@ -145,10 +144,15 @@ export default function DegreeMapMaker() {
                             {/* Term Container */}
                             <TermColumn
                                 year={year}
-                                handleAddBlock={handleAddBlock}
-                                handleAddCourse={handleAddCourse}
                                 handleEditCourse={handleEditCourse}
                                 handleTermNameSave={handleTermNameSave}
+								onRequestDropdownOpen={(yearId, termId, rect) => {
+									setAddDropdownOpen({ yearId, termId });
+									setDropdownPosition({
+										top: rect.bottom + window.scrollY,
+										left: rect.left + window.scrollX,
+									});
+								}}
                             />
 						</div>
 					))}
@@ -157,6 +161,34 @@ export default function DegreeMapMaker() {
 					</div>
 				</div>
 			</div>
+			{addDropdownOpen && dropdownPosition && (
+			<div
+				className="fixed z-[1000] w-32 bg-white border rounded shadow"
+				style={{
+					top: `${dropdownPosition.top}px`,
+					left: `${dropdownPosition.left}px`,
+				}}
+			>
+				<button
+					className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+					onClick={() => {
+						handleAddCourse(addDropdownOpen.yearId, addDropdownOpen.termId);
+						setAddDropdownOpen(null);
+					}}
+				>
+					Add Course
+				</button>
+				<button
+					className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+					onClick={() => {
+						handleAddBlock(addDropdownOpen.yearId, addDropdownOpen.termId);
+						setAddDropdownOpen(null);
+					}}
+				>
+					Add Block
+				</button>
+			</div>
+		)}
 		</div>
 	);
 }
