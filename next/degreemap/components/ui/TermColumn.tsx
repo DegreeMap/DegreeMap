@@ -19,7 +19,7 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleAddCourse, h
     return (
         <div className="flex gap-x-2 h-full">
             {year.terms.map((term) => (
-                <div key={term.id} className="w-24 max-w-sm flex flex-col group relative">
+                <div key={term.id} className="w-[5.5rem] max-w-sm flex flex-col group relative">
                     {editingTermId === term.id ? (
                         // Input Term Component
                         <input
@@ -45,7 +45,7 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleAddCourse, h
                             {term.name}
                         </h3>
                     )}
-                    <div className="bg-white border p-2 rounded flex-1 flex flex-col items-center overflow-hidden">
+                    <div className="bg-white border p-1 rounded flex-1 flex flex-col items-center overflow-hidden">
                         <div className="space-y-1 w-full overflow-auto">
                             {/* Course / Block Container*/}
                             {term.courses.map((course) => (
@@ -68,8 +68,8 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleAddCourse, h
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-2 absolute bottom-2 right-2 opacity-0 scale-95 
-                        transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:scale-100 flex items-center justify-center">
+                        <div className="mt-2 opacity-0 scale-95 flex items-center justify-center
+                        transition-all duration-100 ease-in-out group-hover:opacity-100 group-hover:scale-100">
                             <Button
                                 color="bg-gray-500"
                                 onClick={() =>
