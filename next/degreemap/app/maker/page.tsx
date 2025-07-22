@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import NavBar from "@/components/nav/navbars";
 import { Button } from "@/components/ui/button";
 import { TermColumn } from "@/components/ui/TermColumn";
+import { Dropdown } from "@/components/ui/common/Dropdown";
 
 export default function DegreeMapMaker() {
     const [years, setYears] = useState<Year[]>([]);
@@ -147,7 +148,7 @@ export default function DegreeMapMaker() {
                                 handleEditCourse={handleEditCourse}
                                 handleTermNameSave={handleTermNameSave}
 								onRequestDropdownOpen={(yearId, termId, rect) => {
-									setAddDropdownOpen({ yearId, termId });
+									setAddDropdownOpen({yearId, termId});
 									setDropdownPosition({
 										top: rect.bottom + window.scrollY,
 										left: rect.left + window.scrollX,
@@ -162,32 +163,26 @@ export default function DegreeMapMaker() {
 				</div>
 			</div>
 			{addDropdownOpen && dropdownPosition && (
-			<div
-				className="fixed z-[1000] w-32 bg-white border rounded shadow"
-				style={{
-					top: `${dropdownPosition.top}px`,
-					left: `${dropdownPosition.left}px`,
-				}}
-			>
-				<button
-					className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-					onClick={() => {
-						handleAddCourse(addDropdownOpen.yearId, addDropdownOpen.termId);
-						setAddDropdownOpen(null);
-					}}
-				>
-					Add Course
-				</button>
-				<button
-					className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-					onClick={() => {
-						handleAddBlock(addDropdownOpen.yearId, addDropdownOpen.termId);
-						setAddDropdownOpen(null);
-					}}
-				>
-					Add Block
-				</button>
-			</div>
+			<Dropdown
+				isOpen={addDropdownOpen != null}
+				onClose={() => setAddDropdownOpen(null)}
+				position={dropdownPosition}
+				options={[{
+						option: "Add Course",
+						action: () => {
+							handleAddCourse(addDropdownOpen.yearId, addDropdownOpen.termId);
+							setAddDropdownOpen(null);
+						}
+					},
+					{
+						option: "Add Block",
+						action: () => {
+							handleAddBlock(addDropdownOpen.yearId, addDropdownOpen.termId);
+							setAddDropdownOpen(null);
+						}
+					}
+				]}
+		/>
 		)}
 		</div>
 	);
