@@ -169,17 +169,11 @@ export default function DegreeMapMaker() {
 				position={dropdownPosition}
 				options={[{
 						option: "Add Course",
-						action: () => {
-							handleAddCourse(addDropdownOpen.yearId, addDropdownOpen.termId);
-							setAddDropdownOpen(null);
-						}
+						action: () => handleAddCourse(addDropdownOpen.yearId, addDropdownOpen.termId)
 					},
 					{
 						option: "Add Block",
-						action: () => {
-							handleAddBlock(addDropdownOpen.yearId, addDropdownOpen.termId);
-							setAddDropdownOpen(null);
-						}
+						action: () => handleAddBlock(addDropdownOpen.yearId, addDropdownOpen.termId)
 					}
 				]}
 		/>
