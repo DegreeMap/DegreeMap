@@ -11,27 +11,21 @@ export default function DegreeMapMaker() {
 	const [nextId, setNextId] = useState(1);
     const [editingYearId, setEditingYearId] = useState<number | null>(null);
 	const [yearNameDraft, setYearNameDraft] = useState<string>("");
-    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 	const [addDropdownOpen, setAddDropdownOpen] = useState<{ yearId: number; termId: number } | null>(null);
 	const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
 
-    const handleEditCourse = (course: Course) => {
-    	setSelectedCourse(course);
-    };
-
-    const handleSaveCourse = (updated: { title: string; code: string; credits: number }) => {
+    const handleEditCourse = (updated: Course) => {
     	setYears((prev) =>
     		prev.map((year) => ({
     			...year,
     			terms: year.terms.map((term) => ({
     				...term,
-    				blocks: term.blocks.map((b) =>
-    					b.id === selectedCourse?.id ? { ...b, ...updated } : b
+    				courses: term.courses.map((b) =>
+    					b.id === updated.id ? { ...b, ...updated } : b
     				),
     			})),
     		}))
     	);
-    	setSelectedCourse(null);
     };
 
 	const addYear = () => {
@@ -154,6 +148,7 @@ export default function DegreeMapMaker() {
 										left: rect.left + window.scrollX,
 									});
 								}}
+								isDropdownOpenForTerm={(termId) => addDropdownOpen?.termId === termId}
                             />
 						</div>
 					))}
@@ -168,14 +163,12 @@ export default function DegreeMapMaker() {
 				onClose={() => setAddDropdownOpen(null)}
 				position={dropdownPosition}
 				options={[{
-						option: "Add Course",
-						action: () => handleAddCourse(addDropdownOpen.yearId, addDropdownOpen.termId)
-					},
-					{
-						option: "Add Block",
-						action: () => handleAddBlock(addDropdownOpen.yearId, addDropdownOpen.termId)
-					}
-				]}
+					option: "Add Course",
+					action: () => handleAddCourse(addDropdownOpen.yearId, addDropdownOpen.termId)
+				},{
+					option: "Add Block",
+					action: () => handleAddBlock(addDropdownOpen.yearId, addDropdownOpen.termId)
+				}]}
 		/>
 		)}
 		</div>

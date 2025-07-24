@@ -7,17 +7,18 @@ interface TermColumnProps {
     year: Year
     handleTermNameSave: (termId: number, newTermName: string) => void;
     handleEditCourse: (course: Course) => void;
-    onRequestDropdownOpen: (yearId: number, termId: number, rect: DOMRect) => void
+    onRequestDropdownOpen: (yearId: number, termId: number, rect: DOMRect) => void;
+    isDropdownOpenForTerm: (termId: number) => boolean
 }
 
-export const TermColumn: React.FC<TermColumnProps> = ({ year, handleEditCourse, handleTermNameSave, onRequestDropdownOpen }) => {
+export const TermColumn: React.FC<TermColumnProps> = ({ year, handleEditCourse, handleTermNameSave, onRequestDropdownOpen , isDropdownOpenForTerm}) => {
     const [editingTermId, setEditingTermId] = useState<number | null>(null);
 	const [termNameDraft, setTermNameDraft] = useState<string>("");
 
     return (
         <div className="flex gap-x-2 h-full">
             {year.terms.map((term) => (
-                <div key={term.id} className="w-[5.5rem] max-w-sm flex flex-col group relative">
+                <div key={term.id} className="group w-[5.5rem] max-w-sm flex flex-col relative">
                     {editingTermId === term.id ? (
                         <input
                             type="text"
@@ -48,11 +49,12 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleEditCourse, 
                             {term.courses.map((course) => (
                                 <div key={course.id} className={"p-1 w-full rounded text-sm"}>
                                     <CourseCard
+                                        id={course.id}
                                         key={course.id}
                                         title={course.title}
                                         code={course.code}
                                         credits={course.credits}
-                                        onClick={() => handleEditCourse(course)}
+                                        onCourseChange={() => handleEditCourse(course)}
                                     />
                                 </div>
                             ))}
@@ -65,8 +67,14 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleEditCourse, 
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-2 opacity-0 scale-95 flex items-center justify-center
-                        transition-all duration-100 ease-in-out group-hover:opacity-100 group-hover:scale-100">
+                        {}
+                        <div 
+	                        className={`mt-2 flex items-center justify-center transition-all duration-100 ease-in-out ${
+	                        	isDropdownOpenForTerm(term.id)
+	                        		? "opacity-100 scale-100"
+	                        		: "opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100"
+	                        }`}
+                        >
                             <Button
                                 color="bg-gray-500"
                                 onClick={(e) => {
