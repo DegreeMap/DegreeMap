@@ -20,8 +20,8 @@ export default function DegreeMapMaker() {
     			...year,
     			terms: year.terms.map((term) => ({
     				...term,
-    				courses: term.courses.map((b) =>
-    					b.id === updated.id ? { ...b, ...updated } : b
+    				courses: term.courses.map((course) =>
+    					course.id === updated.id ? { ...course, ...updated } : course
     				),
     			})),
     		}))
@@ -48,7 +48,8 @@ export default function DegreeMapMaker() {
             id: nextId,
             title: "Degree Map I",
             code: "DEGM-101",
-            credits: 4
+            credits: 4,
+			color: '#f97316'
         }
 
         setYears((prevYears) =>
@@ -58,6 +59,7 @@ export default function DegreeMapMaker() {
                     term.id !== termId ? term: {
                         ...term, 
                         courses: [...term.courses, newCourse],
+						blocks: term.blocks
                     }
                 ),
             })
@@ -78,6 +80,7 @@ export default function DegreeMapMaker() {
                     term.id !== termId ? term: {
                         ...term, 
                         blocks: [...term.blocks, newBlock],
+						courses: term.courses
                     }
                 ),
             })

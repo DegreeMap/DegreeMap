@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface CourseCardProps {
 	id: number,
 	title: string;
 	code: string;
 	credits: number;
+	color: string;
     // onClick: () => void;
 
 	onCourseChange: (course: Course) => void;
+	onColorChange?: (newColor: string) => void;
 }
 
 
-export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits, onCourseChange }) => {
+export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits, color, onCourseChange }) => {
+	const [colorPickerOpen, setColorPickerOpen] = useState<Boolean>(false)
+	
 	const handleBlur = (
 		e: React.FocusEvent<HTMLDivElement>,
 		callback?: (val: any) => void,
@@ -28,22 +32,45 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 			id: id,
 			title: newTitle, 
 			code: code, 
-			credits: credits
+			credits: credits,
+			color: color
 		})
 	}
 
 	const onCodeChange = (newCode: string) => {
-
+		onCourseChange({
+			id: id,
+			title: title, 
+			code: newCode, 
+			credits: credits,
+			color: color
+		})
 	}
 
 	const onCreditsChange = (newCredits: number) => {
+		onCourseChange({
+			id: id,
+			title: title, 
+			code: code, 
+			credits: newCredits,
+			color: color
+		})
+	}
 
+	const onColorChange = (newColor: string) => {
+		onCourseChange({
+			id, title, code, credits,
+			color: newColor
+		})
 	}
 
 	return (
 		<div 
-			className="bg-orange-400 text-white text-xs text-center rounded px-1 py-1 cursor-pointer
+			className=" text-white text-xs text-center rounded px-1 py-1 cursor-pointer
 					   transform transition duration-200 ease-in-out hover:scale-105"
+			style={{backgroundColor: color }}
+			onMouseEnter={() => setColorPickerOpen(true)}
+			onMouseLeave={() => setColorPickerOpen(false)}
 		>
 			<div className="py-1 cursor-text outline-none focus:outline-none"
 				contentEditable
@@ -92,6 +119,15 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 					{`(${credits})`}
 				</h3>
 			</div>
+			{colorPickerOpen && (
+				<input
+					type="color"
+					className="absolute top-1 right-1 w-6 h-6 border-none cursor-pointer"
+					onChange={(e) => onColorChange?.(e.target.value)}
+					value={color}
+				/>
+			)}
+
 		</div>
 	);
 };

@@ -54,7 +54,8 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleEditCourse, 
                                         title={course.title}
                                         code={course.code}
                                         credits={course.credits}
-                                        onCourseChange={() => handleEditCourse(course)}
+                                        color={course.color}
+                                        onCourseChange={handleEditCourse}
                                     />
                                 </div>
                             ))}

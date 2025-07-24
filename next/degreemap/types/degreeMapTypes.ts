@@ -3,6 +3,7 @@ interface Course {
 	title: string;
 	code: string;
 	credits: number;
+	color: string;
 }
 
 interface Block {
