@@ -5,6 +5,7 @@ import NavBar from "@/components/nav/navbars";
 import { Button } from "@/components/ui/button";
 import { TermColumn } from "@/components/ui/TermColumn";
 import { Dropdown } from "@/components/ui/common/Dropdown";
+import { Toolbar } from "@/components/ui/Toolbar";
 
 export default function DegreeMapMaker() {
     const [years, setYears] = useState<Year[]>([]);
@@ -112,10 +113,11 @@ export default function DegreeMapMaker() {
 	return (
 		<div className="h-screen flex flex-col">
 			<NavBar />
+			<Toolbar />
             {/* DegreeMap Container */}
             <div className="flex-1 w-full mx-auto bg-gray-200">
                 {/* Year Container */}
-                <div className="flex gap-x-2 h-full py-4 pl-4">
+                <div className="flex gap-x-2 h-full pb-4 pl-4">
                     {years.map((year) => (
 						<div key={year.id} className="border p-3 rounded-lg bg-gray-100 flex-shrink-0 h-full flex flex-col">
 							{editingYearId === year.id ? (

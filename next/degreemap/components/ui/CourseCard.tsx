@@ -122,11 +122,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 					{`(${credits})`}
 				</h3>
 			</div>
-			{colorPickerOpen && (
+			{/* {colorPickerOpen && (
 				<div className="absolute top-1 right-[-160px] z-20 bg-white p-2 rounded shadow">
 					<HexColorPicker color={color} onChange={onColorChange} />
 				</div>
-			)}
+			)} */}
 		</div>
 	);
 };
