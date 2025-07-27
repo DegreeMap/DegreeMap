@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { HexColorPicker } from "react-colorful";
 
 interface CourseCardProps {
 	id: number,
@@ -121,27 +122,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 					{`(${credits})`}
 				</h3>
 			</div>
-			
 			{colorPickerOpen && (
-				<input
-					type="color"
-					className="absolute right-1 top-1 w-6 h-6 p-0 border-none rounded-full overflow-hidden shadow-md cursor-pointer z-10"
-					value={color}
-					onChange={(e) => onColorChange(e.target.value)}
-				/>
-
-				// <div className="absolute top-0 right-0 flex gap-1 p-1 bg-white rounded shadow">
-				// 	{colors.map((c) => (
-				// 		<button
-				// 			key={c}
-				// 			className="w-4 h-4 rounded-full"
-				// 			style={{ backgroundColor: c }}
-				// 			onClick={() => onColorChange(c)}
-				// 		/>
-				// 	))}
-				// </div>
+				<div className="absolute top-1 right-[-160px] z-20 bg-white p-2 rounded shadow">
+					<HexColorPicker color={color} onChange={onColorChange} />
+				</div>
 			)}
-
 		</div>
 	);
 };
