@@ -64,6 +64,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 		})
 	}
 
+	const colors = ['#f87171', '#facc15', '#4ade80', '#38bdf8', '#a78bfa'];
+
 	return (
 		<div 
 			className=" text-white text-xs text-center rounded px-1 py-1 cursor-pointer
@@ -119,13 +121,24 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 					{`(${credits})`}
 				</h3>
 			</div>
+			
 			{colorPickerOpen && (
-				<input
-					type="color"
-					className="absolute top-1 right-1 w-6 h-6 border-none cursor-pointer"
-					onChange={(e) => onColorChange?.(e.target.value)}
-					value={color}
-				/>
+				// <input
+				// 	type="color"
+				// 	className="absolute top-1 right-1 w-6 h-6 border-none cursor-pointer"
+				// 	onChange={(e) => onColorChange?.(e.target.value)}
+				// 	value={color}
+				// />
+				<div className="absolute top-0 right-0 flex gap-1 p-1 bg-white rounded shadow">
+					{colors.map((c) => (
+						<button
+							key={c}
+							className="w-4 h-4 rounded-full"
+							style={{ backgroundColor: c }}
+							onClick={() => onColorChange(c)}
+						/>
+					))}
+				</div>
 			)}
 
 		</div>
