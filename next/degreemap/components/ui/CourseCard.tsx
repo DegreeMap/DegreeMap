@@ -69,7 +69,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 	return (
 		<div 
 			className=" text-white text-xs text-center rounded px-1 py-1 cursor-pointer
-					   transform transition duration-200 ease-in-out hover:scale-105"
+					   transform transition duration-200 ease-in-out hover:scale-105 relative"
 			style={{backgroundColor: color }}
 			onMouseEnter={() => setColorPickerOpen(true)}
 			onMouseLeave={() => setColorPickerOpen(false)}
@@ -123,22 +123,23 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 			</div>
 			
 			{colorPickerOpen && (
-				// <input
-				// 	type="color"
-				// 	className="absolute top-1 right-1 w-6 h-6 border-none cursor-pointer"
-				// 	onChange={(e) => onColorChange?.(e.target.value)}
-				// 	value={color}
-				// />
-				<div className="absolute top-0 right-0 flex gap-1 p-1 bg-white rounded shadow">
-					{colors.map((c) => (
-						<button
-							key={c}
-							className="w-4 h-4 rounded-full"
-							style={{ backgroundColor: c }}
-							onClick={() => onColorChange(c)}
-						/>
-					))}
-				</div>
+				<input
+					type="color"
+					className="absolute right-1 top-1 w-6 h-6 p-0 border-none rounded-full overflow-hidden shadow-md cursor-pointer z-10"
+					value={color}
+					onChange={(e) => onColorChange(e.target.value)}
+				/>
+
+				// <div className="absolute top-0 right-0 flex gap-1 p-1 bg-white rounded shadow">
+				// 	{colors.map((c) => (
+				// 		<button
+				// 			key={c}
+				// 			className="w-4 h-4 rounded-full"
+				// 			style={{ backgroundColor: c }}
+				// 			onClick={() => onColorChange(c)}
+				// 		/>
+				// 	))}
+				// </div>
 			)}
 
 		</div>

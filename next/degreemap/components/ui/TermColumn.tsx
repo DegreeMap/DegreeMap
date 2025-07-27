@@ -18,7 +18,7 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleEditCourse, 
     return (
         <div className="flex gap-x-2 h-full">
             {year.terms.map((term) => (
-                <div key={term.id} className="group w-[5.5rem] max-w-sm flex flex-col relative">
+                <div key={term.id} className="group w-[5.5rem] max-w-sm flex flex-col relative overflow-hidden">
                     {editingTermId === term.id ? (
                         <input
                             type="text"
@@ -43,9 +43,17 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleEditCourse, 
                             {term.name}
                         </h3>
                     )}
-                    <div className="bg-white border p-1 rounded flex-1 flex flex-col items-center ">
+                	<div className="bg-white border p-1 rounded flex-1 flex flex-col items-center overflow-y-auto max-h-[80vh] scrollbar-hidden">
                         <div className="space-y-1 w-full ">
                             {/* Course / Block Container*/}
+                            {term.blocks.map((block) => (
+                                <div key={block.id} className={"p-1 w-full rounded text-sm"}>
+                                    <BlockColumn
+                                        key={block.id}
+                                        title={block.title}
+                                    />
+                                </div>
+                            ))}
                             {term.courses.map((course) => (
                                 <div key={course.id} className={"p-1 w-full rounded text-sm"}>
                                     <CourseCard
@@ -59,18 +67,10 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleEditCourse, 
                                     />
                                 </div>
                             ))}
-                            {term.blocks.map((block) => (
-                                <div key={block.id} className={"p-1 w-full rounded text-sm"}>
-                                    <BlockColumn
-                                        key={block.id}
-                                        title={block.title}
-                                    />
-                                </div>
-                            ))}
                         </div>
                         {}
                         <div 
-	                        className={`mt-2 flex items-center justify-center transition-all duration-100 ease-in-out ${
+	                        className={`mt-2 mb-24 flex items-center justify-center transition-all duration-100 ease-in-out ${
 	                        	isDropdownOpenForTerm(term.id)
 	                        		? "opacity-100 scale-100"
 	                        		: "opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100"
