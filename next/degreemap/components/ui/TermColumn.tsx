@@ -6,12 +6,13 @@ import { Button } from "./button";
 interface TermColumnProps {
     year: Year
     handleTermNameSave: (termId: number, newTermName: string) => void;
+    handleSelectCourse: (course: Course) => void;
     handleEditCourse: (course: Course) => void;
     onRequestDropdownOpen: (yearId: number, termId: number, rect: DOMRect) => void;
     isDropdownOpenForTerm: (termId: number) => boolean
 }
 
-export const TermColumn: React.FC<TermColumnProps> = ({ year, handleEditCourse, handleTermNameSave, onRequestDropdownOpen , isDropdownOpenForTerm}) => {
+export const TermColumn: React.FC<TermColumnProps> = ({ year, handleSelectCourse, handleEditCourse, handleTermNameSave, onRequestDropdownOpen , isDropdownOpenForTerm}) => {
     const [editingTermId, setEditingTermId] = useState<number | null>(null);
 	const [termNameDraft, setTermNameDraft] = useState<string>("");
 
@@ -64,6 +65,9 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleEditCourse, 
                                         credits={course.credits}
                                         color={course.color}
                                         onCourseChange={handleEditCourse}
+                                        onClick={() => {
+                                            handleSelectCourse({id: course.id, title: course.title, code: course.code, credits: course.credits, color: course.color})
+                                        }}
                                     />
                                 </div>
                             ))}

@@ -7,7 +7,7 @@ interface CourseCardProps {
 	code: string;
 	credits: number;
 	color: string;
-    // onClick: () => void;
+	onClick: () => void;
 
 	onCourseChange: (course: Course) => void;
 	onColorChange?: (newColor: string) => void;

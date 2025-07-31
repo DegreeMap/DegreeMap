@@ -14,6 +14,15 @@ export default function DegreeMapMaker() {
 	const [yearNameDraft, setYearNameDraft] = useState<string>("");
 	const [addDropdownOpen, setAddDropdownOpen] = useState<{ yearId: number; termId: number } | null>(null);
 	const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
+	const [selectedCourses, setSelectedCourses] = useState<Course[]>([]);
+
+	/**
+	 * Adds a new course to the selectedCourses field
+	 * @param newSelectedCourse: The course being selected
+	 */
+	const handleSelectCourse = (newSelectedCourse: Course) => {
+		setSelectedCourses((prev) => [...prev, newSelectedCourse]);
+	}
 
     const handleEditCourse = (updated: Course) => {
     	setYears((prev) =>
@@ -113,7 +122,7 @@ export default function DegreeMapMaker() {
 	return (
 		<div className="h-screen flex flex-col">
 			<NavBar />
-			<Toolbar />
+			<Toolbar courses={selectedCourses}/>
             {/* DegreeMap Container */}
             <div className="flex-1 w-full mx-auto bg-gray-200">
                 {/* Year Container */}
@@ -144,6 +153,7 @@ export default function DegreeMapMaker() {
                             {/* Term Container */}
                             <TermColumn
                                 year={year}
+								handleSelectCourse={handleSelectCourse}
                                 handleEditCourse={handleEditCourse}
                                 handleTermNameSave={handleTermNameSave}
 								onRequestDropdownOpen={(yearId, termId, rect) => {
