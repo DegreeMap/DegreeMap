@@ -46,12 +46,18 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 		})
 	}
 
-	const onCreditsChange = (newCredits: number) => {
+	const onCreditsChange = (newCredits: string) => {
+		const digitsOnly = newCredits.replace(/\D/g, ""); // only keep 0-9
+		var newDigitsOnly = 0
+		if(digitsOnly != ""){
+			newDigitsOnly = Number(digitsOnly)
+		}
+		
 		onCourseChange({
 			id: id,
 			title: title, 
 			code: code, 
-			credits: newCredits,
+			credits: newDigitsOnly,
 			color: color
 		})
 	}
@@ -108,16 +114,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 				<h3 className="text-[.6rem] font-semibold leading-none pb-[3px] cursor-text outline-none focus:outline-none"
 					contentEditable
 					suppressContentEditableWarning
-					onBlur={(e) => handleBlur(e, onCreditsChange, (v) => parseInt(v))}
+					onBlur={(e) => handleBlur(e, onCreditsChange)}
 				>
 					{`(${credits})`}
 				</h3>
 			</div>
-			{/* {colorPickerOpen && (
-				<div className="absolute top-1 right-[-160px] z-20 bg-white p-2 rounded shadow">
-					<HexColorPicker color={color} onChange={onColorChange} />
-				</div>
-			)} */}
 		</div>
 	);
 };
