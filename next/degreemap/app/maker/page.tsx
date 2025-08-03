@@ -21,7 +21,13 @@ export default function DegreeMapMaker() {
 	 * @param newSelectedCourse: The course being selected
 	 */
 	const handleSelectCourse = (newSelectedCourse: Course) => {
-		setSelectedCourses((prev) => [...prev, newSelectedCourse]);
+		setSelectedCourses((prev) => {
+			const exists  = prev.some(course => course.id == newSelectedCourse.id)
+			// ^ exists is true if there is a course that shares the same id
+			return exists
+				? prev.filter(course => course.id !== newSelectedCourse.id)
+				: [...prev, newSelectedCourse];
+		})
 	}
 
     const handleEditCourse = (updated: Course) => {
@@ -153,6 +159,7 @@ export default function DegreeMapMaker() {
                             {/* Term Container */}
                             <TermColumn
                                 year={year}
+								selectedCourses={selectedCourses}
 								handleSelectCourse={handleSelectCourse}
                                 handleEditCourse={handleEditCourse}
                                 handleTermNameSave={handleTermNameSave}

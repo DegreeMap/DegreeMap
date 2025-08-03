@@ -5,6 +5,7 @@ import { Button } from "./button";
 
 interface TermColumnProps {
     year: Year
+    selectedCourses: Course[]
     handleTermNameSave: (termId: number, newTermName: string) => void;
     handleSelectCourse: (course: Course) => void;
     handleEditCourse: (course: Course) => void;
@@ -12,7 +13,7 @@ interface TermColumnProps {
     isDropdownOpenForTerm: (termId: number) => boolean
 }
 
-export const TermColumn: React.FC<TermColumnProps> = ({ year, handleSelectCourse, handleEditCourse, handleTermNameSave, onRequestDropdownOpen , isDropdownOpenForTerm}) => {
+export const TermColumn: React.FC<TermColumnProps> = ({ year, selectedCourses, handleSelectCourse, handleEditCourse, handleTermNameSave, onRequestDropdownOpen , isDropdownOpenForTerm}) => {
     const [editingTermId, setEditingTermId] = useState<number | null>(null);
 	const [termNameDraft, setTermNameDraft] = useState<string>("");
 
@@ -64,6 +65,7 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, handleSelectCourse
                                         code={course.code}
                                         credits={course.credits}
                                         color={course.color}
+                                        selected={selectedCourses?.some((c) => c.id === course.id)}
                                         onCourseChange={handleEditCourse}
                                         onClick={() => {
                                             handleSelectCourse({id: course.id, title: course.title, code: course.code, credits: course.credits, color: course.color})

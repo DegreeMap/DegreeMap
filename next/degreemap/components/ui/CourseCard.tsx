@@ -7,6 +7,7 @@ interface CourseCardProps {
 	code: string;
 	credits: number;
 	color: string;
+	selected: boolean;
 	onClick: () => void;
 
 	onCourseChange: (course: Course) => void;
@@ -14,7 +15,7 @@ interface CourseCardProps {
 }
 
 
-export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits, color, onCourseChange }) => {
+export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits, color, selected, onCourseChange, onClick }) => {
 	const [colorPickerOpen, setColorPickerOpen] = useState<Boolean>(false)
 	
 	const handleBlur = (
@@ -69,11 +70,15 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 
 	return (
 		<div 
-			className=" text-white text-xs text-center rounded px-1 py-1 cursor-pointer
-					   transform transition duration-200 ease-in-out hover:scale-105 relative"
+			className={`
+				text-white text-xs text-center rounded px-1 py-1 cursor-pointer
+				transform transition duration-200 ease-in-out hover:scale-105 relative
+				${selected ? "ring-2 ring-black" : ""}
+			`}
 			style={{backgroundColor: color }}
 			onMouseEnter={() => setColorPickerOpen(true)}
 			onMouseLeave={() => setColorPickerOpen(false)}
+			onClick={onClick}
 		>
 			<div className="py-1 cursor-text outline-none focus:outline-none"
 				contentEditable
