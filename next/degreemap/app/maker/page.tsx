@@ -62,6 +62,29 @@ export default function DegreeMapMaker() {
     	);
     };
 
+	const handleBulkEditCourse = (updated: { title: string; code: string; credits: number }) => {
+		const selectedIds = new Set(selectedCourses.map(c => c.id));
+		
+		setYears((prev) =>
+    		prev.map((year) => ({
+    			...year,
+    			terms: year.terms.map((term) => ({
+    				...term,
+    				courses: term.courses.map((course) =>
+						selectedIds.has(course.id)
+					? {
+						...course,
+						...(updated.title?.trim() ? { title: updated.title } : {}), // dont overwrite if ""
+						...(updated.code?.trim() ? { code: updated.code } : {}),	// dont overwrite if ""
+						...(Number.isFinite(updated.credits) ? { credits: updated.credits } : {}), // dont overwrite if non numeric
+					  }
+					: course
+				),
+    			})),
+    		}))
+    	);
+    };
+
 	const handleBulkEditColorCourse = (hex: string) => {
 		const selectedIds = new Set(selectedCourses.map(c => c.id));
 
@@ -165,6 +188,7 @@ export default function DegreeMapMaker() {
 			{/* <NavBar /> */}
 			<Toolbar 
 				selectedCourses={selectedCourses} 
+				onBulkEdit={handleBulkEditCourse}
 				onBulkEditColor={handleBulkEditColorCourse}
 				onClearSelection={handleClearSelection}
 				onBulkDelete={handleDeleteSelection}

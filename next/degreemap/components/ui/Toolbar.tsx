@@ -7,12 +7,12 @@ import { CourseCardModal } from "./CourseCardModal";
 interface ToolbarProps {
     selectedCourses: Course[],
     onBulkEditColor: (hex: string) => void,
-    // onBulkEdit: () => void,
+    onBulkEdit: (updated: { title: string; code: string; credits: number }) => void,
     onBulkDelete: () => void,
     onClearSelection: () => void,
 }
 
-export const Toolbar: React.FC<ToolbarProps> = ({ selectedCourses, onBulkEditColor, onClearSelection, onBulkDelete }) => {
+export const Toolbar: React.FC<ToolbarProps> = ({ selectedCourses, onBulkEdit, onBulkEditColor, onClearSelection, onBulkDelete }) => {
     const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [tempColor, setTempColor] = useState<string>(selectedCourses[0]?.color ?? "#f97316");
@@ -89,16 +89,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({ selectedCourses, onBulkEditCol
             {isEditModalOpen && (
                 <>
                     <CourseCardModal 
+                        selectedCourses={selectedCourses}
                         isOpen={isEditModalOpen} 
+                        onSave={onBulkEdit}
                         onClose={() => setIsEditModalOpen(false)}
                     />
-
-                    {/* <div
-                        className="fixed inset-0 z-[1000] grid place-items-center bg-black/20"
-                        onClick={() => setIsEditModalOpen(false)}
-                        role="dialog"
-                        aria-modal="true"
-                    ></div> */}
                 </>
             )}
 

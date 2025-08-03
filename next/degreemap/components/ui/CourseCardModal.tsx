@@ -2,21 +2,17 @@ import React, { useState } from "react"
 import { Button } from "./button";
 
 interface CourseCardModalProps {
-	// course: {
-    //     title: string
-    //     code: string
-    //     credits: number
-    // }
+	selectedCourses: Course[]
     isOpen: boolean
     onClose: () => void
-    // onSave: (updated: { title: string; code: string; credits: number }) => void;
+    onSave: (updated: { title: string; code: string; credits: number }) => void;
 }
 
 export const CourseCardModal: React.FC<CourseCardModalProps>= ({ 
         // course, 
         isOpen, 
         onClose, 
-        // onSave 
+        onSave 
     }) => {
     const [title, setTitle] = useState("");
 	const [code, setCode] = useState("");
@@ -55,7 +51,10 @@ export const CourseCardModal: React.FC<CourseCardModalProps>= ({
                             Cancel
                         </Button>
                         <Button
-                            // onClick={() => onSave({ title, code, credits: Number(credits) })}
+                            onClick={() => {
+                                onSave({ title, code, credits: Number(credits) })
+                                onClose()
+                            }}
                         >
                             Save
                         </Button>
