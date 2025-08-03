@@ -30,6 +30,24 @@ export default function DegreeMapMaker() {
 		})
 	}
 
+	const handleClearSelection = () => {
+		setSelectedCourses([])
+	}
+
+	const handleDeleteSelection = () => {
+		const selectedIds = new Set(selectedCourses.map(c => c.id));
+
+		setYears((prev) => 
+			prev.map((year) => ({
+				...year,
+				terms: year.terms.map((term) => ({
+					...term,
+					courses: term.courses.filter((course) => !selectedIds.has(course.id))
+				}))
+			})))
+		setSelectedCourses([])
+	}
+
     const handleEditCourse = (updated: Course) => {
     	setYears((prev) =>
     		prev.map((year) => ({
@@ -145,7 +163,12 @@ export default function DegreeMapMaker() {
 	return (
 		<div className="h-screen flex flex-col">
 			{/* <NavBar /> */}
-			<Toolbar selectedCourses={selectedCourses} onBulkEditColor={handleBulkEditColorCourse}/>
+			<Toolbar 
+				selectedCourses={selectedCourses} 
+				onBulkEditColor={handleBulkEditColorCourse}
+				onClearSelection={handleClearSelection}
+				onBulkDelete={handleDeleteSelection}
+			/>
             {/* DegreeMap Container */}
             <div className="flex-1 w-full mx-auto bg-gray-200">
                 {/* Year Container */}
