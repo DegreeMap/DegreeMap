@@ -44,6 +44,24 @@ export default function DegreeMapMaker() {
     	);
     };
 
+	const handleBulkEditColorCourse = (hex: string) => {
+		const selectedIds = new Set(selectedCourses.map(c => c.id));
+
+		setYears((prev) =>
+		  prev.map(year => ({
+			...year,
+			terms: year.terms.map((term) => ({
+			  ...term,
+			  courses: term.courses.map((course) =>
+				selectedIds.has(course.id)
+				  ? { ...course, color: hex } 
+				  : course
+			  ),
+			})),
+		  }))
+		);
+    };
+
 	const addYear = () => {
 		const newYear: Year = {
 			id: nextId,
@@ -104,7 +122,6 @@ export default function DegreeMapMaker() {
         setNextId((id) => id + 1);
     };
     
-
 	const handleYearNameSave = (yearId: number) => {
 		setYears((prev) =>
 			prev.map((year) =>
@@ -127,8 +144,8 @@ export default function DegreeMapMaker() {
 
 	return (
 		<div className="h-screen flex flex-col">
-			<NavBar />
-			<Toolbar courses={selectedCourses}/>
+			{/* <NavBar /> */}
+			<Toolbar selectedCourses={selectedCourses} onBulkEditColor={handleBulkEditColorCourse}/>
             {/* DegreeMap Container */}
             <div className="flex-1 w-full mx-auto bg-gray-200">
                 {/* Year Container */}

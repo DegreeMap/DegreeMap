@@ -1,26 +1,57 @@
-import React from "react"
-import { FaSearchPlus, FaSearchMinus, FaExpand, FaCog } from "react-icons/fa";
+import React, { useEffect, useState } from "react"
+import { HexColorPicker } from "react-colorful";
+import { FaSearchPlus, FaSearchMinus, FaCog } from "react-icons/fa";
 
 interface ToolbarProps {
-    courses?: Course[]
+    selectedCourses: Course[],
+    onBulkEditColor: (hex: string) => void
 }
 
-export const Toolbar: React.FC<ToolbarProps> = ({courses}) => {
-    const iconSize = 24
-    const iconStyle = "p-2 text-gray-800 hover:text-gray-600"
-    
-	if (courses?.length) {
-		console.log("Courses:", courses);
-	} else {
-        console.log("No courses found...")
-    }
+export const Toolbar: React.FC<ToolbarProps> = ({ selectedCourses, onBulkEditColor }) => {
+    const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+    const [tempColor, setTempColor] = useState<string>(selectedCourses[0]?.color ?? "#f97316");
+    // ^ tempColor is the color displayed on the color picker button
+
+    useEffect(() => {
+        if (selectedCourses.length > 0) {
+            setTempColor(selectedCourses[0].color ?? "#f97316");
+        }
+    }, [selectedCourses]
+    );
+
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setIsColorPickerOpen(false);
+        };
+        if (isColorPickerOpen) window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [isColorPickerOpen]);
+
+    const iconSize = 20;
+    const iconStyle = "p-2 text-gray-800 hover:text-gray-600";
+
     return (
-        <div className="bg-gray-200 w-full flex p-2 items-center text-white">
-            {courses?.map((course) => (
-                <div>{course.code}</div>
-            ))}
-            
-            <div className="mr-auto"/>
+        <div className="bg-gray-200 w-full flex p-2 px-6 items-center text-white">
+            <h1 className="text-lg font-semibold text-gray-800 pr-5">DegreeMap</h1>
+
+            {selectedCourses.length > 0 ? (
+                <div className="flex items-center gap-3">
+                    <h2 className="text-base text-gray-800">Selected: {selectedCourses.length}</h2>
+                    <button
+                        className="flex items-center gap-2 rounded border px-2 py-1 text-sm bg-white hover:bg-gray-50"
+                        onClick={() => setIsColorPickerOpen(true)}
+                    >
+                        <span
+                            className="inline-block h-4 w-4 rounded border"
+                            style={{ backgroundColor: tempColor }}
+                        />
+                    </button>
+                </div>
+            ) : (
+                <div></div>
+            )}
+
+            <div className="mr-auto" />
             <button className={iconStyle}>
                 <FaSearchPlus size={iconSize} />
             </button>
@@ -32,6 +63,30 @@ export const Toolbar: React.FC<ToolbarProps> = ({courses}) => {
             <button className={iconStyle}>
                 <FaCog size={iconSize} />
             </button>
+
+            {isColorPickerOpen && (
+                <>
+                    <div
+                        className="fixed inset-0 z-[1000] grid place-items-center bg-black/20"
+                        onClick={() => setIsColorPickerOpen(false)}
+                        role="dialog"
+                        aria-modal="true"
+                    >
+                        <div
+                            className="rounded-lg border bg-white p-3 shadow-xl"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <HexColorPicker
+                                color={tempColor}
+                                onChange={(hex) => {
+                                    setTempColor(hex);
+                                    onBulkEditColor(hex);
+                                }}
+                            />
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     )
 }

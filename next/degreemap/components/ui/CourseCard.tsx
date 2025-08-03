@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { HexColorPicker } from "react-colorful";
 
 interface CourseCardProps {
 	id: number,
@@ -15,9 +14,7 @@ interface CourseCardProps {
 }
 
 
-export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits, color, selected, onCourseChange, onClick }) => {
-	const [colorPickerOpen, setColorPickerOpen] = useState<Boolean>(false)
-	
+export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits, color, selected, onCourseChange, onClick }) => {	
 	const handleBlur = (
 		e: React.FocusEvent<HTMLDivElement>,
 		callback?: (val: any) => void,
@@ -59,25 +56,14 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 		})
 	}
 
-	const onColorChange = (newColor: string) => {
-		onCourseChange({
-			id, title, code, credits,
-			color: newColor
-		})
-	}
-
-	const colors = ['#f87171', '#facc15', '#4ade80', '#38bdf8', '#a78bfa'];
-
 	return (
 		<div 
 			className={`
 				text-white text-xs text-center rounded px-1 py-1 cursor-pointer
 				transform transition duration-200 ease-in-out hover:scale-105 relative
-				${selected ? "ring-2 ring-black" : ""}
+				${selected ? "ring-2 ring-offset-2 ring-black" : ""}
 			`}
 			style={{backgroundColor: color }}
-			onMouseEnter={() => setColorPickerOpen(true)}
-			onMouseLeave={() => setColorPickerOpen(false)}
 			onClick={onClick}
 		>
 			<div className="py-1 cursor-text outline-none focus:outline-none"
