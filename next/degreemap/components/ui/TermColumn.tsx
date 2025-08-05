@@ -58,10 +58,11 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, selectedCourses, s
                                         id={block.id}
                                         key={block.id}
                                         title={block.title}
+                                        color={block.color}
                                         selected={selectedBlocks?.some((b) => (b.id === block.id))}
                                         onBlockChange={handleEditBlock}
                                         onClick = {() => {
-                                            handleSelectBlock({id: block.id, title: block.title})
+                                            handleSelectBlock({id: block.id, title: block.title, color: block.color})
                                         }}
                                     />
                                 </div>

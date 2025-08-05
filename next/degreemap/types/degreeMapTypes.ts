@@ -9,6 +9,7 @@ interface Course {
 interface Block {
 	id: number;
 	title: string;
+	color: string;
 }
 
 interface Term {

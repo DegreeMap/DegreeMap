@@ -5,16 +5,18 @@ interface BlockColumnProps {
 	id: number
 	title: string;
 	selected: boolean;
+	color: string;
 	onBlockChange: (newBlock: Block) => void;
     onClick: () => void;
 }
 
 
-export const BlockColumn: React.FC<BlockColumnProps> = ({id, title, selected, onBlockChange, onClick }) => {
+export const BlockColumn: React.FC<BlockColumnProps> = ({id, title, selected, color, onBlockChange, onClick }) => {
 	const onTitleChange = (newTitle: string) => {
 		onBlockChange({
 			id: id,
-			title: newTitle
+			title: newTitle,
+			color: color
 		})
 	}
 
@@ -39,6 +41,7 @@ export const BlockColumn: React.FC<BlockColumnProps> = ({id, title, selected, on
 			style={{
 				writingMode: "vertical-rl",
 				transform: "rotate(180deg)",
+				backgroundColor: color
 			}}
 			onClick={onClick}
 		>

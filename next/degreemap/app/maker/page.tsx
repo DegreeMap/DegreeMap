@@ -175,6 +175,7 @@ export default function DegreeMapMaker() {
         const newBlock: Block = {
             id: nextId,
             title: `Internship`,
+			color: '#83D7F5'
         };
 
         setYears((prevYears) =>
