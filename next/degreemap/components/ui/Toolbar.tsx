@@ -6,20 +6,25 @@ import { CourseCardModal } from "./CourseCardModal";
 
 interface ToolbarProps {
     selectedCourses: Course[],
+    selectedBlocks: Block[],
     onBulkEditColor: (hex: string) => void,
     onBulkEdit: (updated: { title: string; code: string; credits: number }) => void,
     onBulkDelete: () => void,
     onClearSelection: () => void,
 }
 
-export const Toolbar: React.FC<ToolbarProps> = ({ selectedCourses, onBulkEdit, onBulkEditColor, onClearSelection, onBulkDelete }) => {
+export const Toolbar: React.FC<ToolbarProps> = ({ selectedCourses, selectedBlocks, onBulkEdit, onBulkEditColor, onClearSelection, onBulkDelete }) => {
     const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [tempColor, setTempColor] = useState<string>(selectedCourses[0]?.color ?? "#f97316");
     // ^ tempColor is the color displayed on the color picker button
 
+    const canRenderToolbar = (): boolean => {
+        return ((selectedCourses.length + selectedBlocks.length) > 0)
+    }
+    
     useEffect(() => {
-        if (selectedCourses.length > 0) {
+        if (canRenderToolbar()) {
             setTempColor(selectedCourses[0].color ?? "#f97316");
         }
     }, [selectedCourses]
@@ -41,9 +46,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({ selectedCourses, onBulkEdit, o
         <div className="bg-gray-200 w-full flex p-2 px-6 items-center text-white">
             <h1 className="text-lg font-semibold text-gray-800 pr-5">DegreeMap</h1>
 
-            {selectedCourses.length > 0 ? (
+            {canRenderToolbar() ? (
                 <div className="flex items-center gap-1">
-                    <h2 className="text-base text-gray-800 mr-3">Selected: {selectedCourses.length}</h2>
+                    <h2 className="text-base text-gray-800 mr-3">Selected: {selectedCourses.length+selectedBlocks.length}</h2>
                     <button
                         className="flex items-center gap-2 rounded border px-2 py-1 text-sm bg-white hover:bg-gray-100"
                         onClick={() => setIsColorPickerOpen(true)}

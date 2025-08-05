@@ -217,6 +217,7 @@ export default function DegreeMapMaker() {
 			{/* <NavBar /> */}
 			<Toolbar 
 				selectedCourses={selectedCourses} 
+				selectedBlocks={selectedBlocks} 
 				onBulkEdit={handleBulkEditCourse}
 				onBulkEditColor={handleBulkEditColorCourse}
 				onClearSelection={handleClearSelection}
