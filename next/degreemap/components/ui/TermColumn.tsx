@@ -2,18 +2,22 @@ import React, { useState } from "react"
 import { CourseCard } from "./CourseCard";
 import { BlockColumn } from "./BlockColumn";
 import { Button } from "./button";
+import { title } from "process";
 
 interface TermColumnProps {
     year: Year
     selectedCourses: Course[]
+    selectedBlocks: Block[]
     handleTermNameSave: (termId: number, newTermName: string) => void;
     handleSelectCourse: (course: Course) => void;
+    handleSelectBlock: (block: Block) => void;
     handleEditCourse: (course: Course) => void;
+    handleEditBlock: (block: Block) => void;
     onRequestDropdownOpen: (yearId: number, termId: number, rect: DOMRect) => void;
     isDropdownOpenForTerm: (termId: number) => boolean
 }
 
-export const TermColumn: React.FC<TermColumnProps> = ({ year, selectedCourses, handleSelectCourse, handleEditCourse, handleTermNameSave, onRequestDropdownOpen , isDropdownOpenForTerm}) => {
+export const TermColumn: React.FC<TermColumnProps> = ({ year, selectedCourses, selectedBlocks, handleSelectCourse, handleSelectBlock, handleEditCourse, handleEditBlock, handleTermNameSave, onRequestDropdownOpen , isDropdownOpenForTerm}) => {
     const [editingTermId, setEditingTermId] = useState<number | null>(null);
 	const [termNameDraft, setTermNameDraft] = useState<string>("");
 
@@ -51,8 +55,14 @@ export const TermColumn: React.FC<TermColumnProps> = ({ year, selectedCourses, h
                             {term.blocks.map((block) => (
                                 <div key={block.id} className={"p-1 w-full rounded text-sm"}>
                                     <BlockColumn
+                                        id={block.id}
                                         key={block.id}
                                         title={block.title}
+                                        selected={selectedBlocks?.some((b) => (b.id === block.id))}
+                                        onBlockChange={handleEditBlock}
+                                        onClick = {() => {
+                                            handleSelectBlock({id: block.id, title: block.title})
+                                        }}
                                     />
                                 </div>
                             ))}

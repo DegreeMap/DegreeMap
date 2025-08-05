@@ -15,6 +15,7 @@ export default function DegreeMapMaker() {
 	const [addDropdownOpen, setAddDropdownOpen] = useState<{ yearId: number; termId: number } | null>(null);
 	const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
 	const [selectedCourses, setSelectedCourses] = useState<Course[]>([]);
+	const [selectedBlocks, setSelectedBlocks] = useState<Block[]>([]);
 
 	/**
 	 * Adds a new course to the selectedCourses field
@@ -30,22 +31,36 @@ export default function DegreeMapMaker() {
 		})
 	}
 
+	const handleSelectBlock = (newSelectedBlock: Block) => {
+		setSelectedBlocks((prev) => {
+			const exists  = prev.some(block => block.id == newSelectedBlock.id)
+			// ^ exists is true if there is a block that shares the same id
+			return exists
+				? prev.filter(block => block.id !== newSelectedBlock.id)
+				: [...prev, newSelectedBlock];
+		})
+	}
+
 	const handleClearSelection = () => {
 		setSelectedCourses([])
+		setSelectedBlocks([])
 	}
 
 	const handleDeleteSelection = () => {
-		const selectedIds = new Set(selectedCourses.map(c => c.id));
+		const selectedBlockIds = new Set(selectedCourses.map(c => c.id));
+		const selectedCourseIds = new Set(selectedBlocks.map(c => c.id));
 
 		setYears((prev) => 
 			prev.map((year) => ({
 				...year,
 				terms: year.terms.map((term) => ({
 					...term,
-					courses: term.courses.filter((course) => !selectedIds.has(course.id))
+					courses: term.courses.filter((course) => !selectedBlockIds.has(course.id)),
+					blocks: term.blocks.filter((block) => !selectedBlockIds.has(block.id))
 				}))
 			})))
 		setSelectedCourses([])
+		setSelectedBlocks([])
 	}
 
     const handleEditCourse = (updated: Course) => {
@@ -56,6 +71,20 @@ export default function DegreeMapMaker() {
     				...term,
     				courses: term.courses.map((course) =>
     					course.id === updated.id ? { ...course, ...updated } : course
+    				),
+    			})),
+    		}))
+    	);
+    };
+
+	const handleEditBlock= (updated: Block) => {
+    	setYears((prev) =>
+    		prev.map((year) => ({
+    			...year,
+    			terms: year.terms.map((term) => ({
+    				...term,
+    				blocks: term.blocks.map((block) =>
+    					block.id === updated.id ? { ...block, ...updated } : block
     				),
     			})),
     		}))
@@ -224,8 +253,11 @@ export default function DegreeMapMaker() {
                             <TermColumn
                                 year={year}
 								selectedCourses={selectedCourses}
+								selectedBlocks={selectedBlocks}
 								handleSelectCourse={handleSelectCourse}
+								handleSelectBlock={handleSelectBlock}
                                 handleEditCourse={handleEditCourse}
+								handleEditBlock={handleEditBlock}
                                 handleTermNameSave={handleTermNameSave}
 								onRequestDropdownOpen={(yearId, termId, rect) => {
 									setAddDropdownOpen({yearId, termId});
