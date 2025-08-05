@@ -8,9 +8,9 @@ import { Dropdown } from "@/components/ui/common/Dropdown";
 import { Toolbar } from "@/components/ui/Toolbar";
 
 export default function DegreeMapMaker() {
-    const [years, setYears] = useState<Year[]>([]);
+	const [years, setYears] = useState<Year[]>([]);
 	const [nextId, setNextId] = useState(1);
-    const [editingYearId, setEditingYearId] = useState<number | null>(null);
+	const [editingYearId, setEditingYearId] = useState<number | null>(null);
 	const [yearNameDraft, setYearNameDraft] = useState<string>("");
 	const [addDropdownOpen, setAddDropdownOpen] = useState<{ yearId: number; termId: number } | null>(null);
 	const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
@@ -23,7 +23,7 @@ export default function DegreeMapMaker() {
 	 */
 	const handleSelectCourse = (newSelectedCourse: Course) => {
 		setSelectedCourses((prev) => {
-			const exists  = prev.some(course => course.id == newSelectedCourse.id)
+			const exists = prev.some(course => course.id == newSelectedCourse.id)
 			// ^ exists is true if there is a course that shares the same id
 			return exists
 				? prev.filter(course => course.id !== newSelectedCourse.id)
@@ -33,7 +33,7 @@ export default function DegreeMapMaker() {
 
 	const handleSelectBlock = (newSelectedBlock: Block) => {
 		setSelectedBlocks((prev) => {
-			const exists  = prev.some(block => block.id == newSelectedBlock.id)
+			const exists = prev.some(block => block.id == newSelectedBlock.id)
 			// ^ exists is true if there is a block that shares the same id
 			return exists
 				? prev.filter(block => block.id !== newSelectedBlock.id)
@@ -47,15 +47,15 @@ export default function DegreeMapMaker() {
 	}
 
 	const handleDeleteSelection = () => {
-		const selectedBlockIds = new Set(selectedCourses.map(c => c.id));
-		const selectedCourseIds = new Set(selectedBlocks.map(c => c.id));
+		const selectedCourseIds = new Set(selectedCourses.map(c => c.id));
+		const selectedBlockIds = new Set(selectedBlocks.map(c => c.id));
 
-		setYears((prev) => 
+		setYears((prev) =>
 			prev.map((year) => ({
 				...year,
 				terms: year.terms.map((term) => ({
 					...term,
-					courses: term.courses.filter((course) => !selectedBlockIds.has(course.id)),
+					courses: term.courses.filter((course) => !selectedCourseIds.has(course.id)),
 					blocks: term.blocks.filter((block) => !selectedBlockIds.has(block.id))
 				}))
 			})))
@@ -63,74 +63,83 @@ export default function DegreeMapMaker() {
 		setSelectedBlocks([])
 	}
 
-    const handleEditCourse = (updated: Course) => {
-    	setYears((prev) =>
-    		prev.map((year) => ({
-    			...year,
-    			terms: year.terms.map((term) => ({
-    				...term,
-    				courses: term.courses.map((course) =>
-    					course.id === updated.id ? { ...course, ...updated } : course
-    				),
-    			})),
-    		}))
-    	);
-    };
-
-	const handleEditBlock= (updated: Block) => {
-    	setYears((prev) =>
-    		prev.map((year) => ({
-    			...year,
-    			terms: year.terms.map((term) => ({
-    				...term,
-    				blocks: term.blocks.map((block) =>
-    					block.id === updated.id ? { ...block, ...updated } : block
-    				),
-    			})),
-    		}))
-    	);
-    };
-
-	const handleBulkEditCourse = (updated: { title: string; code: string; credits: number }) => {
-		const selectedIds = new Set(selectedCourses.map(c => c.id));
-		
+	const handleEditCourse = (updated: Course) => {
 		setYears((prev) =>
-    		prev.map((year) => ({
-    			...year,
-    			terms: year.terms.map((term) => ({
-    				...term,
-    				courses: term.courses.map((course) =>
-						selectedIds.has(course.id)
-					? {
-						...course,
-						...(updated.title?.trim() ? { title: updated.title } : {}), // dont overwrite if ""
-						...(updated.code?.trim() ? { code: updated.code } : {}),	// dont overwrite if ""
-						...(Number.isFinite(updated.credits) ? { credits: updated.credits } : {}), // dont overwrite if non numeric
-					  }
-					: course
-				),
-    			})),
-    		}))
-    	);
-    };
-
-	const handleBulkEditColorCourse = (hex: string) => {
-		const selectedIds = new Set(selectedCourses.map(c => c.id));
-
-		setYears((prev) =>
-		  prev.map(year => ({
-			...year,
-			terms: year.terms.map((term) => ({
-			  ...term,
-			  courses: term.courses.map((course) =>
-				selectedIds.has(course.id)
-				  ? { ...course, color: hex } 
-				  : course
-			  ),
-			})),
-		  }))
+			prev.map((year) => ({
+				...year,
+				terms: year.terms.map((term) => ({
+					...term,
+					courses: term.courses.map((course) =>
+						course.id === updated.id ? { ...course, ...updated } : course
+					),
+				})),
+			}))
 		);
-    };
+	};
+
+	const handleEditBlock = (updated: Block) => {
+		setYears((prev) =>
+			prev.map((year) => ({
+				...year,
+				terms: year.terms.map((term) => ({
+					...term,
+					blocks: term.blocks.map((block) =>
+						block.id === updated.id ? { ...block, ...updated } : block
+					),
+				})),
+			}))
+		);
+	};
+
+	const handleBulkEdit = (updated: { title: string; code: string; credits: number }) => {
+		const selectedCourseIds = new Set(selectedCourses.map(c => c.id));
+		const selectedBlockIds = new Set(selectedBlocks.map(b => b.id));
+
+		setYears((prev) =>
+			prev.map((year) => ({
+				...year,
+				terms: year.terms.map((term) => ({
+					...term,
+					courses: term.courses.map((course) =>
+						selectedCourseIds.has(course.id)
+							? {
+								...course,
+								...(updated.title?.trim() ? { title: updated.title } : {}), // dont overwrite if ""
+								...(updated.code?.trim() ? { code: updated.code } : {}),	// dont overwrite if ""
+								...(Number.isFinite(updated.credits) ? { credits: updated.credits } : {}), // dont overwrite if non numeric
+							} : course),
+					blocks: term.blocks.map((block) =>
+						selectedBlockIds.has(block.id)
+							? {
+								...block,
+								...(updated.title?.trim() ? { title: updated.title } : {}), // dont overwrite if ""
+							} : block),
+				})),
+			}))
+		);
+	};
+
+	const handleBulkEditColor = (hex: string) => {
+		const selectedCourseIds = new Set(selectedCourses.map(c => c.id));
+		const selectedBlockIds = new Set(selectedBlocks.map(b => b.id));
+
+		setYears((prev) =>
+			prev.map(year => ({
+				...year,
+				terms: year.terms.map((term) => ({
+					...term,
+					courses: term.courses.map((course) =>
+						selectedCourseIds.has(course.id)
+							? { ...course, color: hex }
+							: course),
+					blocks: term.blocks.map((block) => 
+						selectedBlockIds.has(block.id)
+						? {...block, color: hex}
+						: block),
+				})),
+			}))
+		);
+	};
 
 	const addYear = () => {
 		const newYear: Year = {
@@ -139,7 +148,7 @@ export default function DegreeMapMaker() {
 			terms: ["Fall", "Spring", "Summer"].map((term, index) => ({
 				id: nextId + index + 1,
 				name: term,
-                courses: [],
+				courses: [],
 				blocks: []
 			})),
 		};
@@ -147,52 +156,52 @@ export default function DegreeMapMaker() {
 		setYears([...years, newYear]);
 	};
 
-    const handleAddCourse = (yearId: number, termId: number) => {
-        const newCourse: Course = {
-            id: nextId,
-            title: "Degree Map I",
-            code: "DEGM-101",
-            credits: 4,
+	const handleAddCourse = (yearId: number, termId: number) => {
+		const newCourse: Course = {
+			id: nextId,
+			title: "Degree Map I",
+			code: "DEGM-101",
+			credits: 4,
 			color: '#f97316'
-        }
+		}
 
-        setYears((prevYears) =>
-            prevYears.map((year) => year.id !== yearId? year: {
-                ...year,
-                terms: year.terms.map((term) =>
-                    term.id !== termId ? term: {
-                        ...term, 
-                        courses: [...term.courses, newCourse],
+		setYears((prevYears) =>
+			prevYears.map((year) => year.id !== yearId ? year : {
+				...year,
+				terms: year.terms.map((term) =>
+					term.id !== termId ? term : {
+						...term,
+						courses: [...term.courses, newCourse],
 						blocks: term.blocks
-                    }
-                ),
-            })
-        );
-        setNextId((id) => id + 1);
-    }
+					}
+				),
+			})
+		);
+		setNextId((id) => id + 1);
+	}
 
-    const handleAddBlock = (yearId: number, termId: number) => {
-        const newBlock: Block = {
-            id: nextId,
-            title: `Internship`,
+	const handleAddBlock = (yearId: number, termId: number) => {
+		const newBlock: Block = {
+			id: nextId,
+			title: `Internship`,
 			color: '#83D7F5'
-        };
+		};
 
-        setYears((prevYears) =>
-            prevYears.map((year) => year.id !== yearId? year: {
-                ...year,
-                terms: year.terms.map((term) =>
-                    term.id !== termId ? term: {
-                        ...term, 
-                        blocks: [...term.blocks, newBlock],
+		setYears((prevYears) =>
+			prevYears.map((year) => year.id !== yearId ? year : {
+				...year,
+				terms: year.terms.map((term) =>
+					term.id !== termId ? term : {
+						...term,
+						blocks: [...term.blocks, newBlock],
 						courses: term.courses
-                    }
-                ),
-            })
-        );
-        setNextId((id) => id + 1);
-    };
-    
+					}
+				),
+			})
+		);
+		setNextId((id) => id + 1);
+	};
+
 	const handleYearNameSave = (yearId: number) => {
 		setYears((prev) =>
 			prev.map((year) =>
@@ -202,7 +211,7 @@ export default function DegreeMapMaker() {
 		setEditingYearId(null);
 	};
 
-    const handleTermNameSave = (termId: number, newTermName: string) => {
+	const handleTermNameSave = (termId: number, newTermName: string) => {
 		setYears((prev) =>
 			prev.map((year) => ({
 				...year,
@@ -216,23 +225,23 @@ export default function DegreeMapMaker() {
 	return (
 		<div className="h-screen flex flex-col">
 			{/* <NavBar /> */}
-			<Toolbar 
-				selectedCourses={selectedCourses} 
-				selectedBlocks={selectedBlocks} 
-				onBulkEdit={handleBulkEditCourse}
-				onBulkEditColor={handleBulkEditColorCourse}
+			<Toolbar
+				selectedCourses={selectedCourses}
+				selectedBlocks={selectedBlocks}
+				onBulkEdit={handleBulkEdit}
+				onBulkEditColor={handleBulkEditColor}
 				onClearSelection={handleClearSelection}
 				onBulkDelete={handleDeleteSelection}
 			/>
-            {/* DegreeMap Container */}
-            <div className="flex-1 w-full mx-auto bg-gray-200">
-                {/* Year Container */}
-                <div className="flex gap-x-2 h-full pb-4 pl-4">
-                    {years.map((year) => (
+			{/* DegreeMap Container */}
+			<div className="flex-1 w-full mx-auto bg-gray-200">
+				{/* Year Container */}
+				<div className="flex gap-x-2 h-full pb-4 pl-4">
+					{years.map((year) => (
 						<div key={year.id} className="border p-3 rounded-lg bg-gray-100 flex-shrink-0 h-full flex flex-col">
 							{editingYearId === year.id ? (
 								// Input Year Component
-                                <input
+								<input
 									type="text"
 									value={yearNameDraft}
 									onChange={(e) => setYearNameDraft(e.target.value)}
@@ -251,25 +260,25 @@ export default function DegreeMapMaker() {
 									{year.name}
 								</h2>
 							)}
-                            {/* Term Container */}
-                            <TermColumn
-                                year={year}
+							{/* Term Container */}
+							<TermColumn
+								year={year}
 								selectedCourses={selectedCourses}
 								selectedBlocks={selectedBlocks}
 								handleSelectCourse={handleSelectCourse}
 								handleSelectBlock={handleSelectBlock}
-                                handleEditCourse={handleEditCourse}
+								handleEditCourse={handleEditCourse}
 								handleEditBlock={handleEditBlock}
-                                handleTermNameSave={handleTermNameSave}
+								handleTermNameSave={handleTermNameSave}
 								onRequestDropdownOpen={(yearId, termId, rect) => {
-									setAddDropdownOpen({yearId, termId});
+									setAddDropdownOpen({ yearId, termId });
 									setDropdownPosition({
 										top: rect.bottom + window.scrollY,
 										left: rect.left + window.scrollX,
 									});
 								}}
 								isDropdownOpenForTerm={(termId) => addDropdownOpen?.termId === termId}
-                            />
+							/>
 						</div>
 					))}
 					<div className="flex items-center">
@@ -278,19 +287,19 @@ export default function DegreeMapMaker() {
 				</div>
 			</div>
 			{addDropdownOpen && dropdownPosition && (
-			<Dropdown
-				isOpen={addDropdownOpen != null}
-				onClose={() => setAddDropdownOpen(null)}
-				position={dropdownPosition}
-				options={[{
-					option: "Add Course",
-					action: () => handleAddCourse(addDropdownOpen.yearId, addDropdownOpen.termId)
-				},{
-					option: "Add Block",
-					action: () => handleAddBlock(addDropdownOpen.yearId, addDropdownOpen.termId)
-				}]}
-		/>
-		)}
+				<Dropdown
+					isOpen={addDropdownOpen != null}
+					onClose={() => setAddDropdownOpen(null)}
+					position={dropdownPosition}
+					options={[{
+						option: "Add Course",
+						action: () => handleAddCourse(addDropdownOpen.yearId, addDropdownOpen.termId)
+					}, {
+						option: "Add Block",
+						action: () => handleAddBlock(addDropdownOpen.yearId, addDropdownOpen.termId)
+					}]}
+				/>
+			)}
 		</div>
 	);
 }
