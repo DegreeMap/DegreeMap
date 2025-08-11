@@ -16,26 +16,20 @@ export const DegreeMapCard: React.FC<DegreeMapCardProps> = ({ degreeMap, onRenam
     const iconStyle = "p-2 text-gray-800 hover:text-gray-600";
 
 	return (
-		<div className="rounded-2xl border bg-white p-4 shadow-sm hover:shadow-md transition">
+		<div className="rounded-2xl w-80 shrink-0 border bg-white p-4 shadow-sm hover:shadow-md transition">
 			<div className="flex items-start justify-between gap-3">
 				<Link href={`/maps/${id}`} className="text-lg font-semibold hover:underline">
 					{name || "NULL_NAME"}
 				</Link>
 
 				<div className="flex gap-2 shrink-0">
-					<button
-						className="text-sm px-2 py-1 rounded border hover:bg-gray-50"
-						onClick={() => onRename?.(id, name)}
-					>
-						Rename
-					</button>
                     <button className={iconStyle} onClick={() => onDelete?.(id)}>
                         <FaTrash size={selectionIconSize} />
                     </button>
 				</div>
 			</div>
 
-			<p className="mt-2 text-sm text-gray-500">
+			<p className="mt-2 text-xs text-gray-500">
 				last updated {new Date(updatedAt).toLocaleString()}
 			</p>
 		</div>
