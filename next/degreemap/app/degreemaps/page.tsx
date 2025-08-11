@@ -1,61 +1,36 @@
-"use client"
-import NavBar from "@/components/nav/navbars";
-import React, { useEffect, useState } from "react";
-import api from '@/utils/axiosInstance';
-import { useSession } from 'next-auth/react';
+"use client";
 
+import { ExportButton } from "@/components/db/ExportButton";
+import { ImportButton } from "@/components/db/ImportButton";
+import { useAllDegreeMaps, createNewDegreeMap, renameDegreeMap, deleteDegreeMap } from "@/lib/useDegreeMaps";
+import Link from "next/link";
 
+export default function MapsPage() {
+	const maps = useAllDegreeMaps();
 
-const Page: React.FC = () => {
-    const { data: session } = useSession();
-    const [degreeMaps, setMaps] = useState<{ id: number, name: string }[]>([]);
+	return (
+		<div className="p-4 space-y-4">
+			<div className="flex gap-2">
+				<button onClick={() => createNewDegreeMap()} className="px-3 py-2 rounded bg-black text-white">
+					New Degree Map
+				</button>
+				<ExportButton />
+				<ImportButton />
+			</div>
 
-    const getData = async () => {
-
-        try {
-            const res = await api.get('/degreeMaps');
-
-            return res.data;
-        } catch (error: any) {
-
-            if (error.response?.status === 401) {
-                console.error('401 MOMENT');
-                console.dir(error);
-                return 'unauthorized, so you can\'t see it :(';
-            }
-
-            console.error('Error fetching dummy data: ', error);
-            return 'An error occurred';
-        }
-    }
-
-    useEffect(() => {
-        if (session) {
-            getData().then(data => {
-                setMaps(data);
-            }).catch(err => {
-                console.error(err);
-                setMaps([{ id: 0, name: "Error" }]);
-            });
-        } else {
-            setMaps([{ id: 0, name: "Must be logged in" }]);
-        }
-    }, [session]);
-
-    return (
-        <>
-            <NavBar></NavBar>
-            <div>
-                <h1>Protected page</h1>
-                <h2>RESULT: </h2>
-                {degreeMaps.map((degreemap) =>
-                (
-                    <h2 key={degreemap.id}>{degreemap.name}</h2>
-                )
-                )}
-            </div>
-        </>
-    );
-};
-
-export default Page;
+			<ul className="space-y-2">
+				{maps.map((m) => (
+					<li key={m.id} className="flex items-center gap-2">
+						<Link href={`/maps/${m.id}`} className="underline">{m.name}</Link>
+						<small className="opacity-70">updated {new Date(m.updatedAt).toLocaleString()}</small>
+						<button onClick={() => {
+							const name = prompt("Rename:", m.name);
+							if (name) renameDegreeMap(m.id, name);
+						}}>Rename</button>
+						<button onClick={() => deleteDegreeMap(m.id)}>Delete</button>
+					</li>
+				))}
+			</ul>
+		</div>
+	);
+}

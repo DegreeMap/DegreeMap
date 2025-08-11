@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState } from "react";
-import NavBar from "@/components/nav/navbars";
 import { Button } from "@/components/ui/button";
 import { TermColumn } from "@/components/ui/TermColumn";
 import { Dropdown } from "@/components/ui/common/Dropdown";

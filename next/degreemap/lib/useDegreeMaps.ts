@@ -15,7 +15,7 @@ export async function createNewDegreeMap(name = "Untitled Degree Map") {
 	return id;
 }
 
-export async function renameMap(id: string, name: string) {
+export async function renameDegreeMap(id: string, name: string) {
 	const existing = await db.degreeMaps.get(id);
 	if (!existing) return;
 	await saveDegreeMap({ ...existing, name });
@@ -27,4 +27,4 @@ export async function saveContent(id: string, degreeMap: {years: Year[] }) {
 	await saveDegreeMap({ ...existing, degreeMap });
 }
 
-export { deleteDegreeMap as deleteMap };
+export { deleteDegreeMap as deleteDegreeMap };
