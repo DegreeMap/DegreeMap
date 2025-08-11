@@ -30,7 +30,7 @@ export default function NavBar({navItems}: NavBarProps) {
     const items = navItems || defaultNavData; // If no props are given, a default navbar will be made.
     
     return (
-        <div className="flex flex-row items-center w-full h-20 p-3.5 px-32 bg-slate-400">
+        <div className="flex flex-row items-center w-full h-16 p-3.5 px-32 bg-slate-400">
             <NavItem key={'logo'} navData={{name: "Homepage/Logo", link: "/" }}></NavItem>
             <div className="flex-1"></div>
             {items.map((item, index) => (

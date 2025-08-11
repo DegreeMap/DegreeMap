@@ -4,10 +4,22 @@ import com.degreemap.DegreeMap.auth.jwt.AuthResponseDto;
 import com.degreemap.DegreeMap.auth.jwt.JwtGenerator;
 import com.degreemap.DegreeMap.auth.refreshToken.RefreshTokenEntity;
 import com.degreemap.DegreeMap.auth.refreshToken.RefreshTokenRepo;
+import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalog;
+import com.degreemap.DegreeMap.courseEntities.catalogs.CourseCatalogRepository;
+import com.degreemap.DegreeMap.courseEntities.courses.Course;
+import com.degreemap.DegreeMap.courseEntities.courses.CourseRepository;
+import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMap;
+import com.degreemap.DegreeMap.dmEntities.degreeMap.DegreeMapRepository;
 import com.degreemap.DegreeMap.users.User;
 import com.degreemap.DegreeMap.users.UserRepository;
+import com.degreemap.DegreeMap.users.userCatalog.UserCourseCatalog;
+import com.degreemap.DegreeMap.users.userCatalog.UserCourseCatalogRepository;
+import com.degreemap.DegreeMap.users.userDm.UserDegreeMap;
+import com.degreemap.DegreeMap.users.userDm.UserDegreeMapRepository;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,15 +35,25 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JpaUserDetailsService userDetailsService;
     private final JwtGenerator jwtGenerator;
-    private final UserRepository userRepository;
     private final RefreshTokenRepo refreshTokenRepo;
+    private final UserCourseCatalogRepository userCcRepository;
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
+    private final CourseCatalogRepository ccRepository;
+    private final DegreeMapRepository degreeMapRepository;
+    private final UserDegreeMapRepository udmRepo;
 
-    public AuthService(PasswordEncoder passwordEncoder, JpaUserDetailsService userDetailsService, JwtGenerator jwtGenerator, UserRepository userRepository, RefreshTokenRepo refreshTokenRepo) {
+    public AuthService(PasswordEncoder passwordEncoder, CourseRepository courseRepository, DegreeMapRepository dmRepository, UserDegreeMapRepository udmRepo, CourseCatalogRepository ccRepository, JpaUserDetailsService userDetailsService, JwtGenerator jwtGenerator, UserRepository userRepository, UserCourseCatalogRepository userCcRepository, RefreshTokenRepo refreshTokenRepo) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
         this.jwtGenerator = jwtGenerator;
         this.userRepository = userRepository;
+        this.userCcRepository = userCcRepository;
+        this.ccRepository = ccRepository;
         this.refreshTokenRepo = refreshTokenRepo;
+        this.degreeMapRepository = dmRepository;
+        this.udmRepo = udmRepo;
+        this.courseRepository= courseRepository;
     }
 
     /**
@@ -85,6 +107,33 @@ public class AuthService {
                     passwordEncoder.encode(password)
             );
             userRepository.save(user);
+
+            // Default CC
+            CourseCatalog cc = new CourseCatalog("Custom Courses");
+            ccRepository.save(cc);
+            UserCourseCatalog ucc = new UserCourseCatalog(user, cc);
+            user.addUserCC(ucc);
+            cc.addUserCC(ucc);
+            userRepository.save(user);
+
+            Course chem = new Course(cc, "Chemistry 101", "CHEM-101", 4, "RIT", "College of Science", "Chemistry");
+            Course cs = new Course(cc, "Computer Science 101", "CODE-101", 4, "RIT", "College of Information Sciences", "Computer Science");
+            Course eng = new Course(cc, "Writing 101", "WRIT-101", 4, "RIT", "College of Language Arts", "English");
+
+            // Default DM
+            DegreeMap dm = new DegreeMap("DegreeMap 1");
+            degreeMapRepository.save(dm);
+            UserDegreeMap udm = new UserDegreeMap(user, dm);
+            user.addUserDM(udm);
+            dm.addUserDM(udm);
+            userRepository.save(user);
+            
+            userRepository.save(user);
+            userCcRepository.save(ucc);
+            udmRepo.save(udm);
+            courseRepository.save(chem);
+            courseRepository.save(cs);
+            courseRepository.save(eng);
             return userDetailsService.loadUserByUsername(email);
         }
     }

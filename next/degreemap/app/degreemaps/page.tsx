@@ -1,28 +1,26 @@
-// A page for testing protected routes
 "use client"
-import NavBar from '@/components/nav/navbars';
+import NavBar from "@/components/nav/navbars";
+import React, { useEffect, useState } from "react";
 import api from '@/utils/axiosInstance';
-
 import { useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+
+
 
 const Page: React.FC = () => {
     const { data: session } = useSession();
-    const [msg, setMsg] = useState<string>('');
+    const [degreeMaps, setMaps] = useState<{ id: number, name: string }[]>([]);
 
     const getData = async () => {
 
         try {
-            const response = await api.get('/dummy/hello');
+            const res = await api.get('/degreeMaps');
 
-            return response.data.message;
+            return res.data;
         } catch (error: any) {
-            
-            // Runs when the server returns non-200 status code
-            
+
             if (error.response?.status === 401) {
                 console.error('401 MOMENT');
-                console.dir(error); 
+                console.dir(error);
                 return 'unauthorized, so you can\'t see it :(';
             }
 
@@ -34,13 +32,13 @@ const Page: React.FC = () => {
     useEffect(() => {
         if (session) {
             getData().then(data => {
-                setMsg(data);
+                setMaps(data);
             }).catch(err => {
                 console.error(err);
-                setMsg('An error occurred');
+                setMaps([{ id: 0, name: "Error" }]);
             });
         } else {
-            setMsg('You need to be logged in to see this page');
+            setMaps([{ id: 0, name: "Must be logged in" }]);
         }
     }, [session]);
 
@@ -49,11 +47,12 @@ const Page: React.FC = () => {
             <NavBar></NavBar>
             <div>
                 <h1>Protected page</h1>
-                <h2>MESSAGE: {msg}</h2>
-                {/* How to access user's ID */}
-                {session &&
-                    <h2>Your ID is {session.user.id}</h2>
-                }
+                <h2>RESULT: </h2>
+                {degreeMaps.map((degreemap) =>
+                (
+                    <h2 key={degreemap.id}>{degreemap.name}</h2>
+                )
+                )}
             </div>
         </>
     );

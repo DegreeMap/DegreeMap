@@ -34,12 +34,8 @@ public class UserControllerTests {
         given(userService.getAllUsers()).willReturn(
                 List.of(
         new User("getall0@example.com", "Password6666!"),
-
         new User("getall1@example.com", "Password6666!"),
         new User("getall2@example.com", "Password6666!")
-
-
-
                 )
         );
 

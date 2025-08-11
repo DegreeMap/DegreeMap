@@ -1,10 +1,14 @@
 package com.degreemap.DegreeMap.users;
 
 import com.degreemap.DegreeMap.auth.refreshToken.RefreshTokenEntity;
+import com.degreemap.DegreeMap.users.userCatalog.UserCourseCatalog;
+import com.degreemap.DegreeMap.users.userDm.UserDegreeMap;
+
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +38,12 @@ public class User {
     // Lazy fetching means we only get refresh tokens on demand/when needed; they don't come along by default.
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RefreshTokenEntity> refreshTokens;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserCourseCatalog> userCourseCatalogs = new ArrayList<UserCourseCatalog>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserDegreeMap> userDegreeMaps = new ArrayList<UserDegreeMap>();
 
     public User() {
     }
@@ -73,5 +83,25 @@ public class User {
 
     public void setRefreshTokens(List<RefreshTokenEntity> refreshTokens) {
         this.refreshTokens = refreshTokens;
+    }
+
+    public List<UserCourseCatalog> getUserCCs(){
+        return this.userCourseCatalogs;
+    }
+    public void addUserCC(UserCourseCatalog userCC){
+        this.userCourseCatalogs.add(userCC);
+    }
+    public void removeUserCC(UserCourseCatalog userCC){
+        this.userCourseCatalogs.remove(userCC);
+    }
+
+    public List<UserDegreeMap> getUserDMs(){
+        return this.userDegreeMaps;
+    }
+    public void addUserDM(UserDegreeMap userDM){
+        this.userDegreeMaps.add(userDM);
+    }
+    public void removeUserDM(UserDegreeMap userDM){
+        this.userDegreeMaps.remove(userDM);
     }
 }
