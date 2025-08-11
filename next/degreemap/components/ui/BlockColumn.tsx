@@ -33,7 +33,7 @@ export const BlockColumn: React.FC<BlockColumnProps> = ({id, title, selected, co
 	return (
 		<div
 			className={`
-				w-full h-96 bg-blue-200 border rounded text-sm flex items-center justify-start text-left px-1 py-2 cursor-pointer
+				w-full h-96 bg-blue-200 border rounded text-sm text-white flex items-center justify-start text-left px-1 py-2 cursor-pointer
 				transform transition duration-200 ease-in-out hover:scale-105 relative
 				${selected ? "ring-2 ring-offset-2 ring-black" : ""}
 				`}
