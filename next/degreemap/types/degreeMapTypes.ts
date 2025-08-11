@@ -24,3 +24,12 @@ interface Year {
 	name: string;
 	terms: Term[];
 }
+
+interface DegreeMap {
+	id: string;
+	name: string;
+	updatedAt: number;
+	degreeMap: {
+		years: Year[]
+	};
+}

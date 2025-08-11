@@ -2,15 +2,6 @@
 
 import Dexie, { Table } from "dexie";
 
-export interface DegreeMap {
-	id: string;
-	name: string;
-	updatedAt: number;
-	degreeMap: {
-        years: Year[]
-    };
-}
-
 class DegreeDB extends Dexie {
 	degreeMaps!: Table<DegreeMap, string>;
 

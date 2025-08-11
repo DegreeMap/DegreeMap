@@ -2,6 +2,7 @@
 
 import { ExportButton } from "@/components/db/ExportButton";
 import { ImportButton } from "@/components/db/ImportButton";
+import { DegreeMapCard } from "@/components/ui/DegreeMapCard";
 import { useAllDegreeMaps, createNewDegreeMap, renameDegreeMap, deleteDegreeMap } from "@/lib/useDegreeMaps";
 import Link from "next/link";
 
@@ -19,16 +20,22 @@ export default function MapsPage() {
 			</div>
 
 			<ul className="space-y-2">
-				{maps.map((m) => (
-					<li key={m.id} className="flex items-center gap-2">
-						<Link href={`/maps/${m.id}`} className="underline">{m.name}</Link>
-						<small className="opacity-70">updated {new Date(m.updatedAt).toLocaleString()}</small>
-						<button onClick={() => {
-							const name = prompt("Rename:", m.name);
-							if (name) renameDegreeMap(m.id, name);
-						}}>Rename</button>
-						<button onClick={() => deleteDegreeMap(m.id)}>Delete</button>
-					</li>
+				{maps.map((map) => (
+                    <DegreeMapCard 
+                        degreeMap={map} 
+                        onRename={renameDegreeMap}
+                        onDelete={deleteDegreeMap}
+                    />
+                    
+					// <li key={m.id} className="flex items-center gap-2">
+					// 	<Link href={`/maps/${m.id}`} className="underline">{m.name}</Link>
+					// 	<small className="opacity-70">updated {new Date(m.updatedAt).toLocaleString()}</small>
+					// 	<button onClick={() => {
+					// 		const name = prompt("Rename:", m.name);
+					// 		if (name) renameDegreeMap(m.id, name);
+					// 	}}>Rename</button>
+					// 	<button onClick={() => deleteDegreeMap(m.id)}>Delete</button>
+					// </li>
 				))}
 			</ul>
 		</div>

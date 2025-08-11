@@ -1,7 +1,7 @@
 "use client";
 
 import { useLiveQuery } from "dexie-react-hooks";
-import { db, listDegreeMaps, saveDegreeMap, deleteDegreeMap, type DegreeMap } from "./db";
+import { db, listDegreeMaps, saveDegreeMap, deleteDegreeMap} from "./db";
 
 export function useAllDegreeMaps() {
 	const maps = useLiveQuery(() => listDegreeMaps(), [], []);
