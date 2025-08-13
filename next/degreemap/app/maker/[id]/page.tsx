@@ -1,20 +1,59 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TermColumn } from "@/components/ui/TermColumn";
 import { Dropdown } from "@/components/ui/common/Dropdown";
 import { Toolbar } from "@/components/ui/Toolbar";
-import { getDegreeMap, saveDegreeMap } from "@/lib/db"; 
+import { getDegreeMap, saveDegreeMap } from "@/lib/db";
 import { useParams, useRouter } from "next/navigation";
 
 export default function DegreeMapMaker() {
 	const router = useRouter();
 	const [degreeMap, setDegreeMap] = useState<DegreeMap | null>(null);
-	const { id } = useParams<{id: string}>()
+	const [years, setYears] = useState<Year[]>([]);
+	const { id } = useParams<{ id: string }>()
 	//		^ This is the id passed into the URL
 
-	const [years, setYears] = useState<Year[]>([]);
+	useEffect(() => {
+		let cancel = false;
+		(async () => {
+			const retrievedDegreeMap = await getDegreeMap(id);
+			if (!retrievedDegreeMap) {
+				// maybe make a new one on the spot in the future??
+				return;
+			}
+			if (cancel) return;
+			setDegreeMap(retrievedDegreeMap);
+			const retrievedYears = retrievedDegreeMap.degreeMap?.years ?? [];
+			setYears(retrievedYears);
+			setNextId(computeNextId(retrievedYears) + 1);
+		})();
+		return () => { cancel = true; };
+	}, [id]);
+
+	// debounce save whenever years changes
+	const debouncedSave = useMemo(() => {
+		let t: any;
+		return (ys: Year[]) => {
+			clearTimeout(t);
+			t = setTimeout(async () => {
+				if (!degreeMap) return;
+				const updated: DegreeMap = {
+					...degreeMap,
+					updatedAt: Date.now(),
+					degreeMap: { years: ys }
+				};
+				await saveDegreeMap(updated);
+				setDegreeMap(updated);
+			}, 400);
+		};
+	}, [degreeMap]);
+
+	useEffect(() => {
+		if (degreeMap) debouncedSave(years);
+	}, [years, debouncedSave, degreeMap]);
+
 	const [nextId, setNextId] = useState(1);
 	const [editingYearId, setEditingYearId] = useState<number | null>(null);
 	const [yearNameDraft, setYearNameDraft] = useState<string>("");
@@ -138,10 +177,10 @@ export default function DegreeMapMaker() {
 						selectedCourseIds.has(course.id)
 							? { ...course, color: hex }
 							: course),
-					blocks: term.blocks.map((block) => 
+					blocks: term.blocks.map((block) =>
 						selectedBlockIds.has(block.id)
-						? {...block, color: hex}
-						: block),
+							? { ...block, color: hex }
+							: block),
 				})),
 			}))
 		);
@@ -308,4 +347,17 @@ export default function DegreeMapMaker() {
 			)}
 		</div>
 	);
+
+	function computeNextId(years: Year[]): number {
+		let max = 0;
+		for (const y of years) {
+			if (y.id > max) max = y.id;
+			for (const t of y.terms) {
+				if (t.id > max) max = t.id;
+				for (const c of t.courses) if (c.id > max) max = c.id;
+				for (const b of t.blocks) if (b.id > max) max = b.id;
+			}
+		}
+		return max;
+	}
 }
