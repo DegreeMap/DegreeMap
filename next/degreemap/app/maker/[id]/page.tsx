@@ -5,8 +5,15 @@ import { Button } from "@/components/ui/button";
 import { TermColumn } from "@/components/ui/TermColumn";
 import { Dropdown } from "@/components/ui/common/Dropdown";
 import { Toolbar } from "@/components/ui/Toolbar";
+import { getDegreeMap, saveDegreeMap } from "@/lib/db"; 
+import { useParams, useRouter } from "next/navigation";
 
 export default function DegreeMapMaker() {
+	const router = useRouter();
+	const [degreeMap, setDegreeMap] = useState<DegreeMap | null>(null);
+	const { id } = useParams<{id: string}>()
+	//		^ This is the id passed into the URL
+
 	const [years, setYears] = useState<Year[]>([]);
 	const [nextId, setNextId] = useState(1);
 	const [editingYearId, setEditingYearId] = useState<number | null>(null);

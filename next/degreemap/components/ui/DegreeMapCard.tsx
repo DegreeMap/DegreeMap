@@ -16,7 +16,9 @@ export const DegreeMapCard: React.FC<DegreeMapCardProps> = ({ degreeMap, onRenam
     const iconStyle = "p-2 text-gray-800 hover:text-gray-600";
 
 	return (
-		<div className="rounded-2xl w-80 shrink-0 border bg-white p-4 shadow-sm hover:shadow-md transition">
+		<div className="
+            rounded-2xl w-80 shrink-0 border bg-white p-4 shadow-sm
+            transform transition duration-200 ease-in-out hover:scale-105 relative">
 			<div className="flex items-start justify-between gap-3">
 				<Link href={`/maps/${id}`} className="text-lg font-semibold hover:underline">
 					{name || "NULL_NAME"}
