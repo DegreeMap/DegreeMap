@@ -44,11 +44,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({ selectedCourses, selectedBlock
 
     return (
         <div className="bg-gray-200 w-full flex p-2 px-6 items-center text-white">
-            <h1 className="text-lg font-semibold text-gray-800 pr-5">DegreeMap</h1>
+            <h1 className="text-lg font-semibold text-gray-800 pr-5 mb-0">DegreeMap</h1>
 
             {canRenderToolbar() ? (
-                <div className="flex items-center gap-1">
-                    <h2 className="text-base text-gray-800 mr-3">Selected: {selectedCourses.length+selectedBlocks.length}</h2>
+                <div className="flex items-center  gap-1">
+                    <h2 className="text-base items text-gray-800 mr-3 mb-0">Selected: {selectedCourses.length+selectedBlocks.length}</h2>
                     <button
                         className="flex items-center gap-2 rounded border px-2 py-1 text-sm bg-white hover:bg-gray-100"
                         onClick={() => setIsColorPickerOpen(true)}
