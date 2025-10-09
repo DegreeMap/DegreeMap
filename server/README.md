@@ -3,6 +3,9 @@
 ### Info:
 TODO
 
+### Requirements:
+Must have Docker (for database) & Java (for backend) downloaded.
+
 ### Running Database:
 To run the database for the application, you can run this command in the server directory:
 ``` bash
