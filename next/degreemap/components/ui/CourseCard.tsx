@@ -65,7 +65,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 	return (
 		<div 
 			className={`
-				text-white text-xs text-center rounded px-1 py-1 cursor-pointer
+				text-white text-xs text-center rounded px-1 py-1 mb-1 cursor-pointer
 				transform transition duration-200 ease-in-out hover:scale-105 relative
 				${selected ? "ring-2 ring-offset-2 ring-black" : ""}
 			`}
@@ -91,8 +91,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 			>
 				{title}
 			</div>
-			<div className="bg-white text-black font-bold mt-1 rounded-b px-1">
-				<h3 className="text-[.6rem] font-semibold leading-tight pt-[3px] cursor-text outline-none focus:outline-none"
+			<div className="bg-white text-black font-bold mt-1 rounded-b px-1 pb-1">
+				<h3 className="text-[.6rem] font-semibold pt-[3px] mb-0 cursor-text outline-none focus:outline-none"
 					contentEditable
 					suppressContentEditableWarning
 					onBlur={(e) => handleBlur(e, onCodeChange)}
@@ -111,7 +111,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, title, code, credits
 				>
 					{code}
 				</h3>
-				<h3 className="text-[.6rem] font-semibold leading-none pb-[3px] cursor-text outline-none focus:outline-none"
+				<h3 className="text-[.6rem] font-semibold cursor-text mb-0 outline-none focus:outline-none"
 					contentEditable
 					suppressContentEditableWarning
 					onBlur={(e) => handleBlur(e, onCreditsChange)}
